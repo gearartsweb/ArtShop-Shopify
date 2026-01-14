@@ -1,93 +1,61 @@
-{% paginate collection.products by 48 %}
-<div class="container">
-  <header class="collection-header">
-    <h1 class="collection-title">{{ collection.title }}</h1>
-    {% if collection.description != blank %}
-      <div class="collection-description">{{ collection.description }}</div>
-    {% endif %}
-  </header>
+<div class="collection-layout-wrapper">
+  
+  <aside class="collection-sidebar">
+    <div class="filter-group">
+      <h4>Categories</h4>
+      <ul>
+        {% for collection in collections %}
+          <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
 
-  <div id="ProductGridContainer">
-    <div class="product-grid">
-      {% for product in collection.products %}
-        {% render 'product-card', product: product %}
-      {% else %}
-        <p>No products found in this collection.</p>
+    <div class="filter-group">
+      <h4>Filter by Brand</h4>
+      {% for product_vendor in collection.all_vendors %}
+        <label class="filter-checkbox">
+          <input type="checkbox" value="{{ product_vendor }}"> {{ product_vendor }}
+        </label>
       {% endfor %}
     </div>
+  </aside>
 
-    {% if paginate.pages > 1 %}
-      <div class="pagination">
-        {{ paginate | default_pagination }}
-      </div>
-    {% endif %}
-  </div>
-</div>
-{% endpaginate %}
-
-<section class="product-page-area page-width">
-  <div class="product-main-container">
-    
-    <div class="product-gallery">
-      <div class="image-wrapper">
-        {% if product.featured_image %}
-          <div class="product-image-frame">
-  <img src="{{ product.featured_image | image_url: width: 600, height: 600 }}" 
-       alt="{{ product.title }}" 
-       width="600"
-       height="600"
-       class="grid-product-img">
-</div>
-        {% endif %}
-      </div>
-      <a href= {{ routes.all_products_collection_url }} class="continue-shopping-link">← Continue Shopping</a>
+  <main class="collection-main">
+    <div class="studio-grid">
+       {% comment %} Your existing product loop code {% endcomment %}
     </div>
-
-   <div class="product-grid-container">
-  {% for product in collection.products %} <div class="product-grid-item">
-      
-      <a href="{{ product.url }}" class="product-grid-image-link">
-        <div class="product-image-frame">
-          {% if product.featured_image %}
-            <img src="{{ product.featured_image | image_url: width: 600, height: 600 }}" 
-                 alt="{{ product.title }}" 
-                 loading="lazy" 
-                 width="600"
-                 height="600"
-                 class="grid-product-img">
-          {% else %}
-            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-          {% endif %}
-        </div>
-      </a>
-      
-      <div class="product-grid-details">
-        <span class="grid-vendor">{{ product.vendor }}</span>
-        <h4 class="grid-title">{{ product.title }}</h4>
-        <p class="grid-price">{{ product.price | money }}</p>
-        
-        {% form 'product', product, class: 'quick-add-form' %}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-          <button type="submit" class="grid-add-btn">+ ADD</button>
-        {% endform %}
-      </div>
-
-    </div>
-  {% endfor %}
-</div>
-
+  </main>
 
 </div>
-</section>
 
-{% schema %}
-{
-  "name": "Main Collection",
-  "settings": [
-    {
-      "type": "header",
-      "content": "Collection Settings"
-    }
-  ]
-}
-{% endschema %}
+<style>
+  .collection-layout-wrapper {
+    display: flex;
+    gap: 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  .collection-sidebar {
+    flex: 0 0 250px; /* Fixed width for sidebar */
+    border-right: 1px solid #eee;
+    padding-right: 20px;
+  }
+
+  .collection-main {
+    flex: 1; /* Takes up remaining space */
+  }
+
+  .filter-group { margin-bottom: 30px; }
+  .filter-group h4 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px; }
+  .filter-group ul { list-style: none; padding: 0; }
+  .filter-group li { margin-bottom: 8px; font-size: 14px; }
+  .filter-checkbox { display: block; font-size: 13px; margin-bottom: 5px; cursor: pointer; color: #555; }
+
+  /* Responsive: Stack on mobile */
+  @media (max-width: 768px) {
+    .collection-layout-wrapper { flex-direction: column; }
+    .collection-sidebar { display: none; } /* Usually we hide this and use a drawer on mobile */
+  }
+</style>
