@@ -1,0 +1,81 @@
+<div class="header-boutique page-width">
+  
+  <div class="header-nav-container">
+    <input type="checkbox" id="menu-toggle" class="menu-toggle-checkbox">
+    <label for="menu-toggle" class="hamburger-icon">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+
+    <nav class="header-nav-left boutique-menu" role="navigation">
+      {% for link in linklists.main-menu.links %}
+        {%- comment -%} Skip Search/Cart if they are in the menu to avoid double text {%- endcomment -%}
+        {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
+          <a href="{{ link.url }}">{{ link.title }}</a>
+        {%- endunless -%}
+      {% endfor %}
+    </nav>
+  </div>
+
+  <div class="header-logo-center">
+    <a href="{{ routes.root_url }}" class="site-logo-link">
+      <img 
+        src="{{ 'logo-2.png' | asset_url }}" 
+        alt="The Art Shop" 
+        class="site-logo-image"
+        width="180" 
+        height="50"
+        loading="eager"
+      >
+    </a>
+  </div>
+
+  <div class="header-icons-right">
+    <button type="button" class="icon-btn search-trigger" aria-label="Search">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+    </button>
+
+   <a href="javascript:void(0)" onclick="toggleCart()" class="header-cart-link" id="cart-icon-bubble">
+  {%- comment -%} Your SVG icon should stay here {%- endcomment -%}
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0" />
+  </svg>
+
+  {%- if cart.item_count > 0 -%}
+    <span class="cart-count-number">{{ cart.item_count }}</span>
+  {%- endif -%}
+</a>
+  </div>
+
+</div>
+
+<div id="search-overlay" class="search-modal">
+  <button class="search-close" type="button">&times;</button>
+  <div class="search-modal-content">
+    <form action="{{ routes.search_url }}" method="get" class="search-form">
+      <input type="text" name="q" placeholder="SEARCH" class="search-input" autofocus>
+      <button type="submit" class="search-submit">GO</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const searchTrigger = document.querySelector('.search-trigger');
+  const searchOverlay = document.getElementById('search-overlay');
+  const searchClose = document.querySelector('.search-close');
+
+  if (searchTrigger) {
+    searchTrigger.addEventListener('click', () => {
+      searchOverlay.classList.add('is-active');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  if (searchClose) {
+    searchClose.addEventListener('click', () => {
+      searchOverlay.classList.remove('is-active');
+      document.body.style.overflow = 'auto';
+    });
+  }
+</script>

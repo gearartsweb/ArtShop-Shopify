@@ -1,0 +1,49 @@
+<section class="contact-area">
+  <div class="page-width">
+    <div class="contact-grid">
+      
+      <div class="contact-info">
+        <h2 class="contact-title">{{ section.settings.title }}</h2>
+        <p class="contact-text">{{ section.settings.text }}</p>
+        <div class="contact-details">
+          <p><strong>Address:</strong> {{ section.settings.address }}</p>
+          <p><strong>Email:</strong> {{ section.settings.email }}</p>
+          <p><strong>Phone:</strong> +27 62 251 0546</p>
+        </div>
+      </div>
+
+      <div class="contact-form-wrapper">
+        {% form 'contact' %}
+          {% if form.posted_successfully? %}
+            <p class="form-success">Thank you for your inquiry. We will contact you shortly.</p>
+          {% endif %}
+
+          <div class="form-group">
+            <input type="text" name="contact[name]" placeholder="Full Name" required>
+          </div>
+          <div class="form-group">
+            <input type="email" name="contact[email]" placeholder="Email Address" required>
+          </div>
+          <div class="form-group">
+            <textarea name="contact[body]" placeholder="How can we help you?" rows="5"></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Send Inquiry</button>
+        {% endform %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Boutique Contact",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Inquiries & Commissions" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Whether you are looking for a specific piece or a commission, our curators are here." },
+    { "type": "text", "id": "address", "label": "Address", "default": "123 Art Avenue, London" },
+    { "type": "text", "id": "email", "label": "Email", "default": "studio@geararts.com" }
+  ],
+  "presets": [{ "name": "Boutique Contact" }]
+}
+{% endschema %}

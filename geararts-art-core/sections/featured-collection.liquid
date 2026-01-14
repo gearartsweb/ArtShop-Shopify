@@ -1,0 +1,82 @@
+<section class="featured-collection-area page-width">
+  <div class="section-header">
+    <h2 class="h2">{{ section.settings.title | default: "Studio Essentials" }}</h2>
+  </div>
+
+  <div class="boutique-zigzag-container">
+    {% for product in collections.all.products limit: 4 %}
+      {%- comment -%} Determine if row is odd or even for the zig-zag flip {%- endcomment -%}
+      {% assign remainder = forloop.index | modulo: 2 %}
+      
+      <div class="zigzag-row {% if remainder == 0 %}is-reversed{% endif %}">
+        
+        <div class="zigzag-image">
+          <a href="{{ product.url }}">
+            {% if product.featured_image %}
+              <img 
+                src="{{ product.featured_image | image_url: width: 1000 }}" 
+                alt="{{ product.title }}" 
+                loading="lazy"
+                class="gallery-image"
+                width="{{ product.featured_image.width }}"
+                height="{{ product.featured_image.height }}"
+              >
+            {% else %}
+              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            {% endif %}
+          </a>
+        </div>
+        
+        <div class="zigzag-text">
+  <span class="product-vendor">{{ product.vendor }}</span>
+  <h3 class="product-card-title">{{ product.title }}</h3>
+  
+  <div class="product-description">
+    {{ product.description | strip_html | truncatewords: 30 }}
+  </div>
+  
+  <div class="product-meta">
+    <span class="product-card-price">{{ product.price | money }}</span>
+    
+    <div class="quick-add-container">
+      <form action="{{ routes.cart_add_url }}" method="post" class="quick-add-form" enctype="multipart/form-data">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button type="submit" class="quick-add-btn">+ ADD TO CART</button>
+      </form>
+      
+      {%- comment -%} This is the ONLY link we keep {%- endcomment -%}
+      <a href="{{ product.url }}" class="view-details-link">VIEW DETAILS</a>
+    </div>
+
+    {%- comment -%} 
+      IF YOU SEE ANOTHER "VIEW PRODUCT" OR "VIEW DETAILS" LINK DOWN HERE, 
+      DELETE IT ENTIRELY.
+    {%- endcomment -%}
+  </div>
+</div>
+
+      </div>
+    {% else %}
+      <p class="no-products">No products found in the collection.</p>
+    {% endfor %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Featured Collection",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Studio Essentials"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Featured Collection"
+    }
+  ]
+}
+{% endschema %}

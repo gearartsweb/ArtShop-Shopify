@@ -1,0 +1,49 @@
+<div class="product-page-area page-width">
+  <div class="product-main-container">
+    
+    <div class="product-gallery">
+      <div class="image-wrapper">
+        {% if product.featured_image %}
+          <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title }}" class="main-product-img" width="800" height="800">
+        {% else %}
+          {{ 'product-1' | placeholder_svg_tag: 'main-product-img placeholder' }}
+        {% endif %}
+      </div>
+      <a href="{{ routes.all_products_collection_url }}" class="continue-shopping-link">← Continue Shopping</a>
+    </div>
+
+    <div class="product-info-column">
+      <div class="product-sticky-content">
+        <span class="product-vendor">{{ product.vendor | upcase }}</span>
+        <h1 class="product-title">{{ product.title }}</h1>
+        <p class="product-price">{{ product.price | money }}</p>
+        
+        <div class="product-description rte">
+          {{ product.description }}
+        </div>
+
+        {% form 'product', product, id: "add-to-cart-form" %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          
+          <div class="product-form-actions">
+            <div class="qty-and-add-row">
+              <div class="quantity-selector">
+                <input type="number" id="Quantity" name="quantity" value="1" min="1">
+              </div>
+              <button type="submit" name="add" class="main-add-btn">ADD TO CART</button>
+            </div>
+            
+            <button type="submit" name="checkout" class="buy-it-now-btn">BUY IT NOW</button>
+          </div>
+        {% endform %}
+
+        <div class="studio-perks">
+          <p>✓ Professional Grade</p>
+          <p>✓ Studio Tested</p>
+          <p>✓ Fast Shipping</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,26 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "boutique_form": {
+      "type": "contact-boutique",
+      "settings": {
+        "title": "Contact The Art Shop",
+        "text": "For any enquires please reach out below.",
+        "address": "13 Mitchell str. Hermanus",
+        "email": "artshophermanus@gmail.com",
+        "phone": "+27 62 251 0546"
+      }
+    }
+  },
+  "order": [
+    "boutique_form"
+  ]
+}

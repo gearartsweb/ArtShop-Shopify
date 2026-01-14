@@ -1,0 +1,33 @@
+{
+  "sections": {
+    "hero_video": {
+      "type": "hero-video",
+      "settings": {
+        "title": "The Art of Precision",
+        "subtitle": "Fine Art supplies for the modern studio."
+    }
+  },
+  "featured_products": {
+  "type": "featured-collection",
+  "settings": {
+    "title": "Studio Essentials",
+    "product_limit": 4,
+    "collection": "home-page" 
+  }
+},
+    "boutique_contact": {
+      "type": "contact-boutique",
+      "settings": {
+        "title": "Inquiries & Commissions",
+        "text": "The best place to buy fine art supplies",
+        "address": "13 Mitchell Str. Hermanus",
+        "email": "artshophermanus@gmail.com"
+      }
+    }
+  },
+  "order": [
+    "hero_video",
+    "featured_products",
+    "boutique_contact"
+  ]
+}

@@ -1,0 +1,61 @@
+<section class="hero-video-container">
+  <div class="video-wrapper">
+    <video autoplay muted loop playsinline poster="" class="hero-video">
+      <source src="https://cdn.shopify.com/videos/c/o/v/445580544d5b40c38721dccf33b36110.mp4" type="video/mp4">
+    </video>
+    
+    <div class="hero-overlay">
+      <div class="page-width">
+        <div class="hero-content">
+          <h2 class="hero-title">{{ section.settings.title }}</h2>
+          <p class="hero-subtitle">{{ section.settings.subtitle }}</p>
+          <a href="{{ section.settings.button_link }}" class="btn-primary">
+            {{ section.settings.button_label }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero Video",
+  "settings": [
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL",
+      "default": "https://videos.pexels.com/video-files/3847424/3847424-uhd_2560_1440_30fps.mp4"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "The Art of Precision"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Professional grade supplies for the modern studio."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button Label",
+      "default": "Shop the Collection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button Link"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero Video"
+    }
+  ]
+}
+{% endschema %}
