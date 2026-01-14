@@ -1,61 +1,102 @@
+{% paginate collection.products by 48 %}
 <div class="collection-layout-wrapper">
   
   <aside class="collection-sidebar">
     <div class="filter-group">
       <h4>Categories</h4>
       <ul>
-        {% for collection in collections %}
-          <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+        {% for coll in collections %}
+          <li><a href="{{ coll.url }}" class="filter-link">{{ coll.title }}</a></li>
         {% endfor %}
       </ul>
     </div>
 
     <div class="filter-group">
-      <h4>Filter by Brand</h4>
+      <h4>Brands</h4>
       {% for product_vendor in collection.all_vendors %}
-        <label class="filter-checkbox">
-          <input type="checkbox" value="{{ product_vendor }}"> {{ product_vendor }}
-        </label>
+        <a href="{{ collection.url }}?filter.p.vendor={{ product_vendor | url_param_escape }}" class="filter-link">
+          {{ product_vendor }}
+        </a>
       {% endfor %}
     </div>
   </aside>
 
   <main class="collection-main">
+    <h1 class="collection-title">{{ collection.title }}</h1>
+    
     <div class="studio-grid">
-       {% comment %} Your existing product loop code {% endcomment %}
+      {% for product in collection.products %}
+        <div class="studio-product-card">
+          <a href="{{ product.url }}" class="product-card-link">
+            <div class="image-frame">
+              <img 
+                src="{{ product.featured_image | image_url: width: 400 }}" 
+                alt="{{ product.featured_image.alt | escape }}"
+                loading="lazy"
+                width="{{ product.featured_image.width }}"
+                height="{{ product.featured_image.height }}"
+                class="grid-img"
+              >
+            </div>
+            <div class="product-info">
+              <p class="brand-name">{{ product.vendor }}</p>
+              <h3 class="product-title">{{ product.title }}</h3>
+              <p class="product-price">{{ product.price | money }}</p>
+            </div>
+          </a>
+        </div>
+      {% else %}
+        <p>No products found in this collection.</p>
+      {% endfor %}
     </div>
+
+    {% if paginate.pages > 1 %}
+      <div class="pagination">{{ paginate | default_pagination }}</div>
+    {% endif %}
   </main>
 
 </div>
 
 <style>
-  .collection-layout-wrapper {
-    display: flex;
-    gap: 40px;
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 0 20px;
+  .collection-layout-wrapper { display: flex; gap: 40px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
+  .collection-sidebar { flex: 0 0 220px; border-right: 1px solid #eee; padding-right: 20px; }
+  .collection-main { flex: 1; }
+  .collection-title { font-size: 1.5rem; margin-bottom: 30px; font-weight: 300; text-transform: uppercase; letter-spacing: 2px; }
+  
+  /* Grid Logic */
+  .studio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
+  
+  /* Image Scaling & Sharpness */
+  .image-frame { 
+    height: 280px; 
+    background: #f9f9f9; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    overflow: hidden; 
+    margin-bottom: 12px;
+    border: 1px solid #f0f0f0;
   }
+  .grid-img { max-height: 85%; max-width: 85%; object-fit: contain; transition: transform 0.4s ease; }
+  .studio-product-card:hover .grid-img { transform: scale(1.05); }
 
-  .collection-sidebar {
-    flex: 0 0 250px; /* Fixed width for sidebar */
-    border-right: 1px solid #eee;
-    padding-right: 20px;
-  }
+  /* Typography */
+  .product-card-link { text-decoration: none; color: inherit; }
+  .brand-name { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
+  .product-title { font-size: 13px; margin: 5px 0; font-weight: 400; line-height: 1.4; height: 2.8em; overflow: hidden; }
+  .product-price { font-weight: 600; font-size: 14px; margin-top: 8px; }
 
-  .collection-main {
-    flex: 1; /* Takes up remaining space */
-  }
-
+  /* Sidebar Links */
   .filter-group { margin-bottom: 30px; }
-  .filter-group h4 { font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; border-bottom: 1px solid #000; padding-bottom: 5px; }
-  .filter-group ul { list-style: none; padding: 0; }
-  .filter-group li { margin-bottom: 8px; font-size: 14px; }
-  .filter-checkbox { display: block; font-size: 13px; margin-bottom: 5px; cursor: pointer; color: #555; }
+  .filter-group h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; color: #000; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+  .filter-link { display: block; font-size: 13px; color: #666; text-decoration: none; margin-bottom: 8px; }
+  .filter-link:hover { color: #000; }
 
-  /* Responsive: Stack on mobile */
-  @media (max-width: 768px) {
+  @media (max-width: 1100px) { .studio-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px) { 
     .collection-layout-wrapper { flex-direction: column; }
-    .collection-sidebar { display: none; } /* Usually we hide this and use a drawer on mobile */
+    .collection-sidebar { display: none; }
+    .studio-grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
+{% endpaginate %}
