@@ -61,6 +61,14 @@
 </div>
 
 <script>
+  function toggleCart() {
+    const drawer = document.getElementById('CartDrawer');
+    if (drawer) {
+      drawer.classList.toggle('is-active');
+      document.body.classList.toggle('cart-open');
+    }
+  }
+
   const searchTrigger = document.querySelector('.search-trigger');
   const searchOverlay = document.getElementById('search-overlay');
   const searchClose = document.querySelector('.search-close');

@@ -1,40 +1,28 @@
-<div id="CartDrawerItemsInner">
-  {% if cart.item_count == 0 %}
-    <p style="text-align: center; padding: 20px;">Your bag is empty.</p>
-  {% else %}
-    {% for item in cart.items %}
-      <div class="cart-item" data-key="{{ item.key }}" style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
-        <div class="cart-item-image">
-          <img 
-            src="{{ item.image | image_url: width: 150 }}" 
-            alt="{{ item.product.title | escape }}" 
-            loading="lazy"
-            width="{{ item.image.width }}"
-            height="{{ item.image.height }}"
-            style="width: 70px; height: auto; object-fit: contain;"
-          >
-        </div>
+{% if cart.item_count == 0 %}
+  <p style="text-align: center; padding: 20px;">Your bag is empty.</p>
+{% else %}
+  {% for item in cart.items %}
+    <div class="cart-item" style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+      <div class="cart-item-image">
+        <img 
+          src="{{ item.image | image_url: width: 150 }}" 
+          alt="{{ item.product.title | escape }}" 
+          width="{{ item.image.width }}" 
+          height="{{ item.image.height }}" 
+          loading="lazy"
+          style="width: 70px; height: auto;">
+      </div>
+      <div class="cart-item-details">
+        <h4 style="margin: 0; font-size: 14px;">{{ item.product.title }}</h4>
+        <p style="margin: 5px 0;">{{ item.final_line_price | money }}</p>
         
-        <div class="cart-item-details" style="flex: 1;">
-          <h4 style="margin: 0; font-size: 14px;">{{ item.product.title }}</h4>
-          <p style="margin: 5px 0; font-weight: bold;">{{ item.final_line_price | money }}</p>
-          
-          <button type="button" 
-            class="cart-remove-button" 
-            onclick="removeCartItem('{{ item.key }}')"
-            style="display: block !important; visibility: visible !important; background: none; border: none; color: #ff4d4d; text-decoration: underline; font-size: 11px; cursor: pointer; padding: 5px 0; margin-top: 5px;">
-            REMOVE ITEM
-          </button>
-        </div>
+        {% comment %} THE AJAX REMOVE BUTTON {% endcomment %}
+        <button type="button" 
+          onclick="removeCartItem('{{ item.key }}')"
+          style="background: none; border: none; color: #ff0000; text-decoration: underline; font-size: 11px; cursor: pointer; padding: 0; display: block;">
+          REMOVE
+        </button>
       </div>
-    {% endfor %}
-
-    <div class="cart-drawer-footer" style="margin-top: 20px; border-top: 2px solid #000; padding-top: 15px;">
-      <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
-        <span>SUBTOTAL</span>
-        <span>{{ cart.total_price | money }}</span>
-      </div>
-      <a href="/checkout" style="display: block; background: #000; color: #fff; text-align: center; padding: 15px; text-decoration: none; font-weight: bold;">CHECKOUT</a>
     </div>
-  {% endif %}
-</div>
+  {% endfor %}
+{% endif %}

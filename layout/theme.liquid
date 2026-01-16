@@ -238,6 +238,77 @@ function refreshCartDrawer() {
 }
 </script>
 
+<script>
+function removeCartItem(key) {
+  fetch('/cart/change.js', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: key, quantity: 0 })
+  })
+  .then(response => response.json())
+  .then(state => {
+    // Refresh the drawer content using Shopify 2.0 Section Rendering API
+    refreshCartDrawer();
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function refreshCartDrawer() {
+  // Use the section_id parameter to fetch just the cart drawer section
+  fetch(`${window.location.pathname}?sections=cart-drawer`)
+    .then(response => response.json())
+    .then(json => {
+      const html = new DOMParser().parseFromString(json['cart-drawer'], 'text/html');
+      const newItems = html.querySelector('#CartDrawerItems').innerHTML;
+      const drawerFooter = html.querySelector('.cart-drawer__footer').innerHTML;
+      
+      document.querySelector('#CartDrawerItems').innerHTML = newItems;
+      document.querySelector('.cart-drawer__footer').innerHTML = drawerFooter;
+    });
+}
+
+function toggleCart() {
+  document.getElementById('CartDrawer').classList.toggle('is-active');
+}
+</script>
+
+<script>
+  // 1. Remove Item via Ajax
+  function removeCartItem(key) {
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: key, quantity: 0 })
+    })
+    .then(res => res.json())
+    .then(() => refreshCartDrawer())
+    .catch(err => console.error(err));
+  }
+
+  // 2. Refresh Drawer Content without Reload
+  function refreshCartDrawer() {
+    fetch(`${window.location.pathname}?sections=cart-drawer`)
+      .then(res => res.json())
+      .then(json => {
+        const html = new DOMParser().parseFromString(json['cart-drawer'], 'text/html');
+        document.getElementById('CartDrawerItems').innerHTML = html.getElementById('CartDrawerItems').innerHTML;
+        document.getElementById('CartDrawerFooter').innerHTML = html.getElementById('CartDrawerFooter').innerHTML;
+        
+        // Update bubble count in header
+        fetch('/cart.js').then(r => r.json()).then(cart => {
+          const count = document.querySelector('.cart-count-number');
+          if (count) count.textContent = cart.item_count;
+        });
+      });
+  }
+
+  // 3. Global Toggle (Fallback)
+  window.toggleCart = function() {
+    const drawer = document.getElementById('CartDrawer');
+    drawer.classList.toggle('is-active');
+  };
+</script>
+
   </body>
 </html>
 
