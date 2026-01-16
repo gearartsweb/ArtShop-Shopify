@@ -1,0 +1,21 @@
+<div id="CartDrawer" class="cart-drawer">
+  <div class="cart-drawer__overlay" onclick="toggleCart()"></div>
+  <div class="cart-drawer__inner">
+    <div class="cart-drawer__header">
+      <h2 class="cart-drawer__title">Your Studio Bag</h2>
+      <button type="button" class="cart-drawer__close" onclick="toggleCart()">&times;</button>
+    </div>
+
+    <div id="CartDrawerItems" class="cart-drawer__content">
+      {% comment %} This is where we link your snippet {% endcomment %}
+      {% render 'cart-drawer-items' %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cart Drawer",
+  "settings": []
+}
+{% endschema %}

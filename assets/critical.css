@@ -1367,3 +1367,102 @@ section {
   letter-spacing: 0.1em;
 }
 .view-details-mini:hover { color: #000; }
+
+/* Studio Product Card Styles */
+.image-frame { 
+  position: relative; 
+  height: 280px; 
+  background: #f9f9f9; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  overflow: hidden; 
+  margin-bottom: 12px;
+  border: 1px solid #f0f0f0;
+}
+
+.grid-img { max-height: 85%; max-width: 85%; object-fit: contain; transition: transform 0.4s ease; }
+
+.quick-add-btn {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: #000;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.studio-product-card:hover .quick-add-btn {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.studio-product-card:hover .grid-img { transform: scale(1.05); }
+
+.brand-name { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
+.product-title { font-size: 13px; margin: 5px 0; font-weight: 400; line-height: 1.4; height: 2.8em; overflow: hidden; color: #111; }
+.product-price { font-weight: 600; font-size: 14px; margin-top: 8px; color: #000; }
+
+/* 1. Force the Cart Drawer to the absolute front */
+.cart-drawer, 
+#cart-drawer,
+.drawer {
+  z-index: 9999 !important;
+}
+
+/* 2. Ensure the darkened overlay also covers the menu */
+.drawer__overlay,
+.cart-drawer-overlay {
+  z-index: 9998 !important;
+}
+
+/* 3. Make sure the header stays below the drawer when open */
+.header-wrapper, 
+header, 
+#shopify-section-header {
+  z-index: 100 !important;
+}
+
+/* Ensure the drawer is the master layer */
+.cart-drawer {
+  z-index: 100000 !important;
+  visibility: visible !important;
+}
+
+/* Hide the main navigation links ONLY when the cart drawer is active */
+.js-drawer-open .header__inline-menu, 
+.js-drawer-open .header__icon--menu {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease;
+}
+
+/* This targets the specific "Home/Catalog" buttons in your theme */
+.drawer--active .site-nav,
+.drawer--active .menu-drawer {
+  display: none !important;
+}
+
+/* Keeps cart images consistent in the Studio drawer */
+.cart-item-img {
+  display: block;
+  max-width: 80px; /* Adjust this to fit your drawer width */
+  height: auto;
+  background-color: #f9f9f9; /* Soft background for transparent art supplies */
+  border-radius: 2px;
+}
+
+/* Ensure the container doesn't collapse before the image loads */
+.cart-item-image-wrapper {
+  width: 80px;
+  aspect-ratio: 1 / 1;
+}

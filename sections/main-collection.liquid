@@ -26,25 +26,7 @@
     
     <div class="studio-grid">
       {% for product in collection.products %}
-        <div class="studio-product-card">
-          <a href="{{ product.url }}" class="product-card-link">
-            <div class="image-frame">
-              <img 
-                src="{{ product.featured_image | image_url: width: 400 }}" 
-                alt="{{ product.featured_image.alt | escape }}"
-                loading="lazy"
-                width="{{ product.featured_image.width }}"
-                height="{{ product.featured_image.height }}"
-                class="grid-img"
-              >
-            </div>
-            <div class="product-info">
-              <p class="brand-name">{{ product.vendor }}</p>
-              <h3 class="product-title">{{ product.title }}</h3>
-              <p class="product-price">{{ product.price | money }}</p>
-            </div>
-          </a>
-        </div>
+        {% render 'product-card', product: product %}
       {% else %}
         <p>No products found in this collection.</p>
       {% endfor %}
@@ -58,15 +40,17 @@
 </div>
 
 <style>
+  /* Layout Architecture */
   .collection-layout-wrapper { display: flex; gap: 40px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
   .collection-sidebar { flex: 0 0 220px; border-right: 1px solid #eee; padding-right: 20px; }
   .collection-main { flex: 1; }
   .collection-title { font-size: 1.5rem; margin-bottom: 30px; font-weight: 300; text-transform: uppercase; letter-spacing: 2px; }
   
-  /* Grid Logic */
+  /* The Grid */
   .studio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
-  
-  /* Image Scaling & Sharpness */
+
+  /* Product Card Styles (Must be here to style the snippet) */
+  .studio-product-card { position: relative; text-decoration: none; color: inherit; display: block; }
   .image-frame { 
     height: 280px; 
     background: #f9f9f9; 
@@ -76,15 +60,43 @@
     overflow: hidden; 
     margin-bottom: 12px;
     border: 1px solid #f0f0f0;
+    position: relative;
   }
   .grid-img { max-height: 85%; max-width: 85%; object-fit: contain; transition: transform 0.4s ease; }
-  .studio-product-card:hover .grid-img { transform: scale(1.05); }
-
-  /* Typography */
-  .product-card-link { text-decoration: none; color: inherit; }
+  
   .brand-name { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
   .product-title { font-size: 13px; margin: 5px 0; font-weight: 400; line-height: 1.4; height: 2.8em; overflow: hidden; }
   .product-price { font-weight: 600; font-size: 14px; margin-top: 8px; }
+
+  /* Quick Add Button - Now Always Visible */
+  .quick-add-btn {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0); /* Sitting in final position */
+    background: #800000 (0, 0, 0, 0.8); /* Slightly transparent Marron for a studio feel */
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    opacity: 1; /* Always visible */
+    transition: background 0.3s ease;
+    width: 80%; /* Makes it a nice wide target for thumbs on mobile */
+    white-space: nowrap;
+  }
+
+  /* Optional: Make it turn solid Maroon when hovered on desktop */
+  .quick-add-btn:hover {
+    background: #800000 (0, 0, 0, 1);
+  }
+
+  /* Keep the image zoom on hover for desktop */
+  .studio-product-card:hover .grid-img { 
+    transform: scale(1.05); 
+  }
 
   /* Sidebar Links */
   .filter-group { margin-bottom: 30px; }
