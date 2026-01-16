@@ -59,31 +59,3 @@
     </form>
   </div>
 </div>
-
-<script>
-  function toggleCart() {
-    const drawer = document.getElementById('CartDrawer');
-    if (drawer) {
-      drawer.classList.toggle('is-active');
-      document.body.classList.toggle('cart-open');
-    }
-  }
-
-  const searchTrigger = document.querySelector('.search-trigger');
-  const searchOverlay = document.getElementById('search-overlay');
-  const searchClose = document.querySelector('.search-close');
-
-  if (searchTrigger) {
-    searchTrigger.addEventListener('click', () => {
-      searchOverlay.classList.add('is-active');
-      document.body.style.overflow = 'hidden';
-    });
-  }
-
-  if (searchClose) {
-    searchClose.addEventListener('click', () => {
-      searchOverlay.classList.remove('is-active');
-      document.body.style.overflow = 'auto';
-    });
-  }
-</script>
