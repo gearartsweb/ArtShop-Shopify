@@ -1,70 +1,125 @@
-{% comment %}
-  This section is used in the search template to render search results for
-  products, articles, and pages.
+{{ 'critical.css' | asset_url | stylesheet_tag }}
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/search
-{% endcomment %}
+<div class="page-width" style="padding: 60px 20px;">
+  <div class="search-header" style="text-align: center; margin-bottom: 50px;">
+    <h1 class="collection-title" style="font-size: 1.5rem; font-weight: 300; text-transform: uppercase; letter-spacing: 2px;">
+      {% if search.performed %}
+        {% if search.results_count == 1 %}
+          1 Result for "{{ search.terms }}"
+        {% else %}
+          {{ search.results_count }} Results for "{{ search.terms }}"
+        {% endif %}
+      {% else %}
+        Search Our Studio
+      {% endif %}
+    </h1>
 
-<h1>{{ 'search.title' | t }}</h1>
+    {% comment %} Search bar on the results page for quick adjustments {% endcomment %}
+    <form action="{{ routes.search_url }}" method="get" role="search" style="max-width: 500px; margin: 30px auto; display: flex; gap: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
+      <input 
+        type="search" 
+        name="q" 
+        value="{{ search.terms | escape }}" 
+        placeholder="Search again..." 
+        style="flex: 1; border: none; outline: none; font-family: inherit; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;"
+      >
+      <button type="submit" style="background: none; border: none; font-weight: 600; cursor: pointer; font-size: 12px; letter-spacing: 1px;">GO</button>
+    </form>
+  </div>
 
-<form action="{{ routes.search_url }}" method="get" role="search">
-  <input
-    type="search"
-    size="50"
-    name="q"
-    value="{{ search.terms | escape }}"
-    placeholder="{{ 'search.placeholder' | t }}"
-  >
-  <button type="submit">{{ 'search.submit' | t }}</button>
-</form>
+  <div class="collection-layout-wrapper">
+    {% comment %} Sidebar with Dynamic Filters {% endcomment %}
+    <aside class="collection-sidebar">
+      {% render 'facets', results: search %}
+    </aside>
 
-{% if search.performed %}
-  {% if search.results_count == 0 %}
-    <p>{{ 'search.no_results_html' | t: terms: search.terms }}</p>
-  {% else %}
-    <p>{{ 'search.results_for_html' | t: terms: search.terms, count: search.results_count }}</p>
-
-    <div class="search-results">
-      {% paginate search.results by 20 %}
-        {% # Search result items may be an article, a page, or a product. %}
-        {% for result in search.results %}
-          <div class="search-result">
-            {% assign featured_image = result.featured_image | default: result.image %}
-            {% if featured_image %}
-              {% render 'image', class: 'search-result__image', image: featured_image, url: result.url, width: 400 %}
-            {% endif %}
-            <div class="search-result__content">
-              <p>
-                {{ result.title | link_to: result.url }}
-                {% if result.price %}
-                  {{ result.price | money_with_currency }}
-                {% endif %}
+    <main class="collection-main">
+      {% paginate search.results by 32 %}
+        {% if search.performed %}
+          <div class="studio-grid">
+            {% for item in search.results %}
+              {% comment %} 
+                Ensure we only show products. 
+                If you want to show pages/articles, we would need a different card style.
+              {% endcomment %}
+              {% if item.object_type == 'product' %}
+                {% render 'product-card', product: item %}
+              {% endif %}
+            {% else %}
+              <p style="text-align: center; grid-column: 1 / -1; padding: 40px; color: #666;">
+                No items matched your search for "{{ search.terms }}".
               </p>
-            </div>
+            {% endfor %}
           </div>
-        {% endfor %}
+        {% endif %}
 
-        {{ paginate | default_pagination }}
+        {% if paginate.pages > 1 %}
+          <div class="pagination" style="margin-top: 50px; text-align: center; display: flex; justify-content: center; gap: 15px;">
+            {{ paginate | default_pagination }}
+          </div>
+        {% endif %}
       {% endpaginate %}
-    </div>
-  {% endif %}
-{% endif %}
+    </main>
+  </div>
+</div>
 
-{% stylesheet %}
-  .search-results {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+<style>
+  /* Layout Architecture - Matches your Collection Page */
+  .collection-layout-wrapper { 
+    display: flex; 
+    gap: 40px; 
+    max-width: 1400px; 
+    margin: 0 auto; 
   }
-  .search-results .prev,
-  .search-results .page,
-  .search-results .next {
-    grid-column: 1 / -1;
+  
+  .collection-sidebar { 
+    flex: 0 0 220px; 
+    border-right: 1px solid #eee; 
+    padding-right: 20px; 
   }
-{% endstylesheet %}
+  
+  .collection-main { 
+    flex: 1; 
+  }
+
+  /* The Studio Grid */
+  .studio-grid { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 25px; 
+  }
+
+  /* Mobile Responsiveness */
+  @media (max-width: 1200px) {
+    .studio-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .collection-layout-wrapper { flex-direction: column; }
+    .collection-sidebar { display: none; } /* Hide sidebar on mobile to save space */
+    .studio-grid { grid-template-columns: repeat(2, 1fr); }
+    .collection-title { font-size: 1.2rem; }
+  }
+
+  /* Ensure the facets snippet styling is supported */
+  .facet-details { border-bottom: 1px solid #eee; padding: 15px 0; }
+  .facet-details summary { cursor: pointer; font-size: 12px; text-transform: uppercase; font-weight: 600; list-style: none; }
+  .facet-details summary::-webkit-details-marker { display: none; }
+</style>
 
 {% schema %}
 {
-  "name": "t:general.search",
-  "settings": []
+  "name": "Search Results",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "label": "Products per page"
+    }
+  ]
 }
 {% endschema %}

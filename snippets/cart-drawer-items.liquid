@@ -1,28 +1,32 @@
 {% if cart.item_count == 0 %}
-  <p style="text-align: center; padding: 20px;">Your bag is empty.</p>
+  <div style="text-align: center; padding: 40px 0;">
+    <p style="font-size: 13px; color: #999;">Your studio bag is currently empty.</p>
+  </div>
 {% else %}
-  {% for item in cart.items %}
-    <div class="cart-item" style="display: flex; gap: 15px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
-      <div class="cart-item-image">
-        <img 
-          src="{{ item.image | image_url: width: 150 }}" 
-          alt="{{ item.product.title | escape }}" 
-          width="{{ item.image.width }}" 
-          height="{{ item.image.height }}" 
-          loading="lazy"
-          style="width: 70px; height: auto;">
-      </div>
-      <div class="cart-item-details">
-        <h4 style="margin: 0; font-size: 14px;">{{ item.product.title }}</h4>
-        <p style="margin: 5px 0;">{{ item.final_line_price | money }}</p>
+  <div class="cart-drawer-items-list">
+    {% for item in cart.items %}
+      <div class="cart-drawer-item" style="display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #fafafa;">
+        <div class="cart-item-image">
+          <img src="{{ item.image | image_url: width: 150 }}" loading="eager" alt="{{ item.title }}" width="70" height="70" style="width: 70px; height: 70px; object-fit: cover; background: #f9f9f9;">
+        </div>
         
-        {% comment %} THE AJAX REMOVE BUTTON {% endcomment %}
-        <button type="button" 
-          onclick="removeCartItem('{{ item.key }}')"
-          style="background: none; border: none; color: #ff0000; text-decoration: underline; font-size: 11px; cursor: pointer; padding: 0; display: block;">
-          REMOVE
-        </button>
+        <div class="cart-item-details" style="flex: 1;">
+          <p style="font-size: 13px; font-weight: 600; margin: 0;">{{ item.product.title }}</p>
+          <p style="font-size: 12px; color: #666; margin: 5px 0;">{{ item.final_line_price | money }}</p>
+          
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+            <div style="display: flex; border: 1px solid #eee; align-items: center;">
+              <button type="button" onclick="window.updateQty('{{ item.key }}', {{ item.quantity | minus: 1 }})" style="padding: 5px 10px; cursor: pointer; background: none; border: none;">-</button>
+              <span style="font-size: 12px; min-width: 20px; text-align: center;">{{ item.quantity }}</span>
+              <button type="button" onclick="window.updateQty('{{ item.key }}', {{ item.quantity | plus: 1 }})" style="padding: 5px 10px; cursor: pointer; background: none; border: none;">+</button>
+            </div>
+            
+            <button type="button" onclick="window.updateQty('{{ item.key }}', 0)" style="background: none; border: none; font-size: 10px; text-decoration: underline; cursor: pointer; color: #cc0000; padding: 0;">
+              REMOVE
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
-  {% endfor %}
+    {% endfor %}
+  </div>
 {% endif %}

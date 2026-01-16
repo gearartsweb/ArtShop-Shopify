@@ -1,93 +1,133 @@
-<div id="CartDrawer" class="cart-drawer">
-  <div class="cart-drawer__overlay" onclick="toggleCart()"></div>
+<div id="CartDrawer" class="cart-drawer" aria-hidden="true">
+  <div class="cart-drawer__overlay" onclick="window.toggleCart()"></div>
   <div class="cart-drawer__inner">
-    <div class="cart-drawer__header">
-      <h2 style="margin:0; font-size: 1.2rem; letter-spacing: 2px;">YOUR BAG</h2>
-      <button type="button" class="cart-drawer__close" onclick="toggleCart()" style="background:none; border:none; font-size:24px; cursor:pointer;">&times;</button>
+    <div class="cart-drawer-header">
+      <h3 style="margin:0; letter-spacing: 2px;">YOUR STUDIO BAG</h3>
+      <button type="button" class="close-drawer" onclick="window.toggleCart()" style="background:none; border:none; font-size:30px; cursor:pointer;">&times;</button>
     </div>
 
-    <div id="CartDrawerItems" class="cart-drawer__content" style="flex: 1; overflow-y: auto; padding: 20px;">
+    <div id="CartDrawerItems" class="cart-drawer-scroll-area">
       {% render 'cart-drawer-items' %}
     </div>
 
-    <div class="cart-drawer__footer" id="CartDrawerFooter" style="padding: 20px; border-top: 1px solid #eee;">
-      <div style="display:flex; justify-content:space-between; margin-bottom:15px; font-weight:bold;">
-        <span>SUBTOTAL</span>
-        <span>{{ cart.total_price | money }}</span>
-      </div>
-      <a href="/checkout" style="display:block; width:100%; background:#000; color:#fff; text-align:center; padding:18px; text-decoration:none; letter-spacing:2px;">CHECKOUT</a>
+    <div id="CartDrawerFooter" class="cart-drawer-footer">
+      {% if cart.item_count > 0 %}
+        <div class="cart-total-row">
+          <span>TOTAL</span>
+          <span>{{ cart.total_price | money }}</span>
+        </div>
+        <p class="shipping-note">Taxes and shipping calculated at checkout.</p>
+        <a href="/checkout" class="drawer-checkout-btn">PROCEED TO CHECKOUT</a>
+      {% endif %}
     </div>
   </div>
 </div>
 
 <style>
+  /* Base Drawer - Hidden by default */
   .cart-drawer {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 2147483647; /* Highest possible z-index */
-    visibility: hidden;
-    transition: visibility 0.3s;
+    z-index: 999999;
+    visibility: hidden; /* This prevents the "White Page" */
+    pointer-events: none;
+    transition: all 0.3s ease;
   }
+
   .cart-drawer.is-active {
     visibility: visible;
+    pointer-events: all;
   }
+
   .cart-drawer__overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0,0,0,0.4);
     opacity: 0;
     transition: opacity 0.3s;
   }
+
   .cart-drawer.is-active .cart-drawer__overlay {
     opacity: 1;
   }
+
   .cart-drawer__inner {
     position: absolute;
     top: 0;
-    right: -450px; /* Hidden off-screen */
-    width: 450px;
+    right: -450px;
+    width: 400px;
     height: 100%;
     background: #fff;
     display: flex;
     flex-direction: column;
     transition: right 0.3s ease-in-out;
-    box-shadow: -10px 0 20px rgba(0,0,0,0.1);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
   }
+
   .cart-drawer.is-active .cart-drawer__inner {
     right: 0;
   }
-  .cart-drawer__header {
-    padding: 20px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  @media (max-width: 480px) {
+
+  /* Sandwich Structure */
+  .cart-drawer-header { flex: 0 0 auto; padding: 25px 30px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+  .cart-drawer-scroll-area { flex: 1 1 auto; overflow-y: auto; padding: 30px; }
+  .cart-drawer-footer { flex: 0 0 auto; padding: 30px; border-top: 1px solid #eee; background: #fff; }
+
+  /* Buttons & Text */
+  .drawer-checkout-btn { display: block; width: 100%; background: #800000; color: #fff; text-align: center; padding: 18px; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: 0.2em; }
+  .cart-total-row { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 10px; }
+  .shipping-note { font-size: 11px; color: #888; margin-bottom: 20px; text-align: center; }
+
+  @media (max-width: 450px) {
     .cart-drawer__inner { width: 100%; right: -100%; }
   }
 </style>
 
 <script>
-  function toggleCart() {
+  window.toggleCart = function() {
     const drawer = document.getElementById('CartDrawer');
     if (drawer) {
       drawer.classList.toggle('is-active');
-      // Prevent body scroll when cart is open
       document.body.style.overflow = drawer.classList.contains('is-active') ? 'hidden' : '';
     }
-  }
-</script>
+  };
 
-{% schema %}
-{
-  "name": "Cart Drawer",
-  "settings": []
-}
-{% endschema %}
+  window.updateQty = function(key, qty) {
+    const itemsContainer = document.getElementById('CartDrawerItems');
+    if (itemsContainer) itemsContainer.style.opacity = '0.5';
+
+    fetch('/cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: key, quantity: qty, sections: 'cart-drawer' })
+    })
+    .then(res => res.json())
+    .then(json => {
+      if (json.sections && json.sections['cart-drawer']) {
+        const html = new DOMParser().parseFromString(json.sections['cart-drawer'], 'text/html');
+        document.getElementById('CartDrawerItems').innerHTML = html.getElementById('CartDrawerItems').innerHTML;
+        document.getElementById('CartDrawerFooter').innerHTML = html.getElementById('CartDrawerFooter').innerHTML;
+      }
+      if (itemsContainer) itemsContainer.style.opacity = '1';
+      if (window.updateCartCountBubble) window.updateCartCountBubble();
+    });
+  };
+
+  //** UPDATED: Now returns a promise so we can wait for it!**//
+  window.refreshDrawer = function() {
+    return fetch(window.location.pathname + '?sections=cart-drawer&t=' + Date.now())
+      .then(res => res.json())
+      .then(json => {
+        const html = new DOMParser().parseFromString(json['cart-drawer'], 'text/html');
+        document.getElementById('CartDrawerItems').innerHTML = html.getElementById('CartDrawerItems').innerHTML;
+        document.getElementById('CartDrawerFooter').innerHTML = html.getElementById('CartDrawerFooter').innerHTML;
+      });
+  };
+</script>
+{% schema %} { "name": "Cart Drawer", "settings": [] } {% endschema %}

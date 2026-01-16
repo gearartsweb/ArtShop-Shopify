@@ -2,24 +2,8 @@
 <div class="collection-layout-wrapper">
   
   <aside class="collection-sidebar">
-    <div class="filter-group">
-      <h4>Categories</h4>
-      <ul>
-        {% for coll in collections %}
-          <li><a href="{{ coll.url }}" class="filter-link">{{ coll.title }}</a></li>
-        {% endfor %}
-      </ul>
-    </div>
-
-    <div class="filter-group">
-      <h4>Brands</h4>
-      {% for product_vendor in collection.all_vendors %}
-        <a href="{{ collection.url }}?filter.p.vendor={{ product_vendor | url_param_escape }}" class="filter-link">
-          {{ product_vendor }}
-        </a>
-      {% endfor %}
-    </div>
-  </aside>
+  {% render 'facets', results: collection %}
+</aside>
 
   <main class="collection-main">
     <h1 class="collection-title">{{ collection.title }}</h1>
@@ -110,5 +94,26 @@
     .collection-sidebar { display: none; }
     .studio-grid { grid-template-columns: repeat(2, 1fr); }
   }
+
+  /* Styling for the new Dynamic Filters */
+.facet-details {
+  border-bottom: 1px solid #eee;
+  padding-bottom: 15px;
+  margin-bottom: 15px;
+}
+.facet-details summary {
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.facet-details summary::-webkit-details-marker { display: none; }
+.facet-content ul { list-style: none; padding: 0; margin: 10px 0 0 0; }
+.facet-content li { margin-bottom: 8px; font-size: 13px; color: #666; }
+.facet-content input[type="checkbox"] { margin-right: 10px; accent-color: #800000; }
+
 </style>
 {% endpaginate %}

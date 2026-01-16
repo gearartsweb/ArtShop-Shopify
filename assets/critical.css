@@ -1435,7 +1435,7 @@ header,
 /* Ensure the drawer is the master layer */
 .cart-drawer {
   z-index: 100000 !important;
-  visibility: visible !important;
+  visibility: visible;
 }
 
 /* Hide the main navigation links ONLY when the cart drawer is active */

@@ -9,12 +9,13 @@
         height="{{ product.featured_image.height }}"
         class="grid-img"
       >
-      {% if product.available %}
-        <form method="post" action="{{ routes.cart_add_url }}">
-          <input type="hidden" name="id" value="{{ product.variants.first.id }}" />
-          <button type="submit" class="quick-add-btn">＋ Quick Add</button>
-        </form>
-      {% endif %}
+      {% form 'product', product %}
+  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+  <input type="hidden" name="quantity" value="1">
+  <button type="submit" class="quick-add-btn">
+    ADD TO BAG
+  </button>
+{% endform %}
     </div>
     <div class="product-info">
       <p class="brand-name">{{ product.vendor }}</p>

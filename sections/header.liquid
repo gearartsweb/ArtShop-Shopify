@@ -1,16 +1,11 @@
 <div class="header-boutique page-width">
-  
   <div class="header-nav-container">
     <input type="checkbox" id="menu-toggle" class="menu-toggle-checkbox">
     <label for="menu-toggle" class="hamburger-icon">
-      <span></span>
-      <span></span>
-      <span></span>
+      <span></span><span></span><span></span>
     </label>
-
     <nav class="header-nav-left boutique-menu" role="navigation">
       {% for link in linklists.main-menu.links %}
-        {%- comment -%} Skip Search/Cart if they are in the menu to avoid double text {%- endcomment -%}
         {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
           <a href="{{ link.url }}">{{ link.title }}</a>
         {%- endunless -%}
@@ -19,43 +14,81 @@
   </div>
 
   <div class="header-logo-center">
-    <a href="{{ routes.root_url }}" class="site-logo-link">
-      <img 
-        src="{{ 'logo-2.png' | asset_url }}" 
-        alt="The Art Shop" 
-        class="site-logo-image"
-        width="180" 
-        height="50"
-        loading="eager"
-      >
+    <a href="{{ routes.root_url }}">
+      <img src="{{ 'logo-2.png' | asset_url }}" alt="The Art Shop" width="180" height="150" loading="eager">
     </a>
   </div>
 
   <div class="header-icons-right">
-    <button type="button" class="icon-btn search-trigger" aria-label="Search">
+    <button type="button" onclick="toggleSearch()" class="icon-btn search-trigger" aria-label="Search" style="background:none; border:none; cursor:pointer; padding:0; color:inherit;">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
     </button>
-
-   <a href="javascript:void(0)" onclick="toggleCart()" class="header-cart-link" id="cart-icon-bubble">
-  {%- comment -%} Your SVG icon should stay here {%- endcomment -%}
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-    <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0" />
-  </svg>
-
-  {%- if cart.item_count > 0 -%}
-    <span class="cart-count-number">{{ cart.item_count }}</span>
-  {%- endif -%}
-</a>
+  
+    <button type="button" onclick="window.toggleCart()" class="header-cart-link" id="cart-icon-bubble" style="background:none; border:none; cursor:pointer; padding:0; position: relative; color: inherit;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0" />
+      </svg>
+      <span class="cart-count-number" style="{% if cart.item_count == 0 %}display:none;{% endif %} position: absolute; top: -5px; right: -10px; background: #800000; color: #fff; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+        {{ cart.item_count }}
+      </span>
+    </button>
   </div>
-
 </div>
 
-<div id="search-overlay" class="search-modal">
-  <button class="search-close" type="button">&times;</button>
-  <div class="search-modal-content">
-    <form action="{{ routes.search_url }}" method="get" class="search-form">
-      <input type="text" name="q" placeholder="SEARCH" class="search-input" autofocus>
-      <button type="submit" class="search-submit">GO</button>
+<div id="SearchDrawer" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border-bottom: 1px solid #eee; z-index: 1000; box-shadow: 0 10px 15px rgba(0,0,0,0.05); padding: 30px 0;">
+  <div class="page-width">
+    <form action="{{ routes.search_url }}" method="get" role="search" style="display: flex; gap: 20px; align-items: center; max-width: 800px; margin: 0 auto;">
+      <input 
+        type="search" 
+        name="q" 
+        id="SearchInput"
+        placeholder="SEARCH FOR SUPPLIES..." 
+        style="flex: 1; border: none; border-bottom: 1px solid #000; padding: 10px 0; font-size: 16px; outline: none; letter-spacing: 2px; font-family: inherit;"
+      >
+      <input type="hidden" name="type" value="product">
+      <button type="submit" style="background: #800000; color: #fff; border: none; padding: 12px 25px; cursor: pointer; font-size: 11px; letter-spacing: 2px; font-weight: 600;">GO</button>
+      <button type="button" onclick="toggleSearch()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #999;">&times;</button>
     </form>
   </div>
 </div>
+
+<script>
+  function toggleSearch() {
+    const drawer = document.getElementById('SearchDrawer');
+    if (drawer.style.display === 'none') {
+      drawer.style.display = 'block';
+      setTimeout(() => {
+        document.getElementById('SearchInput').focus();
+      }, 50);
+    } else {
+      drawer.style.display = 'none';
+    }
+  }
+
+  // Close search drawer on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.getElementById('SearchDrawer').style.display = 'none';
+    }
+  });
+
+  // Keep your cart bubble update function alive
+  window.updateCartCountBubble = function() {
+    fetch('/cart.js')
+      .then(res => res.json())
+      .then(cart => {
+        const bubble = document.querySelector('.cart-count-number');
+        if (bubble) {
+          bubble.textContent = cart.item_count;
+          bubble.style.display = cart.item_count > 0 ? 'flex' : 'none';
+        }
+      });
+  };
+</script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": []
+}
+{% endschema %}

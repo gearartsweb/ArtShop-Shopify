@@ -1,0 +1,86 @@
+{% comment %}
+  Renders filters for Collection and Search.
+  Usage: {% render 'facets', results: collection %}
+{% endcomment %}
+
+<form id="FacetFiltersForm" class="facets-form">
+  {%- if results.terms -%}
+    <input type="hidden" name="q" value="{{ results.terms | escape }}">
+    <input name="options[prefix]" type="hidden" value="last">
+  {%- endif -%}
+
+  <div class="facets-container">
+    <div class="facets-header">
+      <h3 style="font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px;">Filters</h3>
+      <a href="{{ results.url }}?sort_by={{ results.sort_by }}" class="clear-all" style="font-size: 11px; text-decoration: underline; color: #666;">Clear all</a>
+    </div>
+
+    {%- for filter in results.filters -%}
+      <details class="facet-details" open style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
+        <summary style="cursor: pointer; font-weight: 600; font-size: 13px; list-style: none; display: flex; justify-content: space-between;">
+          <span>{{ filter.label }}</span>
+          <span class="icon-plus">+</span>
+        </summary>
+
+        <div class="facet-content" style="margin-top: 15px;">
+          {%- case filter.type -%}
+            {%- when 'boolean' or 'list' -%}
+              <ul style="list-style: none; padding: 0; margin: 0;">
+                {%- for value in filter.values -%}
+                  <li style="margin-bottom: 8px;">
+                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 13px; color: #333;">
+                      <input type="checkbox"
+                        name="{{ value.param_name }}"
+                        value="{{ value.value }}"
+                        id="Filter-{{ filter.label | escape }}-{{ forloop.index }}"
+                        {% if value.active %}checked{% endif %}
+                        {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                        onchange="this.form.submit()"
+                        style="margin-right: 10px;"
+                      >
+                      {{ value.label | escape }} 
+                      <span style="color: #999; font-size: 11px; margin-left: 5px;">({{ value.count }})</span>
+                    </label>
+                  </li>
+                {%- endfor -%}
+              </ul>
+
+            {%- when 'price_range' -%}
+              <div class="price-range-inputs" style="display: flex; gap: 10px; align-items: center;">
+                <div class="field">
+                  <span style="font-size: 11px;">{{ cart.currency.symbol }}</span>
+                  <input name="{{ filter.min_value.param_name }}"
+                    id="Filter-{{ filter.label | escape }}-GTE"
+                    {% if filter.min_value.value -%}
+                      value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                    {%- endif %}
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                    style="width: 60px; padding: 5px; border: 1px solid #ddd;"
+                  >
+                </div>
+                <span>-</span>
+                <div class="field">
+                  <span style="font-size: 11px;">{{ cart.currency.symbol }}</span>
+                  <input name="{{ filter.max_value.param_name }}"
+                    id="Filter-{{ filter.label | escape }}-LTE"
+                    {% if filter.max_value.value -%}
+                      value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                    {%- endif %}
+                    type="number"
+                    min="0"
+                    max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                    placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                    style="width: 60px; padding: 5px; border: 1px solid #ddd;"
+                  >
+                </div>
+              </div>
+              <button type="submit" style="margin-top: 10px; font-size: 11px; text-decoration: underline; background: none; border: none; cursor: pointer;">APPLY</button>
+          {%- endcase -%}
+        </div>
+      </details>
+    {%- endfor -%}
+  </div>
+</form>
