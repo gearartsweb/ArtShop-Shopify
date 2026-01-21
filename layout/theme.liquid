@@ -109,6 +109,25 @@
   };
 </script>
 
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const observerOptions = { threshold: 0.1 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+        }
+      });
+    }, observerOptions);
+
+    // Apply to all product cards and section headings
+    document.querySelectorAll('.studio-product-card, .section-heading').forEach(el => {
+      el.classList.add('animate-on-scroll');
+      observer.observe(el);
+    });
+  });
+</script>
+
 {% comment %} custom-scripts.js is now empty/safe, keeping for future UI tweaks {% endcomment %}
 <script src="{{ 'custom-scripts.js' | asset_url }}" defer="defer"></script>
 
