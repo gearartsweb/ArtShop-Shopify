@@ -1,5 +1,16 @@
 <!doctype html>
 <html lang="{{ request.locale.iso_code }}">
+  <style>
+  /* Prevents clicks from being intercepted by the + or - text/icons */
+  .cart-drawer-item button {
+    pointer-events: all !important;
+    z-index: 10;
+  }
+  .cart-drawer-item button * {
+    pointer-events: none;
+  }
+</style>
+
   <head>
     {% # Inlined CSS Variables %}
     {% render 'css-variables' %}
@@ -45,7 +56,12 @@
   {% endcomment %}
   {% section 'cart-drawer' %}
 
-  <script src="{{ 'scroll-reveal.js' | asset_url }}" defer></script>
+  {% section 'cart-drawer' %}
+
+  {% comment %} 
+    Removed missing scroll-reveal.js call to prevent console errors 
+    that break cart functionality.
+  {% endcomment %}
 
  <script>
   document.addEventListener('submit', function(e) {
@@ -54,8 +70,6 @@
       
       const form = e.target;
       const formData = new FormData(form);
-
-      // Visual feedback: dim the button
       const submitBtn = form.querySelector('[type="submit"]');
       if (submitBtn) submitBtn.style.opacity = '0.7';
 
@@ -65,19 +79,13 @@
       })
       .then(response => response.json())
       .then(item => {
-        // Update the header count immediately
-        if (window.updateCartCountBubble) {
-          window.updateCartCountBubble();
-        }
+        if (window.updateCartCountBubble) window.updateCartCountBubble();
 
-        // CRITICAL FIX: Wait for the refresh to finish BEFORE opening the drawer
         if (window.refreshDrawer) {
           window.refreshDrawer().then(() => {
-            // Only open AFTER the new images are in the DOM
             if (window.toggleCart) window.toggleCart();
           });
         } else {
-          // Fallback if function is missing
           if (window.toggleCart) window.toggleCart();
         }
       })
@@ -88,7 +96,6 @@
     }
   });
 
-  // Ensure this function exists and targets your specific bubble class
   window.updateCartCountBubble = function() {
     fetch('/cart.js')
       .then(res => res.json())
@@ -102,7 +109,8 @@
   };
 </script>
 
+{% comment %} custom-scripts.js is now empty/safe, keeping for future UI tweaks {% endcomment %}
+<script src="{{ 'custom-scripts.js' | asset_url }}" defer="defer"></script>
+
   </body>
 </html>
-
-

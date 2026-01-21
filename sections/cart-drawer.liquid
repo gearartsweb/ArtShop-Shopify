@@ -98,28 +98,53 @@
     }
   };
 
-  window.updateQty = function(key, qty) {
-    const itemsContainer = document.getElementById('CartDrawerItems');
-    if (itemsContainer) itemsContainer.style.opacity = '0.5';
+ window.updateQty = function(line, qty) {
+  const itemsContainer = document.getElementById('CartDrawerItems');
+  if (itemsContainer) itemsContainer.style.opacity = '0.5';
 
-    fetch('/cart/change.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id: key, quantity: qty, sections: 'cart-drawer' })
-    })
-    .then(res => res.json())
-    .then(json => {
-      if (json.sections && json.sections['cart-drawer']) {
-        const html = new DOMParser().parseFromString(json.sections['cart-drawer'], 'text/html');
-        document.getElementById('CartDrawerItems').innerHTML = html.getElementById('CartDrawerItems').innerHTML;
-        document.getElementById('CartDrawerFooter').innerHTML = html.getElementById('CartDrawerFooter').innerHTML;
-      }
-      if (itemsContainer) itemsContainer.style.opacity = '1';
-      if (window.updateCartCountBubble) window.updateCartCountBubble();
-    });
-  };
+  const params = new URLSearchParams();
+  // Changed from 'id' to 'line' to bypass key-matching errors
+  params.append('line', parseInt(line));
+  params.append('quantity', parseInt(qty));
+  params.append('sections', 'cart-drawer');
 
-  //** UPDATED: Now returns a promise so we can wait for it!**//
+  fetch(window.Shopify.routes.root + 'cart/change.js', {
+    method: 'POST',
+    headers: { 
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-Requested-With': 'XMLHttpRequest' 
+    },
+    body: params
+  })
+  .then(res => {
+    if (!res.ok) return res.json().then(json => { throw new Error(json.description || 'API Error'); });
+    return res.json();
+  })
+  .then(json => {
+    if (json.sections && json.sections['cart-drawer']) {
+      const parser = new DOMParser();
+      const html = parser.parseFromString(json.sections['cart-drawer'], 'text/html');
+      document.getElementById('CartDrawerItems').innerHTML = html.getElementById('CartDrawerItems').innerHTML;
+      document.getElementById('CartDrawerFooter').innerHTML = html.getElementById('CartDrawerFooter').innerHTML;
+    }
+    if (itemsContainer) itemsContainer.style.opacity = '1';
+    if (window.updateCartCountBubble) window.updateCartCountBubble();
+  })
+  .catch(err => {
+    console.error('Final Cart Error:', err.message);
+    
+    // If it's a "Sold Out" error, notify the user and refresh the cart to reflect truth
+    if (err.message.includes('sold out') || err.message.includes('stock')) {
+      alert("Note: This item just sold out and has been adjusted.");
+      window.refreshDrawer(); 
+    } else {
+      alert("Cart Error: " + err.message);
+    }
+    
+    if (itemsContainer) itemsContainer.style.opacity = '1';
+  });
+};
+
   window.refreshDrawer = function() {
     return fetch(window.location.pathname + '?sections=cart-drawer&t=' + Date.now())
       .then(res => res.json())
@@ -130,4 +155,5 @@
       });
   };
 </script>
+
 {% schema %} { "name": "Cart Drawer", "settings": [] } {% endschema %}

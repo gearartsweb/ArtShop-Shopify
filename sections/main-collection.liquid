@@ -1,10 +1,17 @@
 {% paginate collection.products by 48 %}
 <div class="collection-layout-wrapper">
   
-  <aside class="collection-sidebar">
-  {% render 'facets', results: collection %}
-</aside>
+  {%- comment -%} 1. Mobile Filter Button (Top of Page) {%- endcomment -%}
+  <div class="mobile-filter-bar medium-hide large-up-hide">
+    {% render 'facets', results: collection %}
+  </div>
 
+  {%- comment -%} 2. Desktop Sidebar {%- endcomment -%}
+  <aside class="collection-sidebar small-hide">
+    {% render 'facets', results: collection %}
+  </aside>
+
+  {%- comment -%} 3. Main Grid {%- endcomment -%}
   <main class="collection-main">
     <h1 class="collection-title">{{ collection.title }}</h1>
     
@@ -21,7 +28,8 @@
     {% endif %}
   </main>
 
-</div>
+</div> {% comment %} This closes .collection-layout-wrapper {% endcomment %}
+{% endpaginate %}
 
 <style>
   /* Layout Architecture */
@@ -33,8 +41,25 @@
   /* The Grid */
   .studio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
 
-  /* Product Card Styles (Must be here to style the snippet) */
-  .studio-product-card { position: relative; text-decoration: none; color: inherit; display: block; }
+  /* Product Card + Spice (Hover Lift) */
+  .studio-product-card { 
+    position: relative; 
+    text-decoration: none; 
+    color: inherit; 
+    display: block;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+    background: #fff;
+    padding: 10px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .studio-product-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+      z-index: 2;
+    }
+  }
+
   .image-frame { 
     height: 280px; 
     background: #f9f9f9; 
@@ -52,68 +77,19 @@
   .product-title { font-size: 13px; margin: 5px 0; font-weight: 400; line-height: 1.4; height: 2.8em; overflow: hidden; }
   .product-price { font-weight: 600; font-size: 14px; margin-top: 8px; }
 
-  /* Quick Add Button - Now Always Visible */
-  .quick-add-btn {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%) translateY(0); /* Sitting in final position */
-    background: #800000 (0, 0, 0, 0.8); /* Slightly transparent Marron for a studio feel */
-    color: #fff;
-    border: none;
-    padding: 8px 15px;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    cursor: pointer;
-    opacity: 1; /* Always visible */
-    transition: background 0.3s ease;
-    width: 80%; /* Makes it a nice wide target for thumbs on mobile */
-    white-space: nowrap;
-  }
-
-  /* Optional: Make it turn solid Maroon when hovered on desktop */
-  .quick-add-btn:hover {
-    background: #800000 (0, 0, 0, 1);
-  }
-
-  /* Keep the image zoom on hover for desktop */
-  .studio-product-card:hover .grid-img { 
-    transform: scale(1.05); 
-  }
-
-  /* Sidebar Links */
-  .filter-group { margin-bottom: 30px; }
-  .filter-group h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; color: #000; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-  .filter-link { display: block; font-size: 13px; color: #666; text-decoration: none; margin-bottom: 8px; }
-  .filter-link:hover { color: #000; }
-
+  /* Responsive Adjustments */
   @media (max-width: 1100px) { .studio-grid { grid-template-columns: repeat(3, 1fr); } }
+  
   @media (max-width: 768px) { 
-    .collection-layout-wrapper { flex-direction: column; }
-    .collection-sidebar { display: none; }
-    .studio-grid { grid-template-columns: repeat(2, 1fr); }
+    .collection-layout-wrapper { flex-direction: column; margin: 20px auto; }
+    .collection-sidebar { display: none !important; }
+    .studio-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+    .image-frame { height: 200px; }
+    .mobile-filter-bar { width: 100%; padding: 0 0 20px 0; display: block !important; }
   }
 
-  /* Styling for the new Dynamic Filters */
-.facet-details {
-  border-bottom: 1px solid #eee;
-  padding-bottom: 15px;
-  margin-bottom: 15px;
-}
-.facet-details summary {
-  list-style: none;
-  display: flex;
-  justify-content: space-between;
-  cursor: pointer;
-  font-size: 12px;
-  text-transform: uppercase;
-  font-weight: 600;
-}
-.facet-details summary::-webkit-details-marker { display: none; }
-.facet-content ul { list-style: none; padding: 0; margin: 10px 0 0 0; }
-.facet-content li { margin-bottom: 8px; font-size: 13px; color: #666; }
-.facet-content input[type="checkbox"] { margin-right: 10px; accent-color: #800000; }
-
+  /* Facet Styling (Logic moved into Facets.liquid) */
+  .facet-details { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
+  .facet-details summary { list-style: none; display: flex; justify-content: space-between; cursor: pointer; font-size: 12px; text-transform: uppercase; font-weight: 600; }
+  .facet-details summary::-webkit-details-marker { display: none; }
 </style>
-{% endpaginate %}

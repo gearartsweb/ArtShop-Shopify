@@ -19,3 +19,24 @@ document.addEventListener('DOMContentLoaded', function() {
     observer.observe(row);
   });
 });
+
+/* Quantity Button Fix - Event Delegation */
+document.body.addEventListener('click', (event) => {
+  const button = event.target.closest('button[name="plus"], button[name="minus"]');
+  if (!button) return;
+
+  event.preventDefault();
+  const parent = button.closest('.quantity') || button.parentElement;
+  const input = parent.querySelector('input.quantity__input');
+  
+  if (input) {
+    let value = parseInt(input.value) || 1;
+    if (button.name === 'plus') {
+      input.value = value + 1;
+    } else if (value > 1) {
+      input.value = value - 1;
+    }
+    // Trigger 'change' so the cart AJAX logic updates the totals
+    input.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+});
