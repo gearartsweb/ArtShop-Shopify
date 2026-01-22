@@ -1,20 +1,39 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero_video": {
       "type": "hero-video",
       "settings": {
+        "video_url": "https://videos.pexels.com/video-files/3847424/3847424-uhd_2560_1440_30fps.mp4",
         "title": "The Art of Precision",
-        "subtitle": "Fine Art supplies for the modern studio."
-    }
-  },
-  "featured_products": {
-  "type": "featured-collection",
-  "settings": {
-    "title": "Studio Essentials",
-    "product_limit": 4,
-    "collection": "home-page" 
-  }
-},
+        "subtitle": "Fine Art supplies for the modern studio.",
+        "button_label": "Shop the Collection",
+        "button_link": ""
+      }
+    },
+    "about_studio_fkV74B": {
+      "type": "about-studio",
+      "name": "About Studio",
+      "settings": {
+        "title": "About The Art Shop",
+        "text": "<p>A space for artists, by artists.</p>",
+        "bg_color": "#f9f9f9"
+      }
+    },
+    "featured_products": {
+      "type": "featured-collection",
+      "settings": {
+        "title": "Studio Essentials"
+      }
+    },
     "boutique_contact": {
       "type": "contact-boutique",
       "settings": {
@@ -23,10 +42,22 @@
         "address": "13 Mitchell Str. Hermanus",
         "email": "artshophermanus@gmail.com"
       }
+    },
+    "featured_showcase_LjPAAp": {
+      "type": "featured-showcase",
+      "name": "Showcase Grid",
+      "settings": {
+        "title": "Best Sellers",
+        "subtitle": "Our most loved supplies",
+        "collection": "",
+        "products_to_show": 4
+      }
     }
   },
   "order": [
     "hero_video",
+    "about_studio_fkV74B",
+    "featured_showcase_LjPAAp",
     "featured_products",
     "boutique_contact"
   ]
