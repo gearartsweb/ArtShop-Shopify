@@ -1,24 +1,86 @@
-<div class="featured-showcase" style="padding: 50px 0;">
+<div class="featured-showcase" style="padding: 60px 0; background: #fff; overflow: hidden;">
   <div class="page-width">
-    <div class="section-header" style="text-align: center; margin-bottom: 30px;">
-      <h2 style="font-size: 24px; letter-spacing: 1px;">{{ section.settings.title }}</h2>
-      <p style="color: #666;">{{ section.settings.subtitle }}</p>
+    
+    <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; padding: 0 20px;">
+      <div>
+        <h2 style="font-size: 24px; letter-spacing: 1px; margin: 0; text-transform: uppercase;">{{ section.settings.title }}</h2>
+        <p style="color: #666; margin: 5px 0 0 0;">{{ section.settings.subtitle }}</p>
+      </div>
+      <div class="carousel-nav" style="display: flex; gap: 10px;">
+        <button class="nav-btn prev" onclick="scrollShowcase(this, -1)" aria-label="Previous">❮</button>
+        <button class="nav-btn next" onclick="scrollShowcase(this, 1)" aria-label="Next">❯</button>
+      </div>
     </div>
 
-    <div class="showcase-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
-      {%- assign collection = collections[section.settings.collection] -%}
-      {% for product in collection.products limit: section.settings.products_to_show %}
-        {% render 'product-card', product: product %}
-      {% else %}
-        <p>Select a collection to see products.</p>
-      {% endfor %}
+    <div class="showcase-carousel-wrapper" style="position: relative;">
+      <div class="showcase-slider">
+        {%- assign collection = collections[section.settings.collection] -%}
+        {% for product in collection.products limit: section.settings.products_to_show %}
+          <div class="showcase-item">
+            {% render 'product-card', product: product %}
+          </div>
+        {% else %}
+          {% for i in (1..4) %}
+            <div class="showcase-item">
+              <div style="background: #f3f3f3; height: 300px; display: flex; align-items: center; justify-content: center;">Product {{ i }} Placeholder</div>
+            </div>
+          {% endfor %}
+        {% endfor %}
+      </div>
     </div>
   </div>
 </div>
 
+<style>
+  .showcase-slider {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+    padding: 10px 20px 30px;
+    margin: 0 -20px;
+  }
+  .showcase-slider::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome/Safari */
+
+  .showcase-item {
+    flex: 0 0 280px; /* Width of each card */
+    scroll-snap-align: start;
+  }
+
+  .nav-btn {
+    background: #fff;
+    border: 1px solid #ddd;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-btn:hover { background: #000; color: #fff; border-color: #000; }
+
+  @media screen and (max-width: 749px) {
+    .showcase-item {
+      flex: 0 0 75vw; /* Show one and a bit more on mobile */
+    }
+    .carousel-nav { display: none !important; } /* Use thumb-swiping on mobile */
+  }
+</style>
+
+<script>
+  function scrollShowcase(btn, direction) {
+    const slider = btn.closest('.featured-showcase').querySelector('.showcase-slider');
+    const scrollAmount = slider.clientWidth * 0.8;
+    slider.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
+  }
+</script>
+
 {% schema %}
 {
-  "name": "Showcase Grid",
+  "name": "Featured Carousel",
   "settings": [
     {
       "type": "text",
@@ -30,7 +92,7 @@
       "type": "text",
       "id": "subtitle",
       "label": "Subheading",
-      "default": "Our most loved supplies"
+      "default": "Across all categories"
     },
     {
       "type": "collection",
@@ -41,15 +103,15 @@
       "type": "range",
       "id": "products_to_show",
       "min": 4,
-      "max": 12,
+      "max": 16,
       "step": 4,
-      "default": 4,
-      "label": "Products to show"
+      "default": 8,
+      "label": "Total products"
     }
   ],
   "presets": [
     {
-      "name": "Showcase Grid"
+      "name": "Featured Carousel"
     }
   ]
 }
