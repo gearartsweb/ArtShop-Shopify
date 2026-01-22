@@ -1,0 +1,56 @@
+<div class="featured-showcase" style="padding: 50px 0;">
+  <div class="page-width">
+    <div class="section-header" style="text-align: center; margin-bottom: 30px;">
+      <h2 style="font-size: 24px; letter-spacing: 1px;">{{ section.settings.title }}</h2>
+      <p style="color: #666;">{{ section.settings.subtitle }}</p>
+    </div>
+
+    <div class="showcase-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+      {%- assign collection = collections[section.settings.collection] -%}
+      {% for product in collection.products limit: section.settings.products_to_show %}
+        {% render 'product-card', product: product %}
+      {% else %}
+        <p>Select a collection to see products.</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Showcase Grid",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "Best Sellers"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Subheading",
+      "default": "Our most loved supplies"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 4,
+      "max": 12,
+      "step": 4,
+      "default": 4,
+      "label": "Products to show"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Showcase Grid"
+    }
+  ]
+}
+{% endschema %}

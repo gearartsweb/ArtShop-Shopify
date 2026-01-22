@@ -1697,3 +1697,28 @@ button[name="minus"] svg {
 .is-visible {
   animation: studioFadeInUp 0.8s ease-out forwards;
 }
+
+/* Prevent variant images from shifting the grid layout */
+.studio-product-card .image-frame {
+  height: 280px !important; /* Force the height to stay consistent */
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  background: #f9f9f9;
+}
+
+.studio-product-card .grid-img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important; /* This ensures the image fits inside without stretching or growing */
+  transition: opacity 0.3s ease; /* Smooths the transition when the image changes */
+}
+
+/* Mobile specific lock to ensure it doesn't break our earlier mobile fix */
+@media screen and (max-width: 749px) {
+  .studio-product-card .image-frame {
+    height: 250px !important; /* Slightly smaller for mobile screens */
+  }
+}

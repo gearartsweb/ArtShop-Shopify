@@ -1,0 +1,65 @@
+<div class="about-studio-section" style="padding: 60px 20px; background: {{ section.settings.bg_color }};">
+  <div class="page-width" style="max-width: 1000px; margin: 0 auto; display: flex; align-items: center; gap: 40px; flex-wrap: wrap;">
+    
+    <div class="about-image" style="flex: 1; min-width: 300px;">
+  {% if section.settings.image != blank %}
+    <img 
+      src="{{ section.settings.image | image_url: width: 800 }}" 
+      alt="{{ section.settings.title | escape }}" 
+      loading="lazy"
+      width="{{ section.settings.image.width }}"
+      height="{{ section.settings.image.height }}"
+      style="width: 100%; height: auto; border-radius: 4px; display: block;"
+    >
+  {% else %}
+    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+  {% endif %}
+</div>
+
+    <div class="about-content" style="flex: 1; min-width: 300px;">
+      <h2 style="font-size: 28px; font-weight: 400; margin-bottom: 20px; letter-spacing: -0.5px;">
+        {{ section.settings.title }}
+      </h2>
+      <div style="font-size: 15px; line-height: 1.8; color: #444;">
+        {{ section.settings.text }}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "About Studio",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Heading",
+      "default": "About The Art Shop"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>A space for artists, by artists.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#f9f9f9"
+    }
+  ],
+  "presets": [
+    {
+      "name": "About Studio"
+    }
+  ]
+}
+{% endschema %}

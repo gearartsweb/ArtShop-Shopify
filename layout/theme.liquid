@@ -50,6 +50,8 @@
     {% section 'footer' %}
   </footer>
 
+  
+
   {% comment %} 
     The Cart Drawer section is the "Master" container. 
     It contains its own HTML, CSS, and Logic to prevent theme.liquid from getting cluttered.
@@ -62,6 +64,8 @@
     Removed missing scroll-reveal.js call to prevent console errors 
     that break cart functionality.
   {% endcomment %}
+
+
 
  <script>
   document.addEventListener('submit', function(e) {
@@ -126,6 +130,59 @@
       observer.observe(el);
     });
   });
+</script>
+
+<script>
+  function selectGridVariant(button, productId) {
+  // 1. Prevent the link click (don't go to product page)
+  event.preventDefault();
+  event.stopPropagation();
+
+  // 2. Get Data
+  const card = button.closest('.studio-product-card');
+  const variantId = button.getAttribute('data-variant-id');
+  const price = button.getAttribute('data-variant-price');
+  const available = button.getAttribute('data-variant-available') === 'true';
+  const newImage = button.getAttribute('data-variant-image');
+
+  // 3. Update Visuals (Pills)
+  card.querySelectorAll('.variant-pill').forEach(btn => {
+    btn.style.background = '#fff';
+    btn.style.color = '#800000';
+    btn.style.borderColor = '#ddd';
+  });
+  button.style.background = '#800000';
+  button.style.color = '#fff';
+  button.style.borderColor = '#800000';
+
+  // 4. Update Inputs
+  const input = card.querySelector('.selected-variant-id');
+  if(input) input.value = variantId;
+
+  // 5. Update Price
+  const priceDisplay = card.querySelector('.product-price');
+  if(priceDisplay) priceDisplay.innerText = price;
+
+  // 6. Update Add to Bag Button
+  const addBtn = card.querySelector('.quick-add-btn');
+  if (addBtn) {
+    if (available) {
+      addBtn.disabled = false;
+      addBtn.innerText = 'ADD TO BAG';
+      addBtn.classList.remove('disabled');
+    } else {
+      addBtn.disabled = true;
+      addBtn.innerText = 'SOLD OUT';
+      addBtn.classList.add('disabled');
+    }
+  }
+
+  // 7. Optional: Update Image
+  const mainImg = card.querySelector('.grid-img');
+  if (newImage && newImage !== "null" && mainImg) {
+    mainImg.src = newImage;
+  }
+}
 </script>
 
 {% comment %} custom-scripts.js is now empty/safe, keeping for future UI tweaks {% endcomment %}
