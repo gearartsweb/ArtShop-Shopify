@@ -1,65 +1,130 @@
-<div class="about-studio-section" style="padding: 60px 20px; background: {{ section.settings.bg_color }};">
-  <div class="page-width" style="max-width: 1000px; margin: 0 auto; display: flex; align-items: center; gap: 40px; flex-wrap: wrap;">
-    
-    <div class="about-image" style="flex: 1; min-width: 300px;">
-  {% if section.settings.image != blank %}
-    <img 
-      src="{{ section.settings.image | image_url: width: 800 }}" 
-      alt="{{ section.settings.title | escape }}" 
-      loading="lazy"
-      width="{{ section.settings.image.width }}"
-      height="{{ section.settings.image.height }}"
-      style="width: 100%; height: auto; border-radius: 4px; display: block;"
-    >
-  {% else %}
-    {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
-  {% endif %}
-</div>
-
-    <div class="about-content" style="flex: 1; min-width: 300px;">
-      <h2 style="font-size: 28px; font-weight: 400; margin-bottom: 20px; letter-spacing: -0.5px;">
-        {{ section.settings.title }}
-      </h2>
-      <div style="font-size: 15px; line-height: 1.8; color: #444;">
-        {{ section.settings.text }}
+<div class="about-studio-container" style="background: {{ section.settings.bg_color }}; padding: 80px 0;">
+  <div class="page-width">
+    <div class="about-grid">
+      
+      <div class="about-visual-sticky">
+        {% if section.settings.image != blank %}
+          <img 
+            src="{{ section.settings.image | image_url: width: 1000 }}" 
+            alt="Fine Art Supplies Guide"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+            class="about-main-img"
+          >
+        {% else %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg shadow' }}
+        {% endif %}
+        <div class="floating-badge">Est. 2009</div>
       </div>
-    </div>
 
+      <div class="about-text-content">
+        <span class="about-eyebrow">{{ section.settings.eyebrow | default: "Finest art supplies" }}</span>
+        <h2 class="about-heading">{{ section.settings.title }}</h2>
+        
+        <div class="about-description">
+          {{ section.settings.text }}
+        </div>
+
+        <div class="about-features-grid">
+          <div class="feature-item">
+            <strong>Professional Grade</strong>
+            <p>Sourced for lightfastness and pigment density.</p>
+          </div>
+          <div class="feature-item">
+            <strong>Curated Selection</strong>
+            <p>Tried and tested in the studio by our team.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+  .about-visual-sticky {
+    position: sticky;
+    top: 100px;
+  }
+  .about-main-img {
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+    filter: grayscale(20%); /* Elegant studio look */
+  }
+  .about-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 11px;
+    color: #888;
+    display: block;
+    margin-bottom: 15px;
+  }
+  .about-heading {
+    font-size: clamp(24px, 4vw, 36px);
+    margin: 0 0 30px 0;
+    line-height: 1.2;
+  }
+  .about-description {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #333;
+    margin-bottom: 40px;
+  }
+  .about-features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    border-top: 1px solid #eee;
+    padding-top: 30px;
+  }
+  .feature-item strong {
+    display: block;
+    font-size: 13px;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+  }
+  .feature-item p {
+    font-size: 13px;
+    color: #777;
+    margin: 0;
+  }
+  .floating-badge {
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    background: #800000;
+    color: #fff;
+    padding: 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    transform: rotate(-5deg);
+  }
+
+  @media screen and (max-width: 749px) {
+    .about-grid { grid-template-columns: 1fr; gap: 40px; }
+    .about-visual-sticky { position: relative; top: 0; }
+    .floating-badge { right: 10px; }
+  }
+</style>
+
 {% schema %}
 {
-  "name": "About Studio",
+  "name": "About Studio (Editorial)",
   "settings": [
-    {
-      "type": "text",
-      "id": "title",
-      "label": "Heading",
-      "default": "About The Art Shop"
-    },
-    {
-      "type": "richtext",
-      "id": "text",
-      "label": "Text",
-      "default": "<p>A space for artists, by artists.</p>"
-    },
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Image"
-    },
-    {
-      "type": "color",
-      "id": "bg_color",
-      "label": "Background Color",
-      "default": "#f9f9f9"
-    }
+    { "type": "text", "id": "eyebrow", "label": "Small Top Label" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "Understanding Fine Art Supplies" },
+    { "type": "richtext", "id": "text", "label": "Description" },
+    { "type": "image_picker", "id": "image", "label": "Studio Image" },
+    { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" }
   ],
-  "presets": [
-    {
-      "name": "About Studio"
-    }
-  ]
+  "presets": [{ "name": "About Studio (Editorial)" }]
 }
 {% endschema %}

@@ -50,14 +50,6 @@
     {% section 'footer' %}
   </footer>
 
-  
-
-  {% comment %} 
-    The Cart Drawer section is the "Master" container. 
-    It contains its own HTML, CSS, and Logic to prevent theme.liquid from getting cluttered.
-  {% endcomment %}
-  {% section 'cart-drawer' %}
-
   {% section 'cart-drawer' %}
 
   {% comment %} 
@@ -177,10 +169,12 @@
     }
   }
 
-  // 7. Optional: Update Image
+  // 7. Update Image - Now with a safety check
   const mainImg = card.querySelector('.grid-img');
-  if (newImage && newImage !== "null" && mainImg) {
+  if (mainImg && newImage && newImage !== "null" && !newImage.includes('Liquid error')) {
     mainImg.src = newImage;
+  } else {
+    console.log("Image Lock: No valid variant image found, keeping original.");
   }
 }
 </script>
@@ -188,5 +182,7 @@
 {% comment %} custom-scripts.js is now empty/safe, keeping for future UI tweaks {% endcomment %}
 <script src="{{ 'custom-scripts.js' | asset_url }}" defer="defer"></script>
 
+ {% comment %} Custom ArtShop Logic {% endcomment %}
+    <script src="{{ 'custom-scripts.js' | asset_url }}" defer="defer"></script>
   </body>
 </html>

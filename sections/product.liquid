@@ -1,15 +1,17 @@
-<div class="product-page-area page-width">
+Testing<div class="product-page-area page-width" id="MainProduct-{{ section.id }}">
   <div class="product-main-container">
     
     <div class="product-gallery">
       <div class="image-wrapper">
         {% if product.featured_image %}
-          <img src="{{ product.featured_image | image_url: width: 800 }}" alt="{{ product.title }}" class="main-product-img" width="800" height="800">
+          <img src="{{ product.featured_image | image_url: width: 800 }}" 
+               alt="{{ product.title }}" 
+               class="main-product-img" 
+               width="800" height="800">
         {% else %}
           {{ 'product-1' | placeholder_svg_tag: 'main-product-img placeholder' }}
         {% endif %}
       </div>
-      <a href="{{ routes.all_products_collection_url }}" class="continue-shopping-link">← Continue Shopping</a>
     </div>
 
     <div class="product-info-column">
@@ -24,26 +26,86 @@
 
         {% form 'product', product, id: "add-to-cart-form" %}
           <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-          
-          <div class="product-form-actions">
-            <div class="qty-and-add-row">
-              <div class="quantity-selector">
-                <input type="number" id="Quantity" name="quantity" value="1" min="1">
-              </div>
-              <button type="submit" name="add" class="main-add-btn">ADD TO CART</button>
+
+          {% unless product.has_only_default_variant %}
+            <div class="product-variant-picker">
+              {% for option in product.options_with_values %}
+                <div class="custom-variant-container" style="position: relative; margin-bottom: 20px;">
+                  <label class="variant-label" style="display:block; margin-bottom: 5px; font-weight:bold;">{{ option.name }}</label>
+                  
+                  <button type="button" class="variant-custom-toggle" aria-expanded="false" 
+                          style="width: 100%; padding: 12px; border: 1px solid #000; background: #fff; text-align: left; display: flex; justify-content: space-between; cursor: pointer;">
+                    <span class="current-value">{{ option.selected_value }}</span>
+                    <span>▼</span>
+                  </button>
+
+                  <div class="variant-options-wrapper" 
+                       style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #000; z-index: 100;">
+                    
+                    <div class="mobile-modal-header" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
+                      <span style="font-weight:bold;">Select {{ option.name }}</span>
+                      <button type="button" class="close-modal" style="background:none; border:none; font-size: 1.2rem;">✕</button>
+                    </div>
+
+                    <ul class="variant-options-list" style="list-style: none; padding: 0; margin: 0;">
+                      {% for value in option.values %}
+                        <li class="variant-item {% if option.selected_value == value %}selected{% endif %}" 
+                            data-value="{{ value | escape }}"
+                            style="padding: 12px; border-bottom: 1px solid #eee; cursor: pointer;">
+                          {{ value }}
+                          {% if option.selected_value == value %} <span>✓</span> {% endif %}
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              {% endfor %}
             </div>
-            
-            <button type="submit" name="checkout" class="buy-it-now-btn">BUY IT NOW</button>
+          {% endunless %}
+          <div class="product-form-actions" style="margin-top: 20px;">
+            <div class="qty-and-add-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
+              <div class="quantity-selector" style="display: flex; border: 1px solid #000;">
+                <button type="button" name="minus" style="padding: 10px; border:none; background:none; cursor:pointer;">-</button>
+                <input type="number" name="quantity" value="1" min="1" style="width: 50px; text-align: center; border: none;">
+                <button type="button" name="plus" style="padding: 10px; border:none; background:none; cursor:pointer;">+</button>
+              </div>
+              <button type="submit" name="add" class="main-add-btn" style="flex: 1; background: #000; color: #fff; border: none; padding: 10px; cursor: pointer;">ADD TO CART</button>
+            </div>
+            <button type="submit" name="checkout" class="buy-it-now-btn" style="width: 100%; background: #fff; color: #000; border: 1px solid #000; padding: 10px; cursor: pointer;">BUY IT NOW</button>
           </div>
         {% endform %}
-
-        <div class="studio-perks">
-          <p>✓ Professional Grade</p>
-          <p>✓ Studio Tested</p>
-          <p>✓ Fast Shipping</p>
-        </div>
       </div>
     </div>
 
+    <script data-product-json type="application/json">
+      {{ product | json }}
+    </script>
+
   </div>
 </div>
+
+<style>
+  @media screen and (max-width: 749px) {
+    .variant-options-wrapper.is-open {
+      display: flex !important;
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background: rgba(0,0,0,0.5) !important;
+      flex-direction: column !important;
+      justify-content: flex-end !important;
+      z-index: 9999 !important;
+    }
+    .variant-options-wrapper.is-open .variant-options-list {
+      background: white;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+    .mobile-modal-header { display: flex !important; background: white; }
+  }
+  @media screen and (min-width: 750px) {
+    .mobile-modal-header { display: none !important; }
+  }
+</style>

@@ -1,59 +1,106 @@
-<div class="studio-product-card product-card-{{ product.id }} {% unless product.available %}product-card--sold-out{% endunless %}">
-  <a href="{{ product.url }}" style="text-decoration: none; color: inherit;">
-    <div class="image-frame" style="position: relative;">
-      
-      {% comment %} SOLD OUT BADGE {% endcomment %}
-      <span class="sold-out-badge" {% if product.available %}style="display:none"{% endif %}>SOLD OUT</span>
+<div class="studio-product-card product-card-{{ product.id }} {% unless product.available %}product-card--sold-out{% endunless %}" style="position: relative;">
+  
+  {% comment %} 1. IMAGE AREA {% endcomment %}
+  <div class="image-frame" style="position: relative; overflow: hidden; z-index: 1;">
+    <a href="{{ product.url }}" style="display: block;">
+      <span class="sold-out-badge" {% if product.available %}style="display:none"{% endif %} 
+            style="position: absolute; top: 10px; left: 10px; background: #000; color: #fff; padding: 5px 10px; font-size: 10px; z-index: 2;">
+        SOLD OUT
+      </span>
 
       <img 
         src="{{ product.featured_image | image_url: width: 400 }}" 
         alt="{{ product.featured_image.alt | escape }}"
         loading="lazy"
-        width="{{ product.featured_image.width }}"
-        height="{{ product.featured_image.height }}"
-        class="grid-img"
+        width="400"
+        height="400"
+        class="grid-img main-card-img"
       >
+    </a>
 
-      {% form 'product', product, class: 'product-card-form' %}
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" class="selected-variant-id">
-        <input type="hidden" name="quantity" value="1">
+    {% comment %} QUICK ADD FORM {% endcomment %}
+    {% form 'product', product, class: 'product-card-form' %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" class="selected-variant-id">
+      <input type="hidden" name="quantity" value="1">
+      
+      <button type="submit" name="add" class="quick-add-btn {% unless product.available %}disabled{% endunless %}" 
+              {% unless product.available %}disabled{% endunless %}>
+        {% if product.available %}ADD TO BAG{% else %}UNAVAILABLE{% endif %}
+      </button>
+    {% endform %}
+  </div>
+
+  {% comment %} 2. INFO AREA {% endcomment %}
+  <div class="product-info" style="padding: 10px 0; position: relative; z-index: 10;">
+    <p class="brand-name">{{ product.vendor }}</p>
+    <h3 class="product-title" style="margin: 5px 0;">
+      <a href="{{ product.url }}" style="text-decoration: none; color: inherit;">{{ product.title }}</a>
+    </h3>
+    
+    <p class="product-price">
+      {{ product.price | money }}
+    </p>
+
+    {% comment %} === DROPDOWN VARIANT SELECTOR === {% endcomment %}
+    {% if product.variants.size > 1 %}
+      <div class="grid-variant-wrapper" style="position: relative; margin-top: 10px; z-index: 20;">
         
-        <button type="submit" class="quick-add-btn {% unless product.available %}disabled{% endunless %}" {% unless product.available %}disabled{% endunless %}>
-          {% if product.available %}ADD TO BAG{% else %}UNAVAILABLE{% endif %}
-        </button>
-      {% endform %}
-    </div>
+        <details class="grid-variant-disclosure">
+          <summary style="list-style: none; padding: 8px; font-size: 11px; border: 1px solid #800000; background: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-transform: uppercase;">
+            <span class="current-variant-name">Select Option</span>
+            <span>▼</span>
+          </summary>
 
-    <div class="product-info">
-      <p class="brand-name">{{ product.vendor }}</p>
-      <h3 class="product-title">{{ product.title }}</h3>
-      
-      <p class="product-price" data-base-price="{{ product.price | money }}">
-        {% if product.available %}
-          {{ product.price | money }}
-        {% else %}
-          <span style="text-decoration: line-through; color: #999;">{{ product.price | money }}</span>
-        {% endif %}
-      </p>
-
-      {% comment %} === NEW: VARIANT PILLS (Sizes/Colors) === {% endcomment %}
-      {% if product.variants.size > 1 %}
-        <div class="card-variant-selector" style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 8px;">
-          {% for variant in product.variants %}
-            <button type="button" 
-              class="variant-pill {% if product.selected_or_first_available_variant.id == variant.id %}active{% endif %}"
-              data-variant-id="{{ variant.id }}"
+          <div class="grid-variant-dropdown" style="position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #800000; border-top: none; z-index: 999; box-shadow: 0 5px 10px rgba(0,0,0,0.1);">
+           <ul style="list-style: none; padding: 0; margin: 0;">
+  {% for variant in product.variants %}
+    <li>
+      <button type="button" 
+              class="grid-variant-option" 
+              data-variant-id="{{ variant.id }}" 
               data-variant-price="{{ variant.price | money }}"
-              data-variant-available="{{ variant.available }}"
-              data-variant-image="{{ variant.featured_image | image_url: width: 400 }}"
-              onclick="selectGridVariant(this, '{{ product.id }}')"
-              style="font-size: 10px; padding: 3px 8px; border: 1px solid #ddd; background: #fff; cursor: pointer; border-radius: 2px;">
-              {{ variant.title | replace: 'Size ', '' | replace: 'Color ', '' }}
-            </button>
-          {% endfor %}
-        </div>
-      {% endif %}
-      
-    </div>
-  </a>
+              style="width: 100%; border: none; background: none; padding: 10px; cursor: pointer; display: flex; justify-content: space-between; font-size: 11px;">
+        <span>{{ variant.title }}</span>
+        <span>{{ variant.price | money }}</span>
+      </button>
+    </li>
+  {% endfor %}
+</ul>
+          </div>
+        </details>
+      </div>
+    {% endif %}
+  </div>
 </div>
+
+<style>
+  .product-card-form {
+    position: absolute;
+    bottom: -60px;
+    left: 0;
+    width: 100%;
+    transition: bottom 0.3s ease;
+    z-index: 5;
+  }
+  .studio-product-card:hover .product-card-form {
+    bottom: 0;
+  }
+  .quick-add-btn {
+    width: 100%;
+    background: #800000;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-size: 11px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  /* Ensure the dropdown list items don't trigger the product link */
+  .grid-variant-option {
+    position: relative;
+    z-index: 1000;
+  }
+  .grid-variant-option:hover {
+    background: #f4f4f4;
+  }
+</style>
