@@ -1,4 +1,4 @@
-Testing<div class="product-page-area page-width" id="MainProduct-{{ section.id }}">
+<div class="product-page-area page-width" id="MainProduct-{{ section.id }}">
   <div class="product-main-container">
     
     <div class="product-gallery">
@@ -34,13 +34,13 @@ Testing<div class="product-page-area page-width" id="MainProduct-{{ section.id }
                   <label class="variant-label" style="display:block; margin-bottom: 5px; font-weight:bold;">{{ option.name }}</label>
                   
                   <button type="button" class="variant-custom-toggle" aria-expanded="false" 
-                          style="width: 100%; padding: 12px; border: 1px solid #000; background: #fff; text-align: left; display: flex; justify-content: space-between; cursor: pointer;">
+                          style="width: 100%; padding: 12px; border: 1px solid #800000; background: #fff; text-align: left; display: flex; justify-content: space-between; cursor: pointer;">
                     <span class="current-value">{{ option.selected_value }}</span>
                     <span>▼</span>
                   </button>
 
                   <div class="variant-options-wrapper" 
-                       style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #000; z-index: 100;">
+                       style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #800000; z-index: 100;">
                     
                     <div class="mobile-modal-header" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
                       <span style="font-weight:bold;">Select {{ option.name }}</span>
@@ -64,12 +64,12 @@ Testing<div class="product-page-area page-width" id="MainProduct-{{ section.id }
           {% endunless %}
           <div class="product-form-actions" style="margin-top: 20px;">
             <div class="qty-and-add-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
-              <div class="quantity-selector" style="display: flex; border: 1px solid #000;">
+              <div class="quantity-selector" style="display: flex; border: 1px solid #800000;">
                 <button type="button" name="minus" style="padding: 10px; border:none; background:none; cursor:pointer;">-</button>
                 <input type="number" name="quantity" value="1" min="1" style="width: 50px; text-align: center; border: none;">
                 <button type="button" name="plus" style="padding: 10px; border:none; background:none; cursor:pointer;">+</button>
               </div>
-              <button type="submit" name="add" class="main-add-btn" style="flex: 1; background: #000; color: #fff; border: none; padding: 10px; cursor: pointer;">ADD TO CART</button>
+              <button type="submit" name="add" class="main-add-btn" style="flex: 1; background: #800000; color: #fff; border: none; padding: 10px; cursor: pointer;">ADD TO CART</button>
             </div>
             <button type="submit" name="checkout" class="buy-it-now-btn" style="width: 100%; background: #fff; color: #000; border: 1px solid #000; padding: 10px; cursor: pointer;">BUY IT NOW</button>
           </div>
@@ -93,7 +93,7 @@ Testing<div class="product-page-area page-width" id="MainProduct-{{ section.id }
       left: 0 !important;
       width: 100vw !important;
       height: 100vh !important;
-      background: rgba(0,0,0,0.5) !important;
+      background: #800000 !important;
       flex-direction: column !important;
       justify-content: flex-end !important;
       z-index: 9999 !important;

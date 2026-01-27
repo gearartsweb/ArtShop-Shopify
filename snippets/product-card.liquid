@@ -4,7 +4,7 @@
   <div class="image-frame" style="position: relative; overflow: hidden; z-index: 1;">
     <a href="{{ product.url }}" style="display: block;">
       <span class="sold-out-badge" {% if product.available %}style="display:none"{% endif %} 
-            style="position: absolute; top: 10px; left: 10px; background: #000; color: #fff; padding: 5px 10px; font-size: 10px; z-index: 2;">
+            style="position: absolute; top: 10px; left: 10px; background: #800000; color: #fff; padding: 5px 10px; font-size: 10px; z-index: 2;">
         SOLD OUT
       </span>
 
@@ -42,34 +42,33 @@
     </p>
 
     {% comment %} === DROPDOWN VARIANT SELECTOR === {% endcomment %}
-    {% if product.variants.size > 1 %}
-      <div class="grid-variant-wrapper" style="position: relative; margin-top: 10px; z-index: 20;">
-        
-        <details class="grid-variant-disclosure">
-          <summary style="list-style: none; padding: 8px; font-size: 11px; border: 1px solid #800000; background: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-transform: uppercase;">
-            <span class="current-variant-name">Select Option</span>
-            <span>▼</span>
-          </summary>
+   {% if product.variants.size > 1 %}
+  <details class="grid-variant-disclosure" style="position: relative; margin-top: 10px;">
+    <summary style="list-style: none; padding: 8px; font-size: 11px; border: 1px solid #800000; background: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-transform: uppercase;">
+      <span id="label-{{ product.id }}" class="current-variant-name">Select Option</span>
+      <span>▼</span>
+    </summary>
 
-          <div class="grid-variant-dropdown" style="position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #800000; border-top: none; z-index: 999; box-shadow: 0 5px 10px rgba(0,0,0,0.1);">
-           <ul style="list-style: none; padding: 0; margin: 0;">
-  {% for variant in product.variants %}
-    <li>
-      <button type="button" 
-              class="grid-variant-option" 
-              data-variant-id="{{ variant.id }}" 
-              data-variant-price="{{ variant.price | money }}"
-              style="width: 100%; border: none; background: none; padding: 10px; cursor: pointer; display: flex; justify-content: space-between; font-size: 11px;">
-        <span>{{ variant.title }}</span>
-        <span>{{ variant.price | money }}</span>
-      </button>
-    </li>
-  {% endfor %}
-</ul>
-          </div>
-        </details>
-      </div>
-    {% endif %}
+    <div class="grid-variant-dropdown" style="position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #800000; border-top: none; z-index: 1000; box-shadow: 0 5px 10px #800000;">
+      <ul style="list-style: none; padding: 0; margin: 0; max-height: 150px; overflow-y: auto;">
+        {% for variant in product.variants %}
+          <li style="border-bottom: 1px solid #eee;">
+            <button type="button" 
+                    class="grid-variant-option" 
+                    data-variant-id="{{ variant.id }}" 
+                    data-variant-price="{{ variant.price | money }}"
+                    data-parent-label="label-{{ product.id }}"
+                    data-title="{{ variant.title }}"
+                    style="width: 100%; border: none; background: none; padding: 10px; cursor: pointer; display: flex; justify-content: space-between; font-size: 11px; text-align: left;">
+              <span>{{ variant.title }}</span>
+              <span style="color: #666;">{{ variant.price | money }}</span>
+            </button>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </details>
+{% endif %}
   </div>
 </div>
 
