@@ -73,6 +73,17 @@
 </div>
 
 <style>
+  /* 1. Ensure the card being interacted with jumps to the front */
+  .studio-product-card {
+    position: relative;
+    transition: z-index 0s;
+  }
+
+  .studio-product-card:hover,
+  .studio-product-card:focus-within {
+    z-index: 100 !important; /* Forces this card above all other products in the grid */
+  }
+
   .product-card-form {
     position: absolute;
     bottom: -60px;
@@ -81,9 +92,11 @@
     transition: bottom 0.3s ease;
     z-index: 5;
   }
+
   .studio-product-card:hover .product-card-form {
     bottom: 0;
   }
+
   .quick-add-btn {
     width: 100%;
     background: #800000;
@@ -94,12 +107,38 @@
     cursor: pointer;
     font-weight: bold;
   }
-  /* Ensure the dropdown list items don't trigger the product link */
+
+  /* 2. Dropdown specific layering */
+  .grid-variant-disclosure {
+    position: relative;
+    z-index: 101; /* Higher than the Add to Bag button */
+  }
+
+  .grid-variant-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    border: 1px solid #800000;
+    border-top: none;
+    z-index: 1000; 
+    box-shadow: 0 10px 20px #800000;
+  }
+
   .grid-variant-option {
     position: relative;
-    z-index: 1000;
+    z-index: 1001;
   }
+
   .grid-variant-option:hover {
     background: #f4f4f4;
+  }
+
+  @media screen and (max-width: 749px) {
+    /* Ensure the dropdown doesn't get cut by overflow on mobile */
+    .studio-product-card {
+      overflow: visible !important;
+    }
   }
 </style>

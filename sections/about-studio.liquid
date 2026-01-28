@@ -15,25 +15,27 @@
         {% else %}
           {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg shadow' }}
         {% endif %}
-        <div class="floating-badge">Est. 2009</div>
+        <div class="floating-badge">Est. 2006</div>
       </div>
 
       <div class="about-text-content">
-        <span class="about-eyebrow">{{ section.settings.eyebrow | default: "Finest art supplies" }}</span>
-        <h2 class="about-heading">{{ section.settings.title }}</h2>
+        <span class="about-eyebrow">{{ section.settings.eyebrow | default: "Since 2006" }}</span>
+        <h2 class="about-heading">{{ section.settings.title | default: "The Art Shop Hermanus" }}</h2>
         
         <div class="about-description">
-          {{ section.settings.text }}
+          <p>Since 2006, The Art Shop Hermanus has served as a cornerstone of the Western Cape’s creative community. What began as a local retail space has grown into a trusted hub for artists, crafters, and visionaries across the region.</p>
+          <p>We specialize in high-end fine art supplies, focusing on a curated selection of both local and imported products. Our philosophy is simple: premium quality shouldn’t come with a premium barrier. We stretch our margins to ensure that the best tools remain affordable for every creator.</p>
+          <p>When you walk through our doors, you aren’t just a customer—you’re a peer. Our promise is a professional, helpful experience defined by a warm smile and a commitment to your craft. If we don’t have what you need on the floor, we’ll go above and beyond to find it for you.</p>
         </div>
 
         <div class="about-features-grid">
           <div class="feature-item">
-            <strong>Professional Grade</strong>
-            <p>Sourced for lightfastness and pigment density.</p>
+            <strong>Premium & Affordable</strong>
+            <p>Stretched margins to ensure top-tier tools fit your budget.</p>
           </div>
           <div class="feature-item">
-            <strong>Curated Selection</strong>
-            <p>Tried and tested in the studio by our team.</p>
+            <strong>Artist-to-Artist</strong>
+            <p>A professional, helpful experience from peers who value your craft.</p>
           </div>
         </div>
       </div>
@@ -78,6 +80,9 @@
     color: #333;
     margin-bottom: 40px;
   }
+  .about-description p {
+    margin-bottom: 1.5em;
+  }
   .about-features-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -120,7 +125,7 @@
   "name": "About Studio (Editorial)",
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Small Top Label" },
-    { "type": "text", "id": "title", "label": "Heading", "default": "Understanding Fine Art Supplies" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "The Art Shop Hermanus" },
     { "type": "richtext", "id": "text", "label": "Description" },
     { "type": "image_picker", "id": "image", "label": "Studio Image" },
     { "type": "color", "id": "bg_color", "label": "Background Color", "default": "#ffffff" }
