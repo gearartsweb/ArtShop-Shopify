@@ -1,12 +1,14 @@
 <div class="product-page-area page-width" id="MainProduct-{{ section.id }}">
-  <div class="product-main-container">
+  <div class="product-main-container" style="display: flex; gap: 40px; margin-top: 20px;">
     
-    <div class="product-gallery">
+    {% comment %} --- GALLERY --- {% endcomment %}
+    <div class="product-gallery" style="flex: 1;">
       <div class="image-wrapper">
         {% if product.featured_image %}
           <img src="{{ product.featured_image | image_url: width: 800 }}" 
                alt="{{ product.title }}" 
                class="main-product-img" 
+               style="width: 100%; height: auto; border: 1px solid #eee;"
                width="800" height="800">
         {% else %}
           {{ 'product-1' | placeholder_svg_tag: 'main-product-img placeholder' }}
@@ -14,98 +16,177 @@
       </div>
     </div>
 
-    <div class="product-info-column">
+    {% comment %} --- PRODUCT INFO --- {% endcomment %}
+    <div class="product-info-column" style="flex: 1;">
       <div class="product-sticky-content">
-        <span class="product-vendor">{{ product.vendor | upcase }}</span>
-        <h1 class="product-title">{{ product.title }}</h1>
-        <p class="product-price">{{ product.price | money }}</p>
+        <span class="product-vendor" style="letter-spacing: 2px; font-size: 12px; color: #666;">{{ product.vendor | upcase }}</span>
+        <h1 class="product-title" style="margin: 10px 0;">{{ product.title }}</h1>
+        <p class="product-price" style="font-size: 24px; color: #800000; font-weight: bold; margin-bottom: 20px;">
+          {{ product.selected_or_first_available_variant.price | money }}
+        </p>
         
-        <div class="product-description rte">
+        <div class="product-description rte" style="margin-bottom: 30px;">
           {{ product.description }}
         </div>
 
+        {%- assign variant_count = product.variants.size -%}
+
         {% form 'product', product, id: "add-to-cart-form" %}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="id" id="selected-variant-id" value="{{ product.selected_or_first_available_variant.id }}">
 
-          {% unless product.has_only_default_variant %}
-            <div class="product-variant-picker">
-              {% for option in product.options_with_values %}
-                <div class="custom-variant-container" style="position: relative; margin-bottom: 20px;">
-                  <label class="variant-label" style="display:block; margin-bottom: 5px; font-weight:bold;">{{ option.name }}</label>
+          {% if variant_count > 1 %}
+            {% comment %} --- SEARCH & SIZE FILTER --- {% endcomment %}
+            <div class="paint-matrix-filters" style="margin-bottom: 20px; background: #f9f9f9; padding: 15px; border: 1px solid #eee;">
+              <div class="matrix-size-pills" style="margin-bottom: 15px;">
+                <label style="display:block; margin-bottom: 8px; font-weight:bold;">1. Choose Size:</label>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                  {% for value in product.options_by_name['Size'].values %}
+                    <label class="size-pill-label" style="cursor:pointer;">
+                      <input type="radio" name="size_filter" value="{{ value | escape }}" {% if forloop.first %}checked{% endif %} style="display:none;">
+                      <span class="size-pill-ui">{{ value }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <div class="matrix-search">
+                <label style="display:block; margin-bottom: 8px; font-weight:bold;">2. Find Color:</label>
+                <input type="text" id="color-search-input" placeholder="Search color name..." 
+                       style="width: 100%; padding: 12px; border: 1px solid #800000; font-family: inherit;">
+              </div>
+            </div>
+
+            {% comment %} --- THE COLOR GRID --- {% endcomment %}
+            <div id="paint-color-grid" style="max-height: 400px; overflow-y: auto; border: 1px solid #eee; padding: 10px; display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; background: #fff;">
+              {% for variant in product.variants %}
+                
+{% capture library_color %}{% render 'swatch-library', color_name: variant.option2 %}{% endcapture %}
+{% assign swatch_color = variant.metafields.custom.swatch_color.value | default: library_color | strip %}
+
+                <div class="color-swatch-item {% if product.selected_or_first_available_variant.id == variant.id %}active{% endif %}" 
+                     data-size="{{ variant.option1 | escape }}" 
+                     data-color="{{ variant.option2 | escape }}"
+                     data-price="{{ variant.price | money }}"
+                     data-id="{{ variant.id }}"
+                     style="border: 1px solid #eee; padding: 8px; text-align: center; cursor: pointer; transition: 0.2s; position: relative;">
                   
-                  <button type="button" class="variant-custom-toggle" aria-expanded="false" 
-                          style="width: 100%; padding: 12px; border: 1px solid #800000; background: #fff; text-align: left; display: flex; justify-content: space-between; cursor: pointer;">
-                    <span class="current-value">{{ option.selected_value }}</span>
-                    <span>▼</span>
-                  </button>
-
-                  <div class="variant-options-wrapper" 
-                       style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #800000; z-index: 100;">
-                    
-                    <div class="mobile-modal-header" style="padding: 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center;">
-                      <span style="font-weight:bold;">Select {{ option.name }}</span>
-                      <button type="button" class="close-modal" style="background:none; border:none; font-size: 1.2rem;">✕</button>
-                    </div>
-
-                    <ul class="variant-options-list" style="list-style: none; padding: 0; margin: 0;">
-                      {% for value in option.values %}
-                        <li class="variant-item {% if option.selected_value == value %}selected{% endif %}" 
-                            data-value="{{ value | escape }}"
-                            style="padding: 12px; border-bottom: 1px solid #eee; cursor: pointer;">
-                          {{ value }}
-                          {% if option.selected_value == value %} <span>✓</span> {% endif %}
-                        </li>
-                      {% endfor %}
-                    </ul>
+                  <div class="swatch-circle" 
+                       style="background-color: {{ swatch_color | default: '#ccc' }}; 
+                              width: 30px; height: 30px; border-radius: 50%; margin: 0 auto 5px; border: 1px solid #ddd; box-shadow: inset 0 0 3px rgba(0,0,0,0.1);">
                   </div>
+                  
+                  <div style="font-size: 11px; font-weight: bold; line-height: 1.2; height: 2.4em; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                    {{ variant.option2 }}
+                  </div>
+                  <div style="font-size: 10px; color: #800000; margin-top: 5px;">{{ variant.price | money }}</div>
+                  
+                  {% unless variant.available %}
+                    <div style="position: absolute; top:0; left:0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: bold; color: #ff0000; z-index: 1;">SOLD OUT</div>
+                  {% endunless %}
                 </div>
               {% endfor %}
             </div>
-          {% endunless %}
-          <div class="product-form-actions" style="margin-top: 20px;">
-            <div class="qty-and-add-row" style="display: flex; gap: 10px; margin-bottom: 10px;">
-              <div class="quantity-selector" style="display: flex; border: 1px solid #800000;">
-                <button type="button" name="minus" style="padding: 10px; border:none; background:none; cursor:pointer;">-</button>
-                <input type="number" name="quantity" value="1" min="1" style="width: 50px; text-align: center; border: none;">
-                <button type="button" name="plus" style="padding: 10px; border:none; background:none; cursor:pointer;">+</button>
-              </div>
-              <button type="submit" name="add" class="main-add-btn" style="flex: 1; background: #800000; color: #fff; border: none; padding: 10px; cursor: pointer;">ADD TO CART</button>
+          {% endif %}
+
+          <div class="product-form-actions" style="margin-top: 20px; border-top: 2px solid #800000; padding-top: 20px;">
+            <div id="selected-variant-display" style="margin-bottom: 15px; font-size: 14px; background: #fff8f8; padding: 10px; border-left: 4px solid #800000;">
+               <strong>Selected:</strong> <span id="current-selection-label">{{ product.selected_or_first_available_variant.title }}</span>
             </div>
-            <button type="submit" name="checkout" class="buy-it-now-btn" style="width: 100%; background: #fff; color: #000; border: 1px solid #000; padding: 10px; cursor: pointer;">BUY IT NOW</button>
+            
+            <div class="qty-and-add-row" style="display: flex; gap: 10px;">
+              <div class="quantity-selector" style="display: flex; border: 1px solid #800000;">
+                <button type="button" class="qty-btn" data-action="minus" style="padding: 10px 15px; border:none; background:none; cursor:pointer; font-weight:bold;">-</button>
+                <input type="number" id="Quantity-{{ section.id }}" name="quantity" value="1" min="1" style="width: 50px; text-align: center; border: none; font-weight:bold;">
+                <button type="button" class="qty-btn" data-action="plus" style="padding: 10px 15px; border:none; background:none; cursor:pointer; font-weight:bold;">+</button>
+              </div>
+              <button type="submit" name="add" id="add-to-cart-btn" class="main-add-btn" style="flex: 1; background: #800000; color: #fff; border: none; padding: 15px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;">ADD TO CART</button>
+            </div>
           </div>
         {% endform %}
       </div>
     </div>
-
-    <script data-product-json type="application/json">
-      {{ product | json }}
-    </script>
-
   </div>
 </div>
 
 <style>
-  @media screen and (max-width: 749px) {
-    .variant-options-wrapper.is-open {
-      display: flex !important;
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100vw !important;
-      height: 100vh !important;
-      background: #800000 !important;
-      flex-direction: column !important;
-      justify-content: flex-end !important;
-      z-index: 9999 !important;
-    }
-    .variant-options-wrapper.is-open .variant-options-list {
-      background: white;
-      max-height: 60vh;
-      overflow-y: auto;
-    }
-    .mobile-modal-header { display: flex !important; background: white; }
+  .size-pill-ui {
+    padding: 8px 15px; border: 1px solid #800000; color: #800000; display: inline-block; font-size: 12px; font-weight: bold; transition: 0.3s;
   }
-  @media screen and (min-width: 750px) {
-    .mobile-modal-header { display: none !important; }
+  input[type="radio"]:checked + .size-pill-ui {
+    background: #800000; color: #fff;
+  }
+  .color-swatch-item.active {
+    border-color: #800000 !important; background: #fff8f8; box-shadow: 0 0 8px rgba(128,0,0,0.15); z-index: 2;
+  }
+  #paint-color-grid::-webkit-scrollbar { width: 6px; }
+  #paint-color-grid::-webkit-scrollbar-thumb { background: #800000; border-radius: 10px; }
+  #paint-color-grid::-webkit-scrollbar-track { background: #f1f1f1; }
+
+  @media screen and (max-width: 749px) {
+    .product-main-container { flex-direction: column; gap: 20px; }
+    #paint-color-grid { grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); }
   }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const body = document.body;
+  const searchInput = document.getElementById('color-search-input');
+  const sizePills = document.querySelectorAll('input[name="size_filter"]');
+  const items = document.querySelectorAll('.color-swatch-item');
+  const priceDisplay = document.querySelector('.product-price');
+  const hiddenInput = document.getElementById('selected-variant-id');
+  const selectionLabel = document.getElementById('current-selection-label');
+  const qtyInput = document.querySelector('input[name="quantity"]');
+
+  // FUNCTION: Filter the grid
+  function filterGrid() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const checkedRadio = document.querySelector('input[name="size_filter"]:checked');
+    const selectedSize = checkedRadio ? checkedRadio.value : '';
+
+    items.forEach(item => {
+      const colorName = item.getAttribute('data-color').toLowerCase();
+      const itemSize = item.getAttribute('data-size');
+      const matchesSearch = colorName.includes(searchTerm);
+      const matchesSize = (itemSize === selectedSize);
+
+      item.style.display = (matchesSearch && matchesSize) ? 'block' : 'none';
+    });
+  }
+
+  // EVENT DELEGATION: Swatch Clicks
+  body.addEventListener('click', function(e) {
+    const swatch = e.target.closest('.color-swatch-item');
+    if (swatch) {
+      const vId = swatch.getAttribute('data-id');
+      const vPrice = swatch.getAttribute('data-price');
+      const vSize = swatch.getAttribute('data-size');
+      const vColor = swatch.getAttribute('data-color');
+
+      // Update UI
+      hiddenInput.value = vId;
+      priceDisplay.innerText = vPrice;
+      selectionLabel.innerText = vSize + ' - ' + vColor;
+
+      items.forEach(i => i.classList.remove('active'));
+      swatch.classList.add('active');
+    }
+
+    // EVENT DELEGATION: Quantity Buttons
+    const qtyBtn = e.target.closest('.qty-btn');
+    if (qtyBtn) {
+      const action = qtyBtn.getAttribute('data-action');
+      if (action === 'plus') qtyInput.stepUp();
+      if (action === 'minus') qtyInput.stepDown();
+    }
+  });
+
+  // Event Listeners for Filters
+  if(searchInput) searchInput.addEventListener('input', filterGrid);
+  sizePills.forEach(pill => pill.addEventListener('change', filterGrid));
+
+  // Run on load
+  filterGrid();
+});
+</script>

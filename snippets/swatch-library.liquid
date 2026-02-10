@@ -1,0 +1,141 @@
+{% comment %} 
+  GLOBAL SWATCH LIBRARY 
+  Usage: {% render 'swatch-library', color_name: variant.option2 %}
+{% endcomment %}
+
+{%- assign color_hex = '#ccc' -%}
+{%- assign name = color_name | strip -%}
+
+{%- case name -%}
+  {%- comment -%} --- GEORGIAN OIL RANGE --- {%- endcomment -%}
+  {%- when 'Alizarin Crimson (Hue)' -%}{%- assign color_hex = '#A2231D' -%}
+  {%- when 'Burnt Sienna' -%}{%- assign color_hex = '#8C4521' -%}
+  {%- when 'Burnt Umber' -%}{%- assign color_hex = '#4E352E' -%}
+  {%- when 'Cadmium Orange (Hue)' -%}{%- assign color_hex = '#ED872D' -%}
+  {%- when 'Cadmium Red (Hue)' -%}{%- assign color_hex = '#E30022' -%}
+  {%- when 'Cadmium Yellow (Hue)' -%}{%- assign color_hex = '#FFCF00' -%}
+  {%- when 'Cadmium Yellow Pale (Hue)' -%}{%- assign color_hex = '#FFF200' -%}
+  {%- when 'Cerulean Blue (Hue)' -%}{%- assign color_hex = '#2A52BE' -%}
+  {%- when 'Cobalt Blue (Hue)' -%}{%- assign color_hex = '#0047AB' -%}
+  {%- when 'Coeruleum (Hue)' -%}{%- assign color_hex = '#0095B6' -%}
+  {%- when 'Copper' -%}{%- assign color_hex = '#B87333' -%}
+  {%- when 'Crimson' -%}{%- assign color_hex = '#9E0508' -%}
+  {%- when 'Dioxazine Purple' -%}{%- assign color_hex = '#4B0082' -%}
+  {%- when 'Emerald Green (Hue)' -%}{%- assign color_hex = '#50C878' -%}
+  {%- when 'French Ultramarine' -%}{%- assign color_hex = '#0033AA' -%}
+  {%- when 'Gold' -%}{%- assign color_hex = '#D4AF37' -%}
+  {%- when "Hooker's Green (Hue)" -%}{%- assign color_hex = '#49796B' -%}
+  {%- when 'Indian Red' -%}{%- assign color_hex = '#CD5C5C' -%}
+  {%- when 'Ivory Black' -%}{%- assign color_hex = '#231F20' -%}
+  {%- when 'Lamp Black' -%}{%- assign color_hex = '#1C1C1C' -%}
+  {%- when 'Lemon Yellow' -%}{%- assign color_hex = '#FFF44F' -%}
+  {%- when 'Light Red' -%}{%- assign color_hex = '#AB4E41' -%}
+  {%- when 'Magenta' -%}{%- assign color_hex = '#CA1F7B' -%}
+  {%- when 'Naples Yellow (Hue)' -%}{%- assign color_hex = '#FADA5E' -%}
+  {%- when 'Olive Green' -%}{%- assign color_hex = '#808000' -%}
+  {%- when "Payne's Gray" or "Payne's Grey" -%}{%- assign color_hex = '#40404F' -%}
+  {%- when 'Phthalo Blue' -%}{%- assign color_hex = '#000F89' -%}
+  {%- when 'Phthalo Green' -%}{%- assign color_hex = '#123524' -%}
+  {%- when 'Prussian Blue' -%}{%- assign color_hex = '#003153' -%}
+  {%- when 'Raw Sienna' -%}{%- assign color_hex = '#D68A59' -%}
+  {%- when 'Raw Umber' -%}{%- assign color_hex = '#826644' -%}
+  {%- when 'Rose Madder (Hue)' -%}{%- assign color_hex = '#E32636' -%}
+  {%- when 'Sap Green' -%}{%- assign color_hex = '#507D2A' -%}
+  {%- when 'Scarlet Lake (Hue)' -%}{%- assign color_hex = '#FF2400' -%}
+  {%- when 'Silver' -%}{%- assign color_hex = '#C0C0C0' -%}
+  {%- when 'Sky Blue' -%}{%- assign color_hex = '#87CEEB' -%}
+  {%- when 'Terre Verte (Hue)' -%}{%- assign color_hex = '#707662' -%}
+  {%- when 'Titanium White' -%}{%- assign color_hex = '#FFFFFF' -%}
+  {%- when 'Turquoise' -%}{%- assign color_hex = '#40E0D0' -%}
+  {%- when 'Vandyke Brown (Hue)' -%}{%- assign color_hex = '#664228' -%}
+  {%- when 'Venetian Red' -%}{%- assign color_hex = '#C80815' -%}
+  {%- when 'Vermilion (Hue)' -%}{%- assign color_hex = '#E34234' -%}
+  {%- when 'Viridian (Hue)' -%}{%- assign color_hex = '#00703C' -%}
+  {%- when 'Yellow Ochre' -%}{%- assign color_hex = '#CCAE62' -%}
+  {%- when 'Zinc White' -%}{%- assign color_hex = '#F0F8FF' -%}
+
+  {%- comment -%} --- CLASSICO OIL RANGE --- {%- endcomment -%}
+  {%- when 'Alizarin Crimson' -%}{%- assign color_hex = '#9E0508' -%}
+  {%- when 'Brilliant Yellow' -%}{%- assign color_hex = '#FFF200' -%}
+  {%- when 'Cadmium Red Light (Hue)' -%}{%- assign color_hex = '#E30022' -%}
+  {%- when 'Cadmium Red Medium (Hue)' -%}{%- assign color_hex = '#B21B1C' -%}
+  {%- when 'Cadmium Yellow Deep (Hue)' -%}{%- assign color_hex = '#FFCF00' -%}
+  {%- when 'Cadmium Yellow Lemon (Hue)' -%}{%- assign color_hex = '#FFF44F' -%}
+  {%- when 'Cadmium Yellow Light (Hue)' -%}{%- assign color_hex = '#FFF200' -%}
+  {%- when 'Cadmium Yellow Medium (Hue)' -%}{%- assign color_hex = '#FFD700' -%}
+  {%- when 'Carmine' -%}{%- assign color_hex = '#960018' -%}
+  {%- when 'Celestial Blue' -%}{%- assign color_hex = '#0095B6' -%}
+  {%- when 'Chrome Yellow (Hue)' or 'Chrome Yellow' -%}{%- assign color_hex = '#FFAE42' -%}
+  {%- when 'Cobalt Violet (Hue)' -%}{%- assign color_hex = '#926EAE' -%}
+  {%- when 'Emerald Green' -%}{%- assign color_hex = '#50C878' -%}
+  {%- when 'Flesh Tint' -%}{%- assign color_hex = '#FFCBA4' -%}
+  {%- when 'Indian Yellow (Hue)' -%}{%- assign color_hex = '#E3A857' -%}
+  {%- when 'Indigo' -%}{%- assign color_hex = '#4B0082' -%}
+  {%- when "King's Blue" -%}{%- assign color_hex = '#B0C4DE' -%}
+  {%- when 'Mars Brown' -%}{%- assign color_hex = '#59351F' -%}
+  {%- when 'Naples Yellow Reddish' -%}{%- assign color_hex = '#FADA5E' -%}
+  {%- when 'Permanent Green Deep' -%}{%- assign color_hex = '#006400' -%}
+  {%- when 'Permanent Green Light' -%}{%- assign color_hex = '#90EE90' -%}
+  {%- when 'Permanent Orange' -%}{%- assign color_hex = '#FF8C00' -%}
+  {%- when 'Rose Madder' -%}{%- assign color_hex = '#E32636' -%}
+  {%- when 'Sap Green' -%}{%- assign color_hex = '#507D2A' -%}
+  {%- when 'Terre Verte' -%}{%- assign color_hex = '#707662' -%}
+  {%- when 'Ultramarine Blue' or 'Ultramarine' -%}{%- assign color_hex = '#120A8F' -%}
+  {%- when 'Vandyke Brown' -%}{%- assign color_hex = '#664228' -%}
+  {%- when "Hooker's Green" or "Hookers Green" or "Hooker's Green (Hue)" -%}{%- assign color_hex = '#49796B' -%}
+  {%- when 'Cadmium Red Deep (Hue)' or 'Cadmium Red Deep' -%}{%- assign color_hex = '#8B0000' -%}
+
+  {%- comment -%} --- SCHUB & ZELCRYL UNIQUE ADDITIONS --- {%- endcomment -%}
+  {%- when 'Blush' -%}{%- assign color_hex = '#DE5D83' -%}
+  {%- when 'Carbon Black' or 'Black' -%}{%- assign color_hex = '#1C1C1C' -%}
+  {%- when 'Dove Grey' or 'Mid Grey' or 'Neutral Grey' -%}{%- assign color_hex = '#808080' -%}
+  {%- when 'Grape' -%}{%- assign color_hex = '#6F2DA8' -%}
+  {%- when 'Green Oxide' -%}{%- assign color_hex = '#3B593F' -%}
+  {%- when 'Kalahari' -%}{%- assign color_hex = '#C19A6B' -%}
+  {%- when 'Khaki' -%}{%- assign color_hex = '#F0E68C' -%}
+  {%- when 'Lilac' -%}{%- assign color_hex = '#C8A2C8' -%}
+  {%- when 'Lime' -%}{%- assign color_hex = '#BFFF00' -%}
+  {%- when 'Montana Green' -%}{%- assign color_hex = '#008080' -%}
+  {%- when 'Permanent Green Middle' -%}{%- assign color_hex = '#3CB371' -%}
+  {%- when 'Permanent Rose' -%}{%- assign color_hex = '#E32636' -%}
+  {%- when 'Phthalo Blue (Green Shade)' -%}{%- assign color_hex = '#000F89' -%}
+  {%- when 'Phthalo Blue (Red Shade)' -%}{%- assign color_hex = '#002E63' -%}
+  {%- when 'Pink' or 'Shocking Pink' -%}{%- assign color_hex = '#FFC0CB' -%}
+  {%- when 'Powder Blue' -%}{%- assign color_hex = '#B0E0E6' -%}
+  {%- when 'Red Oxide' -%}{%- assign color_hex = '#AB4E41' -%}
+  {%- when 'Titanium Buff' -%}{%- assign color_hex = '#F0DC82' -%}
+  {%- when 'Transparent Black' -%}{%- assign color_hex = '#231F20' -%}
+  {%- when 'Metallic Bronze' -%}{%- assign color_hex = '#CD7F32' -%}
+  {%- when 'Metallic Copper' -%}{%- assign color_hex = '#B87333' -%}
+  {%- when 'Metallic Gold' -%}{%- assign color_hex = '#D4AF37' -%}
+  {%- when 'Metallic Silver' or 'Pearlescent Silver' -%}{%- assign color_hex = '#C0C0C0' -%}
+  {%- when 'Gun Metal Grey' -%}{%- assign color_hex = '#8D918D' -%}
+  
+  {%- comment -%} --- LUKAS & BULK ADAPTATIONS --- {%- endcomment -%}
+  {%- when 'Cyan' -%}{%- assign color_hex = '#0095B6' -%}
+  {%- when 'English Red' -%}{%- assign color_hex = '#AB4E41' -%}
+  {%- when 'Fern Green' -%}{%- assign color_hex = '#4F7942' -%}
+  {%- when 'Primary Blue' -%}{%- assign color_hex = '#0047AB' -%}
+  {%- when 'Primary Red' -%}{%- assign color_hex = '#E30022' -%}
+  {%- when 'Primary Yellow' -%}{%- assign color_hex = '#FFF200' -%}
+  {%- when 'Violet' or 'Purple' -%}{%- assign color_hex = '#8F00FF' -%}
+  {%- when 'Deep Blue' -%}{%- assign color_hex = '#002E63' -%}
+  {%- when 'Deep Green' -%}{%- assign color_hex = '#006400' -%}
+  {%- when 'Deep Red' -%}{%- assign color_hex = '#B21B1C' -%}
+  {%- when 'Bright Green' -%}{%- assign color_hex = '#66FF00' -%}
+  {%- when 'Mid Green' -%}{%- assign color_hex = '#3CB371' -%}
+  {%- when 'Crimson Lake' -%}{%- assign color_hex = '#9E0508' -%}
+  {%- when 'Sepia (Hue)' -%}{%- assign color_hex = '#704214' -%}
+  {%- when 'Brilliant Red' -%}{%- assign color_hex = '#E30022' -%}
+  {%- when 'Deep Yellow' -%}{%- assign color_hex = '#FFB300' -%}
+  {%- when 'Orange' -%}{%- assign color_hex = '#FF8C00' -%}
+  {%- when 'Scarlet' -%}{%- assign color_hex = '#FF2400' -%}
+  {%- when 'Vermilion' -%}{%- assign color_hex = '#E34234' -%}
+  {%- when 'Viridian' -%}{%- assign color_hex = '#00703C' -%}
+  {%- when 'Naples Yellow' or 'Naples Yellow (Hue)' or 'Naples Yellow Reddish' -%}{%- assign color_hex = '#FADA5E' -%}
+  {%- when 'Permanent Green' or 'Permanent Green Light' or 'Permanent Green Deep' or 'Permanent Green Middle' -%}{%- assign color_hex = '#32CD32' -%}
+{%- when 'Bright Yellow' or 'Primary Yellow' -%}{%- assign color_hex = '#FFF200' -%}
+
+{%- endcase -%}
+
+{{- color_hex -}}

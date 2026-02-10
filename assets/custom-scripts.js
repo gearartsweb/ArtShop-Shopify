@@ -22,3 +22,33 @@ document.addEventListener('click', function(event) {
   // 3. Close
   disclosure.removeAttribute('open');
 });
+
+// Paint Matrix Filter Logic
+document.body.addEventListener('input', function(e) {
+  if (e.target.id === 'color-search-input' || e.target.name === 'size_filter') {
+    const searchTerm = document.getElementById('color-search-input').value.toLowerCase();
+    const selectedSize = document.querySelector('input[name="size_filter"]:checked').value;
+    const items = document.querySelectorAll('.color-swatch-item');
+
+    items.forEach(item => {
+      const color = item.getAttribute('data-color').toLowerCase();
+      const size = item.getAttribute('data-size');
+      const matchesSearch = color.includes(searchTerm);
+      const matchesSize = (size === selectedSize);
+
+      item.style.display = (matchesSearch && matchesSize) ? 'block' : 'none';
+    });
+  }
+});
+
+function selectMatrixVariant(id, price, element) {
+  // Update Hidden ID
+  document.getElementById('selected-variant-id').value = id;
+  // Update Price Display
+  document.querySelector('.product-price').innerText = price;
+  // Update Active UI
+  document.querySelectorAll('.color-swatch-item').forEach(el => el.classList.remove('active'));
+  element.classList.add('active');
+  // Update Label
+  document.getElementById('current-selection-label').innerText = element.getAttribute('data-color');
+}
