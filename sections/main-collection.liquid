@@ -1,8 +1,8 @@
 {% paginate collection.products by 48 %}
 <div class="collection-layout-wrapper">
   
-  {%- comment -%} 1. Mobile Filter Button (Top of Page) {%- endcomment -%}
-  <div class="mobile-filter-bar medium-hide large-up-hide">
+ {%- comment -%} 1. Mobile Filter Button (Top of Page) - Only visible on small screens {%- endcomment -%}
+  <div class="mobile-filter-bar small-hide-up medium-hide large-up-hide">
     {% render 'facets', results: collection %}
   </div>
 
@@ -80,16 +80,17 @@
   /* Responsive Adjustments */
   @media (max-width: 1100px) { .studio-grid { grid-template-columns: repeat(3, 1fr); } }
   
-  @media (max-width: 768px) { 
+ /* Responsive Adjustments */
+  @media screen and (max-width: 749px) { 
     .collection-layout-wrapper { flex-direction: column; margin: 20px auto; }
     .collection-sidebar { display: none !important; }
     .studio-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
     .image-frame { height: 200px; }
-    .mobile-filter-bar { width: 100%; padding: 0 0 20px 0; display: block !important; }
+    .mobile-filter-bar { display: block !important; width: 100%; padding: 0 0 20px 0; }
   }
 
-  /* Facet Styling (Logic moved into Facets.liquid) */
-  .facet-details { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-  .facet-details summary { list-style: none; display: flex; justify-content: space-between; cursor: pointer; font-size: 12px; text-transform: uppercase; font-weight: 600; }
-  .facet-details summary::-webkit-details-marker { display: none; }
+  @media screen and (min-width: 750px) {
+    .mobile-filter-bar { display: none !important; }
+    .collection-sidebar { display: block !important; }
+  }
 </style>
