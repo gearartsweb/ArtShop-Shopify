@@ -1,7 +1,7 @@
 <section class="hero-video-section" aria-label="Hero">
 
   {%- comment -%} ── VIDEO / FALLBACK BACKGROUND ── {%- endcomment -%}
-  {%- assign video_src = section.settings.video_url | default: 'https://www.pexels.com/video/a-person-doing-an-abstract-painting-8347735/' -%}
+  {%- assign video_src = section.settings.video_url | default: 'https://cdn.shopify.com/videos/c/o/v/d23f5aa76f064dd4b87b5e36a744aab3.mp4' -%}
 
   <div class="hero-video-container">
 
@@ -23,7 +23,7 @@
           {%- if section.settings.eyebrow != blank -%}
             <span class="hero-eyebrow">{{ section.settings.eyebrow }}</span>
           {%- else -%}
-            <span class="hero-eyebrow">Hermanus · Est. 1994 · Professional Grade</span>
+            <span class="hero-eyebrow">Hermanus · Est. 2006 · Professional Grade</span>
           {%- endif -%}
 
           <h1 class="hero-headline">
@@ -53,7 +53,7 @@
         {%- comment -%} ── CREDENTIAL BADGE ── {%- endcomment -%}
         <div class="hero-badge" aria-hidden="true">
           <div class="hero-badge__inner">
-            <span class="hero-badge__number">30+</span>
+            <span class="hero-badge__number">20+</span>
             <span class="hero-badge__label">Years Trusted<br>by Artists</span>
           </div>
           <div class="hero-badge__inner">
@@ -85,7 +85,7 @@
     </div>
     <div class="trust-bar__item">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 5v3h-7V8zM5.5 21a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18.5 21a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
-      <span>Free delivery over R800</span>
+      <span>Free delivery over R700</span>
     </div>
     <div class="trust-bar__item">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
@@ -102,8 +102,10 @@
 <style>
   /* ─── HERO VIDEO SECTION ─── */
   .hero-video-section {
-    position: relative;
-  }
+  position: relative;
+  padding-bottom: 0;
+  background: var(--color-black);
+}
 
   .hero-video-container {
     position: relative;
