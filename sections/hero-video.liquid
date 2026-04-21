@@ -1,20 +1,20 @@
 <section class="hero-video-section" aria-label="Hero">
 
   {%- comment -%} ── VIDEO / FALLBACK BACKGROUND ── {%- endcomment -%}
+  {%- assign video_src = section.settings.video_url | default: 'https://videos.pexels.com/video-files/3847424/3847424-uhd_2560_1440_30fps.mp4' -%}
+
   <div class="hero-video-container">
 
-    {%- if section.settings.video_url != blank -%}
-      <video
-        class="hero-video"
-        src="{{ section.settings.video_url }}"
-        autoplay
-        muted
-        loop
-        playsinline
-        aria-hidden="true"
-        preload="none">
-      </video>
-    {%- endif -%}
+    <video
+      class="hero-video"
+      src="{{ video_src }}"
+      autoplay
+      muted
+      loop
+      playsinline
+      aria-hidden="true"
+      preload="auto">
+    </video>
 
     <div class="hero-overlay">
       <div class="hero-content page-width">
