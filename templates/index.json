@@ -44,7 +44,11 @@
     "featured_products": {
       "type": "featured-collection",
       "settings": {
-        "title": "Studio Essentials"
+        "eyebrow": "Hand Picked",
+        "title": "Studio Essentials",
+        "collection": "",
+        "products_to_show": 4,
+        "view_all_link": ""
       }
     },
     "boutique_contact": {
@@ -53,7 +57,11 @@
         "title": "Inquiries & Commissions",
         "text": "The best place to buy fine art supplies",
         "address": "13 Mitchell Str. Hermanus",
-        "email": "artshophermanus@gmail.com"
+        "email": "artshophermanus@gmail.com",
+        "phone": "+27 62 251 0546",
+        "hours": "Mon–Fri 9am–5pm · Sat 9am–2pm",
+        "instagram": "https://www.instagram.com/theartshophermanus/",
+        "facebook": "https://www.facebook.com/p/The-Art-Shop-Hermanus-100066807003010/"
       }
     }
   },
