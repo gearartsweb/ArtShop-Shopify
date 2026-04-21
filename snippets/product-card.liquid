@@ -1,79 +1,130 @@
-<div class="studio-product-card product-card-{{ product.id }} {% unless product.available %}product-card--sold-out{% endunless %}" style="position: relative;">
-  
-  {% comment %} 1. IMAGE AREA {% endcomment %}
-  <div class="image-frame" style="position: relative; overflow: hidden; z-index: 1;">
-    <a href="{{ product.url }}" style="display: block;">
-      <span class="sold-out-badge" {% if product.available %}style="display:none"{% endif %} 
-            style="position: absolute; top: 10px; left: 10px; background: #800000; color: #fff; padding: 5px 10px; font-size: 10px; z-index: 2;">
-        SOLD OUT
-      </span>
+{%- comment -%}
+  SNIPPET: product-card.liquid
+  Usage: {% render 'product-card', product: product %}
+  Renders a single product card for grids and carousels.
+{%- endcomment -%}
 
-      <img 
-        src="{{ product.featured_image | image_url: width: 400 }}" 
-        alt="{{ product.featured_image.alt | escape }}"
-        loading="lazy"
-        width="400"
-        height="400"
-        class="grid-img main-card-img"
-      >
+{%- assign first_variant = product.selected_or_first_available_variant -%}
+{%- assign card_available = product.available -%}
+
+<div class="studio-product-card{% unless card_available %} studio-product-card--sold-out{% endunless %}"
+     data-product-id="{{ product.id }}">
+
+  {%- comment -%} ── IMAGE FRAME ── {%- endcomment -%}
+  <div class="image-frame">
+    <a href="{{ product.url }}" class="product-card__image-link" aria-label="{{ product.title | escape }}">
+
+      {%- comment -%} Grade badge from product tags {%- endcomment -%}
+      {%- if product.tags contains 'Artist Grade' -%}
+        <span class="product-grade-badge" aria-hidden="true">Artist Grade</span>
+      {%- elsif product.tags contains 'Studio Grade' -%}
+        <span class="product-grade-badge product-grade-badge--maroon" aria-hidden="true">Studio Grade</span>
+      {%- elsif product.tags contains 'New In' -%}
+        <span class="product-grade-badge product-grade-badge--maroon" aria-hidden="true">New In</span>
+      {%- endif -%}
+
+      {%- comment -%} Sold out overlay {%- endcomment -%}
+      {%- unless card_available -%}
+        <span class="sold-out-badge" aria-hidden="true">Sold Out</span>
+      {%- endunless -%}
+
+      {%- comment -%} Product image {%- endcomment -%}
+      {%- if product.featured_image != blank -%}
+        <img
+          src="{{ product.featured_image | image_url: width: 600 }}"
+          alt="{{ product.featured_image.alt | default: product.title | escape }}"
+          loading="lazy"
+          width="600"
+          height="600"
+          class="grid-img main-card-img">
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag: 'grid-img placeholder-svg' }}
+      {%- endif -%}
+
     </a>
 
-    {% comment %} QUICK ADD FORM {% endcomment %}
-    {% form 'product', product, class: 'product-card-form' %}
-      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" class="selected-variant-id">
+    {%- comment -%} Quick add button — hover reveals on desktop, always visible on mobile {%- endcomment -%}
+    {%- form 'product', product, class: 'product-card-form', data-ajax-handled: 'true' -%}
+      <input
+        type="hidden"
+        name="id"
+        value="{{ first_variant.id }}"
+        class="selected-variant-id">
       <input type="hidden" name="quantity" value="1">
-      
-      <button type="submit" name="add" class="quick-add-btn {% unless product.available %}disabled{% endunless %}" 
-              {% unless product.available %}disabled{% endunless %}>
-        {% if product.available %}ADD TO BAG{% else %}UNAVAILABLE{% endif %}
+      <button
+        type="submit"
+        name="add"
+        class="quick-add-btn{% unless card_available %} is-disabled{% endunless %}"
+        {% unless card_available %}disabled aria-disabled="true"{% endunless %}
+        aria-label="Add {{ product.title | escape }} to cart">
+        {%- if card_available -%}Add to Cart{%- else -%}Sold Out{%- endif -%}
       </button>
-    {% endform %}
+    {%- endform -%}
+
   </div>
 
-  {% comment %} 2. INFO AREA {% endcomment %}
-  <div class="product-info" style="padding: 10px 0; position: relative; z-index: 10;">
+  {%- comment -%} ── PRODUCT INFO ── {%- endcomment -%}
+  <div class="product-card__info">
     <p class="brand-name">{{ product.vendor }}</p>
-    <h3 class="product-title" style="margin: 5px 0;">
-      <a href="{{ product.url }}" style="text-decoration: none; color: inherit;">{{ product.title }}</a>
+
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
     </h3>
-    
-    <p class="product-price">
-      {{ product.price | money }}
-    </p>
 
-    {% comment %} === DROPDOWN VARIANT SELECTOR === {% endcomment %}
-   {% if product.variants.size > 1 %}
-  <details class="grid-variant-disclosure" style="position: relative; margin-top: 10px;">
-    <summary style="list-style: none; padding: 8px; font-size: 11px; border: 1px solid #800000; background: #fff; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-transform: uppercase;">
-      <span id="label-{{ product.id }}" class="current-variant-name">Select Option</span>
-      <span>▼</span>
-    </summary>
-
-    <div class="grid-variant-dropdown" style="position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border: 1px solid #800000; border-top: none; z-index: 1000; box-shadow: 0 5px 10px #800000;">
-      <ul style="list-style: none; padding: 0; margin: 0; max-height: 150px; overflow-y: auto;">
-        {% for variant in product.variants %}
-          <li style="border-bottom: 1px solid #eee;">
-            <button type="button" 
-                    class="grid-variant-option" 
-                    data-variant-id="{{ variant.id }}" 
-                    data-variant-price="{{ variant.price | money }}"
-                    data-parent-label="label-{{ product.id }}"
-                    data-title="{{ variant.title }}"
-                    style="width: 100%; border: none; background: none; padding: 10px; cursor: pointer; display: flex; justify-content: space-between; font-size: 11px; text-align: left;">
-              <span>{{ variant.title }}</span>
-              <span style="color: #666;">{{ variant.price | money }}</span>
-            </button>
-          </li>
-        {% endfor %}
-      </ul>
+    <div class="product-card__price-row">
+      <span class="product-card__price">
+        {{ first_variant.price | money }}
+      </span>
+      {%- if first_variant.compare_at_price > first_variant.price -%}
+        <span class="product-card__compare-price">
+          {{ first_variant.compare_at_price | money }}
+        </span>
+      {%- endif -%}
     </div>
-  </details>
-{% endif %}
+
+    {%- comment -%} ── VARIANT DROPDOWN (multi-variant products only) ── {%- endcomment -%}
+    {%- if product.variants.size > 1 -%}
+      <details class="grid-variant-disclosure" id="disclosure-{{ product.id }}">
+        <summary
+          class="grid-variant-summary"
+          aria-label="Select variant for {{ product.title | escape }}">
+          <span class="grid-variant-summary__label" id="label-{{ product.id }}">Select option</span>
+          <svg class="grid-variant-summary__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </summary>
+
+        <div class="grid-variant-dropdown" role="listbox" aria-label="Variants for {{ product.title | escape }}">
+          {%- for variant in product.variants -%}
+            <button
+              type="button"
+              class="grid-variant-option{% unless variant.available %} is-unavailable{% endunless %}"
+              role="option"
+              data-variant-id="{{ variant.id }}"
+              data-variant-price="{{ variant.price | money }}"
+              data-variant-available="{{ variant.available }}"
+              data-variant-image="{{ variant.featured_image | image_url: width: 600 }}"
+              data-parent-label="label-{{ product.id }}"
+              data-title="{{ variant.title | escape }}"
+              onclick="window.selectGridVariant(this)"
+              aria-label="{{ variant.title }}{% unless variant.available %} — sold out{% endunless %}">
+              <span class="grid-variant-option__title">{{ variant.title }}</span>
+              <span class="grid-variant-option__price">{{ variant.price | money }}</span>
+              {%- unless variant.available -%}
+                <span class="grid-variant-option__sold-out">Sold out</span>
+              {%- endunless -%}
+            </button>
+          {%- endfor -%}
+        </div>
+      </details>
+    {%- endif -%}
+
   </div>
 </div>
 
+
 <style>
-  /* 1. Ensure the card being interacted with jumps to the front */
+  /* ─── CARD WRAPPER ─── */
   .studio-product-card {
     position: relative;
     transition: z-index 0s;
@@ -81,37 +132,105 @@
 
   .studio-product-card:hover,
   .studio-product-card:focus-within {
-    z-index: 100 !important; /* Forces this card above all other products in the grid */
+    z-index: var(--z-raised);
   }
 
+  /* ─── IMAGE FRAME ─── */
+  /* image-frame base styles live in critical.css */
+  /* Only card-specific overrides here */
+
+  .product-card__image-link {
+    display: block;
+    height: 100%;
+  }
+
+  /* ─── QUICK ADD FORM ─── */
   .product-card-form {
     position: absolute;
-    bottom: -60px;
+    bottom: 0;
     left: 0;
     width: 100%;
-    transition: bottom 0.3s ease;
-    z-index: 5;
+    z-index: var(--z-raised);
+    transform: translateY(100%);
+    transition: transform 0.28s cubic-bezier(0.165, 0.84, 0.44, 1);
   }
 
-  .studio-product-card:hover .product-card-form {
-    bottom: 0;
+  .studio-product-card:hover .product-card-form,
+  .studio-product-card:focus-within .product-card-form {
+    transform: translateY(0);
   }
 
-  .quick-add-btn {
+  /* Override quick-add-btn base from critical.css for card context */
+  .product-card-form .quick-add-btn {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    opacity: 1;
     width: 100%;
-    background: #800000;
-    color: #fff;
-    border: none;
-    padding: 12px;
-    font-size: 11px;
-    cursor: pointer;
-    font-weight: bold;
+    border-radius: 0;
+    padding: 11px;
+    font-size: 10px;
   }
 
-  /* 2. Dropdown specific layering */
+  .product-card-form .quick-add-btn.is-disabled {
+    background: var(--color-surface);
+    color: var(--text-muted);
+    cursor: not-allowed;
+  }
+
+  /* ─── PRICE ROW ─── */
+  .product-card__price-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .product-card__compare-price {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  /* ─── VARIANT DROPDOWN ─── */
   .grid-variant-disclosure {
     position: relative;
-    z-index: 101; /* Higher than the Add to Bag button */
+    margin-top: var(--space-xs);
+    z-index: var(--z-raised);
+  }
+
+  .grid-variant-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px var(--space-xs);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-maroon);
+    border: var(--border-maroon);
+    cursor: pointer;
+    list-style: none;
+    transition: var(--transition-fast);
+  }
+
+  .grid-variant-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .grid-variant-summary:hover {
+    background: var(--color-maroon-ghost);
+  }
+
+  .grid-variant-summary__chevron {
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .grid-variant-disclosure[open] .grid-variant-summary__chevron {
+    transform: rotate(180deg);
   }
 
   .grid-variant-dropdown {
@@ -119,26 +238,81 @@
     top: 100%;
     left: 0;
     width: 100%;
-    background: #fff;
-    border: 1px solid #800000;
+    background: var(--color-white);
+    border: var(--border-maroon);
     border-top: none;
-    z-index: 1000; 
-    box-shadow: 0 10px 20px #800000;
+    z-index: calc(var(--z-overlay) + 1);
+    box-shadow: 0 8px 24px rgba(26, 10, 10, 0.12);
+    max-height: 180px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-maroon) var(--color-surface);
   }
 
   .grid-variant-option {
-    position: relative;
-    z-index: 1001;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-xs);
+    width: 100%;
+    padding: 9px var(--space-xs);
+    font-size: 11px;
+    color: var(--text-primary);
+    background: none;
+    border: none;
+    border-bottom: var(--border-light);
+    cursor: pointer;
+    text-align: left;
+    transition: var(--transition-fast);
+  }
+
+  .grid-variant-option:last-child {
+    border-bottom: none;
   }
 
   .grid-variant-option:hover {
-    background: #f4f4f4;
+    background: var(--color-off-white);
   }
 
+  .grid-variant-option.is-unavailable {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .grid-variant-option__title {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .grid-variant-option__price {
+    color: var(--text-muted);
+    font-size: 10px;
+    flex-shrink: 0;
+  }
+
+  .grid-variant-option__sold-out {
+    font-size: 9px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* ─── MOBILE: Quick add always visible ─── */
   @media screen and (max-width: 749px) {
-    /* Ensure the dropdown doesn't get cut by overflow on mobile */
-    .studio-product-card {
-      overflow: visible !important;
+    .product-card-form {
+      position: relative;
+      transform: none;
+      margin-top: var(--space-xs);
+    }
+
+    .studio-product-card:hover .product-card-form,
+    .studio-product-card:focus-within .product-card-form {
+      transform: none;
+    }
+
+    .product-card-form .quick-add-btn {
+      border-radius: var(--radius-xs);
     }
   }
 </style>

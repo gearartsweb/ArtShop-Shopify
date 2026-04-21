@@ -1,86 +1,311 @@
-<div class="featured-showcase" style="padding: 60px 0; background: #fff; overflow: hidden;">
+<section class="featured-showcase">
   <div class="page-width">
-    
-    <div class="section-header" style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 30px; padding: 0 20px;">
-      <div>
-        <h2 style="font-size: 24px; letter-spacing: 1px; margin: 0; text-transform: uppercase;">{{ section.settings.title }}</h2>
-        <p style="color: #666; margin: 5px 0 0 0;">{{ section.settings.subtitle }}</p>
+
+    {%- comment -%} ── SECTION HEADER ── {%- endcomment -%}
+    <div class="section-header">
+      <div class="showcase-header-text">
+        <span class="eyebrow">{{ section.settings.subtitle | default: 'Curated Selection' }}</span>
+        <h2 class="section-title">{{ section.settings.title | default: 'Best Sellers' }}</h2>
       </div>
-      <div class="carousel-nav" style="display: flex; gap: 10px;">
-        <button class="nav-btn prev" onclick="scrollShowcase(this, -1)" aria-label="Previous">❮</button>
-        <button class="nav-btn next" onclick="scrollShowcase(this, 1)" aria-label="Next">❯</button>
+      <div class="showcase-nav" aria-label="Carousel controls">
+        <button
+          class="showcase-nav__btn"
+          id="showcase-prev"
+          aria-label="Previous products"
+          onclick="TheArtShop.scrollShowcase(-1)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </button>
+        <button
+          class="showcase-nav__btn"
+          id="showcase-next"
+          aria-label="Next products"
+          onclick="TheArtShop.scrollShowcase(1)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
       </div>
     </div>
 
-    <div class="showcase-carousel-wrapper" style="position: relative;">
-      <div class="showcase-slider">
-        {%- assign collection = collections[section.settings.collection] -%}
-        {% for product in collection.products limit: section.settings.products_to_show %}
-          <div class="showcase-item">
+  </div>
+
+  {%- comment -%} ── CAROUSEL (full bleed so cards bleed to edge) ── {%- endcomment -%}
+  <div class="showcase-carousel-wrapper">
+    <div class="showcase-slider" id="showcase-slider" role="list">
+
+      {%- assign showcase_collection = collections[section.settings.collection] -%}
+
+      {%- if showcase_collection != blank and showcase_collection.products.size > 0 -%}
+        {% for product in showcase_collection.products limit: section.settings.products_to_show %}
+          <div class="showcase-item" role="listitem">
             {% render 'product-card', product: product %}
           </div>
-        {% else %}
-          {% for i in (1..4) %}
-            <div class="showcase-item">
-              <div style="background: #f3f3f3; height: 300px; display: flex; align-items: center; justify-content: center;">Product {{ i }} Placeholder</div>
-            </div>
-          {% endfor %}
         {% endfor %}
-      </div>
+
+      {%- else -%}
+        {%- comment -%} Branded placeholders — never show generic grey boxes {%- endcomment -%}
+        {% assign placeholder_titles = "Williamsburg Oil Colours,Arches Watercolour Block,Da Vinci Kolinsky Sable,Gamblin Artist Oils" | split: "," %}
+        {% assign placeholder_brands = "Williamsburg,Arches,Da Vinci,Gamblin" | split: "," %}
+        {% assign placeholder_prices = "R580,R420,R310,R495" | split: "," %}
+        {% assign placeholder_grades = "Artist Grade,Studio Grade,Artist Grade,Artist Grade" | split: "," %}
+
+        {% for i in (1..4) %}
+          <div class="showcase-item" role="listitem">
+            <div class="studio-product-card showcase-placeholder">
+              <div class="image-frame">
+                <div class="showcase-placeholder__grade">{{ placeholder_grades[forloop.index0] }}</div>
+                {{ 'product-' | append: forloop.index | placeholder_svg_tag: 'grid-img placeholder-svg' }}
+              </div>
+              <div class="product-card__info">
+                <p class="brand-name">{{ placeholder_brands[forloop.index0] }}</p>
+                <p class="product-card__title">{{ placeholder_titles[forloop.index0] }}</p>
+                <p class="product-card__price">{{ placeholder_prices[forloop.index0] }}</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+      {%- endif -%}
+
     </div>
+
+    {%- comment -%} ── FADE EDGES ── {%- endcomment -%}
+    <div class="showcase-fade showcase-fade--left"  aria-hidden="true"></div>
+    <div class="showcase-fade showcase-fade--right" aria-hidden="true"></div>
   </div>
-</div>
+
+  {%- comment -%} ── PROGRESS DOTS ── {%- endcomment -%}
+  <div class="showcase-dots page-width" id="showcase-dots" aria-hidden="true"></div>
+
+</section>
 
 <style>
-  .showcase-slider {
+  .featured-showcase {
+    padding: var(--space-2xl) 0 var(--space-xl);
+    background: var(--color-off-white);
+    border-top: var(--border-default);
+    overflow: hidden;
+  }
+
+  /* ─── HEADER ─── */
+  .showcase-header-text .eyebrow {
+    margin-bottom: var(--space-2xs);
+  }
+
+  .showcase-header-text .section-title {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  /* ─── NAV BUTTONS ─── */
+  .showcase-nav {
     display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
-    scrollbar-width: none; /* Hide scrollbar Firefox */
-    padding: 10px 20px 30px;
-    margin: 0 -20px;
-  }
-  .showcase-slider::-webkit-scrollbar { display: none; } /* Hide scrollbar Chrome/Safari */
-
-  .showcase-item {
-    flex: 0 0 280px; /* Width of each card */
-    scroll-snap-align: start;
+    gap: var(--space-xs);
   }
 
-  .nav-btn {
-    background: #fff;
-    border: 1px solid #ddd;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    transition: all 0.2s;
+  .showcase-nav__btn {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: var(--color-white);
+    border: var(--border-default);
+    border-radius: var(--radius-xs);
+    color: var(--text-secondary);
+    transition: var(--transition-fast);
+    cursor: pointer;
   }
-  .nav-btn:hover { background: #800000; color: #fff; border-color: #800000; }
+
+  .showcase-nav__btn:hover {
+    background: var(--color-maroon);
+    border-color: var(--color-maroon);
+    color: var(--color-white);
+  }
+
+  .showcase-nav__btn:disabled {
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  /* ─── CAROUSEL WRAPPER ─── */
+  .showcase-carousel-wrapper {
+    position: relative;
+    margin-top: var(--space-lg);
+  }
+
+  .showcase-slider {
+    display: flex;
+    gap: var(--space-md);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    padding: var(--space-xs) var(--space-lg) var(--space-md);
+    /* Left padding aligns with .page-width */
+  }
+
+  .showcase-slider::-webkit-scrollbar {
+    display: none;
+  }
+
+  .showcase-item {
+    flex: 0 0 260px;
+    scroll-snap-align: start;
+  }
+
+  /* ─── FADE EDGES ─── */
+  .showcase-fade {
+    position: absolute;
+    top: 0;
+    bottom: var(--space-md);
+    width: 80px;
+    pointer-events: none;
+    z-index: var(--z-raised);
+  }
+
+  .showcase-fade--left {
+    left: 0;
+    background: linear-gradient(to right, var(--color-off-white), transparent);
+  }
+
+  .showcase-fade--right {
+    right: 0;
+    background: linear-gradient(to left, var(--color-off-white), transparent);
+  }
+
+  /* ─── PROGRESS DOTS ─── */
+  .showcase-dots {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    margin-top: var(--space-md);
+  }
+
+  .showcase-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: var(--radius-full);
+    background: rgba(26, 10, 10, 0.15);
+    transition: var(--transition-fast);
+    cursor: pointer;
+    border: none;
+  }
+
+  .showcase-dot.is-active {
+    background: var(--color-maroon);
+    width: 20px;
+  }
+
+  /* ─── PLACEHOLDER CARDS ─── */
+  .showcase-placeholder__grade {
+    position: absolute;
+    top: var(--space-xs);
+    left: var(--space-xs);
+    background: var(--color-black);
+    color: var(--color-white);
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: var(--radius-xs);
+    z-index: var(--z-raised);
+  }
+
+  .showcase-placeholder .placeholder-svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media screen and (max-width: 990px) {
+    .showcase-item {
+      flex: 0 0 220px;
+    }
+  }
 
   @media screen and (max-width: 749px) {
-    .showcase-item {
-      flex: 0 0 75vw; /* Show one and a bit more on mobile */
+    .featured-showcase {
+      padding: var(--space-xl) 0 var(--space-lg);
     }
-    .carousel-nav { display: none !important; } /* Use thumb-swiping on mobile */
+
+    .showcase-item {
+      flex: 0 0 72vw;
+    }
+
+    .showcase-nav {
+      display: none; /* Thumb-swipe on mobile */
+    }
+
+    .showcase-fade {
+      width: 40px;
+    }
   }
 </style>
 
 <script>
-  function scrollShowcase(btn, direction) {
-    const slider = btn.closest('.featured-showcase').querySelector('.showcase-slider');
-    const scrollAmount = slider.clientWidth * 0.8;
-    slider.scrollBy({ left: scrollAmount * direction, behavior: 'smooth' });
-  }
+  TheArtShop = window.TheArtShop || {};
+
+  (function() {
+    var slider    = document.getElementById('showcase-slider');
+    var dotsWrap  = document.getElementById('showcase-dots');
+    var prevBtn   = document.getElementById('showcase-prev');
+    var nextBtn   = document.getElementById('showcase-next');
+
+    if (!slider) return;
+
+    var items     = slider.querySelectorAll('.showcase-item');
+    var itemCount = items.length;
+
+    // ── BUILD DOTS ──
+    items.forEach(function(_, i) {
+      var dot = document.createElement('button');
+      dot.className = 'showcase-dot' + (i === 0 ? ' is-active' : '');
+      dot.setAttribute('aria-label', 'Go to product ' + (i + 1));
+      dot.addEventListener('click', function() {
+        items[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+      });
+      dotsWrap.appendChild(dot);
+    });
+
+    var dots = dotsWrap.querySelectorAll('.showcase-dot');
+
+    // ── UPDATE ACTIVE DOT & BUTTON STATES ──
+    function updateState() {
+      var scrollLeft  = slider.scrollLeft;
+      var itemWidth   = items[0] ? items[0].offsetWidth + 20 : 280; // 20 = gap
+      var activeIndex = Math.round(scrollLeft / itemWidth);
+
+      dots.forEach(function(d, i) {
+        d.classList.toggle('is-active', i === activeIndex);
+      });
+
+      if (prevBtn) prevBtn.disabled = scrollLeft <= 4;
+      if (nextBtn) nextBtn.disabled = scrollLeft >= slider.scrollWidth - slider.clientWidth - 4;
+    }
+
+    slider.addEventListener('scroll', updateState, { passive: true });
+    updateState();
+
+    // ── SCROLL BY BUTTON ──
+    TheArtShop.scrollShowcase = function(direction) {
+      var itemWidth = items[0] ? items[0].offsetWidth + 20 : 280;
+      slider.scrollBy({ left: itemWidth * direction, behavior: 'smooth' });
+    };
+  })();
 </script>
 
 {% schema %}
 {
   "name": "Featured Carousel",
+  "tag": "section",
   "settings": [
     {
       "type": "text",
@@ -91,22 +316,22 @@
     {
       "type": "text",
       "id": "subtitle",
-      "label": "Subheading",
-      "default": "Across all categories"
+      "label": "Eyebrow label",
+      "default": "Curated Selection"
     },
     {
       "type": "collection",
       "id": "collection",
-      "label": "Collection"
+      "label": "Collection to display"
     },
     {
       "type": "range",
       "id": "products_to_show",
       "min": 4,
       "max": 16,
-      "step": 4,
+      "step": 2,
       "default": 8,
-      "label": "Total products"
+      "label": "Number of products"
     }
   ],
   "presets": [

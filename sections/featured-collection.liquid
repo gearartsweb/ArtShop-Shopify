@@ -1,76 +1,448 @@
-<section class="featured-collection-area page-width">
-  <div class="section-header">
-    <h2 class="h2">{{ section.settings.title | default: "Studio Essentials" }}</h2>
-  </div>
+<section class="featured-collection-section">
+  <div class="page-width">
 
-  <div class="boutique-zigzag-container">
-    {% for product in collections.all.products limit: 4 %}
-      {%- comment -%} Determine if row is odd or even for the zig-zag flip {%- endcomment -%}
-      {% assign remainder = forloop.index | modulo: 2 %}
-      
-      <div class="zigzag-row {% if remainder == 0 %}is-reversed{% endif %}">
-        
-        <div class="zigzag-image">
-          <a href="{{ product.url }}">
-            {% if product.featured_image %}
-              <img 
-                src="{{ product.featured_image | image_url: width: 1000 }}" 
-                alt="{{ product.title }}" 
-                loading="lazy"
-                class="gallery-image"
-                width="{{ product.featured_image.width }}"
-                height="{{ product.featured_image.height }}"
-              >
-            {% else %}
-              {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
-            {% endif %}
-          </a>
-        </div>
-        
-        <div class="zigzag-text">
-  <span class="product-vendor">{{ product.vendor }}</span>
-  <h3 class="product-card-title">{{ product.title }}</h3>
-  
-  <div class="product-description">
-    {{ product.description | strip_html | truncatewords: 30 }}
-  </div>
-  
-  <div class="product-meta">
-    <span class="product-card-price">{{ product.price | money }}</span>
-    
-    <div class="quick-add-container">
-      <form action="{{ routes.cart_add_url }}" method="post" class="quick-add-form" enctype="multipart/form-data">
-        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-        <button type="submit" class="quick-add-btn">+ ADD TO CART</button>
-      </form>
-      
-      {%- comment -%} This is the ONLY link we keep {%- endcomment -%}
-      <a href="{{ product.url }}" class="view-details-link">VIEW DETAILS</a>
+    {%- comment -%} ── SECTION HEADER ── {%- endcomment -%}
+    <div class="section-header">
+      <div>
+        <span class="eyebrow">{{ section.settings.eyebrow | default: 'Hand Picked' }}</span>
+        <h2 class="section-title">{{ section.settings.title | default: 'Studio Essentials' }}</h2>
+      </div>
+      <a href="{{ section.settings.view_all_link | default: '/collections/all' }}" class="section-link">
+        View all →
+      </a>
     </div>
 
-    {%- comment -%} 
-      IF YOU SEE ANOTHER "VIEW PRODUCT" OR "VIEW DETAILS" LINK DOWN HERE, 
-      DELETE IT ENTIRELY.
-    {%- endcomment -%}
-  </div>
-</div>
+    {%- comment -%} ── ZIGZAG ROWS ── {%- endcomment -%}
+    <div class="zigzag-container">
 
-      </div>
-    {% else %}
-      <p class="no-products">No products found in the collection.</p>
-    {% endfor %}
+      {%- assign fc_collection = collections[section.settings.collection] -%}
+      {%- assign fc_products = fc_collection.products -%}
+
+      {%- if fc_collection != blank and fc_products.size > 0 -%}
+
+        {% for product in fc_products limit: section.settings.products_to_show %}
+          {%- assign is_reversed = forloop.index | modulo: 2 -%}
+          {%- assign first_variant = product.selected_or_first_available_variant -%}
+
+          <div class="zigzag-row{% if is_reversed == 0 %} is-reversed{% endif %} reveal-on-scroll">
+
+            {%- comment -%} IMAGE SIDE {%- endcomment -%}
+            <div class="zigzag-image">
+              <a href="{{ product.url }}" class="zigzag-image__link" aria-label="View {{ product.title }}">
+                {%- if product.featured_image != blank -%}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 1000 }}"
+                    alt="{{ product.featured_image.alt | default: product.title }}"
+                    loading="lazy"
+                    width="{{ product.featured_image.width }}"
+                    height="{{ product.featured_image.height }}"
+                    class="zigzag-image__img">
+                {%- else -%}
+                  {{ 'product-1' | placeholder_svg_tag: 'zigzag-image__img zigzag-placeholder' }}
+                {%- endif -%}
+              </a>
+
+              {%- comment -%} GRADE BADGE — driven by product tag {%- endcomment -%}
+              {%- if product.tags contains 'Artist Grade' -%}
+                <span class="zigzag-badge zigzag-badge--dark">Artist Grade</span>
+              {%- elsif product.tags contains 'Studio Grade' -%}
+                <span class="zigzag-badge zigzag-badge--maroon">Studio Grade</span>
+              {%- elsif product.tags contains 'New In' -%}
+                <span class="zigzag-badge zigzag-badge--maroon">New In</span>
+              {%- endif -%}
+            </div>
+
+            {%- comment -%} TEXT SIDE {%- endcomment -%}
+            <div class="zigzag-text">
+              <span class="zigzag-vendor">{{ product.vendor }}</span>
+              <h3 class="zigzag-title">{{ product.title }}</h3>
+
+              {%- if product.description != blank -%}
+                <div class="zigzag-description">
+                  {{ product.description | strip_html | truncatewords: 35 }}
+                </div>
+              {%- endif -%}
+
+              <div class="zigzag-meta">
+                <span class="zigzag-price">
+                  {{ first_variant.price | money }}
+                </span>
+                {%- if first_variant.compare_at_price > first_variant.price -%}
+                  <span class="zigzag-price--compare">
+                    {{ first_variant.compare_at_price | money }}
+                  </span>
+                {%- endif -%}
+              </div>
+
+              <div class="zigzag-actions">
+                {%- if first_variant.available -%}
+                  <form
+                    action="{{ routes.cart_add_url }}"
+                    method="post"
+                    class="zigzag-add-form"
+                    enctype="multipart/form-data"
+                    data-product-id="{{ product.id }}">
+                    <input type="hidden" name="id" value="{{ first_variant.id }}">
+                    <input type="hidden" name="quantity" value="1">
+                    <button
+                      type="submit"
+                      class="btn btn--primary zigzag-add-btn"
+                      data-adding-text="Adding..."
+                      data-added-text="Added">
+                      Add to Cart
+                    </button>
+                  </form>
+                {%- else -%}
+                  <button class="btn btn--secondary" disabled aria-disabled="true">
+                    Out of Stock
+                  </button>
+                {%- endif -%}
+
+                <a href="{{ product.url }}" class="zigzag-details-link">
+                  View details
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              </div>
+            </div>
+
+          </div>
+        {% endfor %}
+
+      {%- else -%}
+
+        {%- comment -%} Branded placeholders — never show empty state {%- endcomment -%}
+        {% assign ph_titles   = "Williamsburg Handmade Oil Colours,Arches Cold Press Watercolour Block,Da Vinci Kolinsky Sable Rounds,Gamblin Artist Grade Oils" | split: "," %}
+        {% assign ph_vendors  = "Williamsburg,Arches,Da Vinci,Gamblin" | split: "," %}
+        {% assign ph_prices   = "R580,R420,R310,R495" | split: "," %}
+        {% assign ph_desc     = "Handmade in small batches with the highest-quality pigments. Exceptional colour strength and buttery consistency for the professional painter.,Cold-pressed surface with 300gsm weight. Ideal for wet-on-wet techniques and layered washes. Preferred by watercolourists worldwide.,Pure Kolinsky sable hair for superior spring and point retention. The benchmark brush for oil and watercolour painters.,Artist-grade oil paint formulated for maximum pigment concentration and consistent drying time across all colours." | split: "," %}
+
+        {% for i in (1..4) %}
+          {%- assign is_reversed = i | modulo: 2 -%}
+          <div class="zigzag-row{% if is_reversed == 0 %} is-reversed{% endif %} reveal-on-scroll">
+            <div class="zigzag-image">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'zigzag-image__img zigzag-placeholder' }}
+              <span class="zigzag-badge zigzag-badge--dark">Artist Grade</span>
+            </div>
+            <div class="zigzag-text">
+              <span class="zigzag-vendor">{{ ph_vendors[forloop.index0] }}</span>
+              <h3 class="zigzag-title">{{ ph_titles[forloop.index0] }}</h3>
+              <div class="zigzag-description">{{ ph_desc[forloop.index0] }}</div>
+              <div class="zigzag-meta">
+                <span class="zigzag-price">{{ ph_prices[forloop.index0] }}</span>
+              </div>
+              <div class="zigzag-actions">
+                <button class="btn btn--primary zigzag-add-btn" disabled>Add to Cart</button>
+                <span class="zigzag-details-link" style="opacity:0.4; cursor:default;">View details</span>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+
+      {%- endif -%}
+
+    </div>
   </div>
 </section>
+
+
+<style>
+  /* ─── SECTION ─── */
+  .featured-collection-section {
+    padding: var(--space-2xl) 0;
+    border-top: var(--border-default);
+  }
+
+  /* ─── ZIGZAG CONTAINER ─── */
+  .zigzag-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xl);
+    margin-top: var(--space-lg);
+  }
+
+  /* ─── ROW ─── */
+  .zigzag-row {
+    display: grid;
+    grid-template-columns: 55% 1fr;
+    gap: var(--space-xl);
+    align-items: center;
+  }
+
+  .zigzag-row.is-reversed {
+    grid-template-columns: 1fr 55%;
+  }
+
+  .zigzag-row.is-reversed .zigzag-image {
+    order: 2;
+  }
+
+  .zigzag-row.is-reversed .zigzag-text {
+    order: 1;
+  }
+
+  /* ─── IMAGE SIDE ─── */
+  .zigzag-image {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .zigzag-image__link {
+    display: block;
+    overflow: hidden;
+  }
+
+  .zigzag-image__img,
+  .zigzag-placeholder {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .zigzag-image__link:hover .zigzag-image__img {
+    transform: scale(1.03);
+  }
+
+  /* Grade badge */
+  .zigzag-badge {
+    position: absolute;
+    top: var(--space-sm);
+    left: var(--space-sm);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-xs);
+    pointer-events: none;
+  }
+
+  .zigzag-badge--dark {
+    background: var(--color-black);
+    color: var(--color-white);
+  }
+
+  .zigzag-badge--maroon {
+    background: var(--color-maroon);
+    color: var(--color-white);
+  }
+
+  .is-reversed .zigzag-badge {
+    left: auto;
+    right: var(--space-sm);
+  }
+
+  /* ─── TEXT SIDE ─── */
+  .zigzag-vendor {
+    display: block;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .zigzag-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.4rem, 2.5vw, 2rem);
+    font-weight: 500;
+    line-height: var(--leading-snug);
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+  }
+
+  .zigzag-description {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-md);
+    max-width: 420px;
+  }
+
+  .zigzag-meta {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: var(--border-light);
+  }
+
+  .zigzag-price {
+    font-family: var(--font-serif);
+    font-size: var(--text-xl);
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+
+  .zigzag-price--compare {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  .zigzag-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .zigzag-details-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    color: var(--text-secondary);
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: var(--transition-fast);
+  }
+
+  .zigzag-details-link:hover {
+    color: var(--color-maroon);
+    border-bottom-color: var(--color-maroon);
+  }
+
+  /* ─── AJAX FEEDBACK ─── */
+  .zigzag-add-btn.is-adding {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .zigzag-add-btn.is-added {
+    background: var(--color-black);
+    border-color: var(--color-black);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media screen and (max-width: 990px) {
+    .zigzag-row,
+    .zigzag-row.is-reversed {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+    }
+
+    .zigzag-row.is-reversed .zigzag-image { order: 0; }
+    .zigzag-row.is-reversed .zigzag-text  { order: 0; }
+    .is-reversed .zigzag-badge            { left: var(--space-sm); right: auto; }
+
+    .zigzag-description {
+      max-width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .featured-collection-section {
+      padding: var(--space-xl) 0;
+    }
+
+    .zigzag-container {
+      gap: var(--space-xl);
+    }
+
+    .zigzag-actions {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .zigzag-add-btn {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>
+
+
+<script>
+  /**
+   * AJAX add-to-cart for zigzag rows.
+   * Falls back to standard form submit on error.
+   */
+  document.querySelectorAll('.zigzag-add-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      var btn       = form.querySelector('.zigzag-add-btn');
+      var variantId = form.querySelector('[name="id"]').value;
+
+      btn.classList.add('is-adding');
+      btn.textContent = 'Adding...';
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: variantId, quantity: 1 })
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Cart add failed');
+        return res.json();
+      })
+      .then(function() {
+        btn.classList.remove('is-adding');
+        btn.classList.add('is-added');
+        btn.textContent = 'Added ✓';
+
+        if (typeof TheArtShop !== 'undefined' && TheArtShop.updateCartCount) {
+          TheArtShop.updateCartCount();
+        }
+
+        setTimeout(function() {
+          btn.classList.remove('is-added');
+          btn.textContent = 'Add to Cart';
+        }, 2500);
+      })
+      .catch(function() {
+        /* Fallback: let the form submit normally */
+        btn.classList.remove('is-adding');
+        form.submit();
+      });
+    });
+  });
+</script>
+
 
 {% schema %}
 {
   "name": "Featured Collection",
+  "tag": "section",
   "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow label",
+      "default": "Hand Picked"
+    },
     {
       "type": "text",
       "id": "title",
       "label": "Heading",
       "default": "Studio Essentials"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection to display"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4,
+      "label": "Number of products"
+    },
+    {
+      "type": "url",
+      "id": "view_all_link",
+      "label": "View all link"
     }
   ],
   "presets": [
