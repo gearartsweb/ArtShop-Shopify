@@ -1,11 +1,15 @@
 {% style %}
-  {% # Loads all font variantions with display: swap %}
+  {% comment %} Load all font variations with display: swap {% endcomment %}
   {{ settings.type_primary_font | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+
   :root {
+
+    /* ─── SHOPIFY SETTINGS PASSTHROUGH ─── */
     --font-primary--family: {{ settings.type_primary_font.family }}, {{ settings.type_primary_font.fallback_families }};
     --font-primary--style: {{ settings.type_primary_font.style }};
     --font-primary--weight: {{ settings.type_primary_font.weight }};
@@ -14,5 +18,109 @@
     --color-background: {{ settings.background_color }};
     --color-foreground: {{ settings.foreground_color }};
     --style-border-radius-inputs: {{ settings.input_corner_radius }}px;
+
+    /* ─── BRAND COLOURS ─── */
+    --color-black:          #1a0a0a;
+    --color-black-soft:     #2a1515;
+    --color-maroon:         #8B1A2E;
+    --color-maroon-deep:    #5C1020;
+    --color-maroon-light:   #C0253F;
+    --color-maroon-ghost:   rgba(139, 26, 46, 0.10);
+    --color-maroon-border:  rgba(139, 26, 46, 0.35);
+    --color-white:          #FFFFFF;
+    --color-off-white:      #F9F6F4;
+    --color-surface:        #F4F0EE;
+
+    /* ─── TEXT COLOURS ─── */
+    --text-primary:         #1a0a0a;
+    --text-secondary:       #5a4a4a;
+    --text-muted:           #9a8a8a;
+    --text-on-dark:         rgba(255, 255, 255, 0.88);
+    --text-on-dark-muted:   rgba(255, 255, 255, 0.45);
+    --text-on-dark-faint:   rgba(255, 255, 255, 0.25);
+    --text-accent:          #8B1A2E;
+
+    /* ─── TYPOGRAPHY ─── */
+    --font-serif:           'Playfair Display', Georgia, serif;
+    --font-sans:            'Inter', var(--font-primary--family), system-ui, sans-serif;
+    --font-mono:            'Courier New', monospace;
+
+    /* ─── TYPE SCALE ─── */
+    --text-xs:              10px;
+    --text-sm:              12px;
+    --text-base:            15px;
+    --text-md:              17px;
+    --text-lg:              20px;
+    --text-xl:              26px;
+    --text-2xl:             34px;
+    --text-3xl:             44px;
+    --text-4xl:             58px;
+
+    /* ─── LETTER SPACING ─── */
+    --tracking-tight:       -0.01em;
+    --tracking-normal:      0em;
+    --tracking-wide:        0.06em;
+    --tracking-wider:       0.12em;
+    --tracking-widest:      0.20em;
+
+    /* ─── LINE HEIGHT ─── */
+    --leading-tight:        1.15;
+    --leading-snug:         1.35;
+    --leading-normal:       1.6;
+    --leading-relaxed:      1.75;
+
+    /* ─── SPACING SCALE ─── */
+    --space-2xs:            4px;
+    --space-xs:             8px;
+    --space-sm:             16px;
+    --space-md:             24px;
+    --space-lg:             40px;
+    --space-xl:             64px;
+    --space-2xl:            96px;
+    --space-3xl:            128px;
+
+    /* ─── BORDERS ─── */
+    --radius-xs:            2px;
+    --radius-sm:            4px;
+    --radius-md:            8px;
+    --radius-lg:            14px;
+    --radius-full:          9999px;
+
+    --border-light:         0.5px solid rgba(26, 10, 10, 0.10);
+    --border-default:       0.5px solid rgba(26, 10, 10, 0.18);
+    --border-strong:        0.5px solid rgba(26, 10, 10, 0.35);
+    --border-on-dark:       0.5px solid rgba(255, 255, 255, 0.12);
+    --border-on-dark-strong:0.5px solid rgba(255, 255, 255, 0.25);
+    --border-maroon:        0.5px solid var(--color-maroon-border);
+
+    /* ─── TRANSITIONS ─── */
+    --transition-fast:      all 0.15s ease;
+    --transition:           all 0.22s ease;
+    --transition-slow:      all 0.38s ease;
+
+    /* ─── LAYOUT ─── */
+    --max-width:            1280px;
+    --section-padding-y:    var(--space-xl);
+    --section-padding-x:    var(--space-lg);
+
+    /* ─── Z-INDEX SCALE ─── */
+    --z-base:               1;
+    --z-raised:             10;
+    --z-overlay:            100;
+    --z-drawer:             200;
+    --z-modal:              300;
+    --z-toast:              400;
   }
+
+  /* ─── RESPONSIVE OVERRIDES ─── */
+  @media (max-width: 768px) {
+    :root {
+      --text-2xl:           26px;
+      --text-3xl:           32px;
+      --text-4xl:           40px;
+      --section-padding-y:  var(--space-lg);
+      --section-padding-x:  var(--space-sm);
+    }
+  }
+
 {% endstyle %}

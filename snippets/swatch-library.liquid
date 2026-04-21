@@ -6,53 +6,247 @@
 {%- assign color_hex = '#ccc' -%}
 {%- assign name = color_name | strip -%}
 
+ {%- case name -%}
+  {%- comment -%} --- GEORGIAN OIL (GOC) WHITES & BLACKS --- {%- endcomment -%}
+  {%- when 'GOC 38ML ZINC WHITE' or 'Zinc White' -%}{%- assign color_hex = '#F0F8FF' -%}
+  {%- when 'GOC 38ML UNDERPAINTING WHITE' or 'Underpainting White' -%}{%- assign color_hex = '#F5F5F0' -%}
+  {%- when 'GOC 38ML MIXING WHITE' or 'Mixing White' -%}{%- assign color_hex = '#FBFFFF' -%}
+  {%- when 'GOC 38ML TITANIUM WHITE' or 'Titanium White' -%}{%- assign color_hex = '#FFFFFF' -%}
+  {%- when 'GOC 38ML BUFF TITANIUM' or 'Buff Titanium' -%}{%- assign color_hex = '#EBE1C5' -%}
+  {%- when 'GOC 38ML IVORY BLACK' or 'Ivory Black' -%}{%- assign color_hex = '#231F20' -%}
+  {%- when 'GOC 38ML LAMP BLACK' or 'Lamp Black' -%}{%- assign color_hex = '#1C1C1C' -%}
+  
+  {%- comment -%} --- GEORGIAN OIL (GOC) BLUES & GREYS --- {%- endcomment -%}
+  {%- when 'GOC 38ML PAYNES GREY' or 'Paynes Grey' or -%}{%- assign color_hex = '#40404F' -%}
+  {%- when 'GOC 38ML COBALT BLUE' or 'GOC 38ML COBALT BLUE (HUE)' or 'Cobalt Blue' -%}{%- assign color_hex = '#0047AB' -%}
+  {%- when 'GOC 38ML COERULEUM' or 'GOC 38ML COERULEUM (HUE)' or 'Coeruleum' -%}{%- assign color_hex = '#0095B6' -%}
+  {%- when 'GOC 38ML FRENCH ULTRAMARINE' or 'French UltRAMarine' -%}{%- assign color_hex = '#0033AA' -%}
+  {%- when 'GOC 38ML LIGHT BLUE' or 'Light Blue' -%}{%- assign color_hex = '#ADD8E6' -%}
+  {%- when 'GOC 38ML BLUE GREY' or 'Blue Grey' -%}{%- assign color_hex = '#98AFC7' -%}
+  {%- when 'GOC 38ML PRUSSIAN BLUE' or 'Prussian Blue' -%}{%- assign color_hex = '#003153' -%}
+  {%- when 'GOC 38ML PERM BLUE' or 'Perm Blue' -%}{%- assign color_hex = '#1E90FF' -%}
+  {%- when 'GOC 38ML PRIMARY CYAN' or 'Primary Cyan' -%}{%- assign color_hex = '#00B7EB' -%}
+  
+  {%- comment -%} --- GEORGIAN OIL (GOC) EARTHS --- {%- endcomment -%}
+  {%- when 'GOC 38ML BURNT SIENNA' or 'Burnt Sienna' -%}{%- assign color_hex = '#8C4521' -%}
+  {%- when 'GOC 38ML BURNT UMBER' or 'Burnt Umber' -%}{%- assign color_hex = '#4E352E' -%}
+  {%- when 'GOC 38ML RAW UMBER' or 'Raw Umber' -%}{%- assign color_hex = '#826644' -%}
+  {%- when 'GOC 38ML VANDYKE BROWN (HUE)' or 'Vandyke Brown' -%}{%- assign color_hex = '#664228' -%}
+  {%- when 'GOC 38ML RAW SIENNA' or 'Raw Sienna' -%}{%- assign color_hex = '#D68A59' -%}
+  {%- when 'GOC 38ML YELLOW OCHRE' or 'Yellow Ochre' -%}{%- assign color_hex = '#CCAE62' -%}
+
+  {%- comment -%} --- GEORGIAN OIL (GOC) GREENS --- {%- endcomment -%}
+  {%- when 'GOC 38ML EMERALD GREEN (HUE)' or 'Emerald Green' -%}{%- assign color_hex = '#50C878' -%}
+  {%- when 'GOC 38ML PERM GREEN LIGHT' or 'Perm Green Light' -%}{%- assign color_hex = '#90EE90' -%}
+  {%- when 'GOC 38ML HOOKERS GREEN' or 'Hookers Green' -%}{%- assign color_hex = '#49796B' -%}
+  {%- when 'GOC 38ML PHTHALO GREEN' or 'Phthalo Green' -%}{%- assign color_hex = '#123524' -%}
+  {%- when 'GOC 38ML SAP GREEN' or 'Sap Green' -%}{%- assign color_hex = '#507D2A' -%}
+  {%- when 'GOC 38ML TERRE VERTE (HUE)' or 'Terre Verte' -%}{%- assign color_hex = '#707662' -%}
+  {%- when 'GOC 38ML VIRIDIAN (HUE)' or 'Viridian' -%}{%- assign color_hex = '#00703C' -%}
+  {%- when 'GOC 38ML YELLOW GREEN' or 'Yellow Green' -%}{%- assign color_hex = '#9ACD32' -%}
+
+  {%- comment -%} --- GEORGIAN OIL (GOC) VIOLETS & REDS --- {%- endcomment -%}
+  {%- when 'GOC 38ML COBALT VIOLET (HUE)' or 'Cobalt Violet' -%}{%- assign color_hex = '#926EAE' -%}
+  {%- when 'GOC 38ML PRIMARY MAGENTA' or 'Primary Magenta' -%}{%- assign color_hex = '#CA1F7B' -%}
+  {%- when 'GOC 38ML PERM MAUVE' or 'Perm Mauve' -%}{%- assign color_hex = '#673147' -%}
+  {%- when 'GOC 38ML VIOLET GREY' or 'Violet Grey' -%}{%- assign color_hex = '#9683EC' -%}
+  {%- when 'GOC 38ML CAD RED (HUE)' or 'GOC 38ML CAD RED' or 'Cad Red' -%}{%- assign color_hex = '#E30022' -%}
+  {%- when 'GOC 38ML CAD RED DEEP (HUE)' or 'Cad Red Deep' -%}{%- assign color_hex = '#8B0000' -%}
+  {%- when 'GOC 38ML CADMIUM RED LIGHT HUE' or 'Cad Red Light' -%}{%- assign color_hex = '#FF4500' -%}
+  {%- when 'GOC 38ML PYRROLE RED' or 'Pyrrole Red' -%}{%- assign color_hex = '#BC243C' -%}
+  {%- when 'GOC 38ML ALIZARIN CRIMSON' or 'Alizarin Crimson' -%}{%- assign color_hex = '#A2231D' -%}
+  {%- when 'GOC 38ML INDIAN RED' or 'Indian Red' -%}{%- assign color_hex = '#CD5C5C' -%}
+  {%- when 'GOC 38ML BRILLIANT ROSE' or 'Brilliant Rose' -%}{%- assign color_hex = '#FF55A3' -%}
+  {%- when 'GOC 38ML ROSE MADDER (QUIN)' or 'Rose Madder' -%}{%- assign color_hex = '#E32636' -%}
+  {%- when 'GOC 38ML SCARLET LAKE' or 'Scarlet Lake' -%}{%- assign color_hex = '#FF2400' -%}
+  {%- when 'GOC 38ML FLESH TINT' or 'Flesh Tint' -%}{%- assign color_hex = '#FFCBA4' -%}
+  {%- when 'GOC 38ML VENETIAN RED' or 'Venetian Red' -%}{%- assign color_hex = '#C80815' -%}
+  {%- when 'GOC 38ML VERMILION (HUE)' or 'Vermilion' -%}{%- assign color_hex = '#E34234' -%}
+
+  {%- comment -%} --- GEORGIAN OIL (GOC) YELLOWS & ORANGES --- {%- endcomment -%}
+  {%- when 'GOC 38ML CAD YELLOW (HUE)' or 'GOC 38ML CAD YELLOW' or 'Cad Yellow' -%}{%- assign color_hex = '#FFCF00' -%}
+  {%- when 'GOC 38ML CAD YELLOW PALE (HUE)' or 'Cad Yellow Pale' -%}{%- assign color_hex = '#FFF44F' -%}
+  {%- when 'GOC 38ML CAD YELLOW DEEP (HUE)' or 'Cad Yellow Deep' -%}{%- assign color_hex = '#FF8C00' -%}
+  {%- when 'GOC 38ML CAD ORANGE (HUE)' or 'Cad Orange' -%}{%- assign color_hex = '#FF7F00' -%}
+  {%- when 'GOC 38ML PRIMARY YELLOW' or 'Primary Yellow' -%}{%- assign color_hex = '#FFF200' -%}
+  {%- when 'GOC 38ML PYRROLE ORANGE' or 'Pyrrole Orange' -%}{%- assign color_hex = '#FF5E0E' -%}
+  {%- when 'GOC 38ML NAPLES YELLOW' or 'Naples Yellow' -%}{%- assign color_hex = '#FADA5E' -%}
+  {%- when 'GOC 38ML LEMON YELLOW' or 'Lemon Yellow' -%}{%- assign color_hex = '#FFF44F' -%}
+
+  {%- comment -%} --- MAIMERI CLASSICO OIL (60ML) --- {%- endcomment -%}
 {%- case name -%}
-  {%- comment -%} --- GEORGIAN OIL RANGE --- {%- endcomment -%}
-  {%- when 'Alizarin Crimson (Hue)' -%}{%- assign color_hex = '#A2231D' -%}
-  {%- when 'Burnt Sienna' -%}{%- assign color_hex = '#8C4521' -%}
-  {%- when 'Burnt Umber' -%}{%- assign color_hex = '#4E352E' -%}
-  {%- when 'Cadmium Orange (Hue)' -%}{%- assign color_hex = '#ED872D' -%}
-  {%- when 'Cadmium Red (Hue)' -%}{%- assign color_hex = '#E30022' -%}
-  {%- when 'Cadmium Yellow (Hue)' -%}{%- assign color_hex = '#FFCF00' -%}
-  {%- when 'Cadmium Yellow Pale (Hue)' -%}{%- assign color_hex = '#FFF200' -%}
-  {%- when 'Cerulean Blue (Hue)' -%}{%- assign color_hex = '#2A52BE' -%}
-  {%- when 'Cobalt Blue (Hue)' -%}{%- assign color_hex = '#0047AB' -%}
-  {%- when 'Coeruleum (Hue)' -%}{%- assign color_hex = '#0095B6' -%}
-  {%- when 'Copper' -%}{%- assign color_hex = '#B87333' -%}
-  {%- when 'Crimson' -%}{%- assign color_hex = '#9E0508' -%}
-  {%- when 'Dioxazine Purple' -%}{%- assign color_hex = '#4B0082' -%}
-  {%- when 'Emerald Green (Hue)' -%}{%- assign color_hex = '#50C878' -%}
-  {%- when 'French Ultramarine' -%}{%- assign color_hex = '#0033AA' -%}
-  {%- when 'Gold' -%}{%- assign color_hex = '#D4AF37' -%}
-  {%- when "Hooker's Green (Hue)" -%}{%- assign color_hex = '#49796B' -%}
-  {%- when 'Indian Red' -%}{%- assign color_hex = '#CD5C5C' -%}
-  {%- when 'Ivory Black' -%}{%- assign color_hex = '#231F20' -%}
-  {%- when 'Lamp Black' -%}{%- assign color_hex = '#1C1C1C' -%}
-  {%- when 'Lemon Yellow' -%}{%- assign color_hex = '#FFF44F' -%}
-  {%- when 'Light Red' -%}{%- assign color_hex = '#AB4E41' -%}
-  {%- when 'Magenta' -%}{%- assign color_hex = '#CA1F7B' -%}
-  {%- when 'Naples Yellow (Hue)' -%}{%- assign color_hex = '#FADA5E' -%}
-  {%- when 'Olive Green' -%}{%- assign color_hex = '#808000' -%}
-  {%- when "Payne's Gray" or "Payne's Grey" -%}{%- assign color_hex = '#40404F' -%}
-  {%- when 'Phthalo Blue' -%}{%- assign color_hex = '#000F89' -%}
-  {%- when 'Phthalo Green' -%}{%- assign color_hex = '#123524' -%}
-  {%- when 'Prussian Blue' -%}{%- assign color_hex = '#003153' -%}
-  {%- when 'Raw Sienna' -%}{%- assign color_hex = '#D68A59' -%}
-  {%- when 'Raw Umber' -%}{%- assign color_hex = '#826644' -%}
-  {%- when 'Rose Madder (Hue)' -%}{%- assign color_hex = '#E32636' -%}
-  {%- when 'Sap Green' -%}{%- assign color_hex = '#507D2A' -%}
-  {%- when 'Scarlet Lake (Hue)' -%}{%- assign color_hex = '#FF2400' -%}
-  {%- when 'Silver' -%}{%- assign color_hex = '#C0C0C0' -%}
-  {%- when 'Sky Blue' -%}{%- assign color_hex = '#87CEEB' -%}
-  {%- when 'Terre Verte (Hue)' -%}{%- assign color_hex = '#707662' -%}
-  {%- when 'Titanium White' -%}{%- assign color_hex = '#FFFFFF' -%}
-  {%- when 'Turquoise' -%}{%- assign color_hex = '#40E0D0' -%}
-  {%- when 'Vandyke Brown (Hue)' -%}{%- assign color_hex = '#664228' -%}
-  {%- when 'Venetian Red' -%}{%- assign color_hex = '#C80815' -%}
-  {%- when 'Vermilion (Hue)' -%}{%- assign color_hex = '#E34234' -%}
-  {%- when 'Viridian (Hue)' -%}{%- assign color_hex = '#00703C' -%}
+  {%- when 'Brill. Yellow Lght' -%}{%- assign color_hex = '#FFF9BE' -%}
+  {%- when 'Brill. Yellow Deep' or 'Perman. Yellow Deep' -%}{%- assign color_hex = '#FFCC00' -%}
+  {%- when 'Cadmium Orange' or 'Permanent Orange' -%}{%- assign color_hex = '#FF7F00' -%}
+  {%- when 'Cadmium Yellow Lgt' or 'Perm. Yellow Light' or 'Perman. Yellow Lem.' -%}{%- assign color_hex = '#FFF44F' -%}
+  {%- when 'Cadmium Yellow Dp' or 'Golden Ochre' or 'Indian Yellow' -%}{%- assign color_hex = '#FFB300' -%}
+  {%- when 'Naples Yellow' -%}{%- assign color_hex = '#FADA5E' -%}
+  {%- when 'Naples Yell. Redd.' -%}{%- assign color_hex = '#F7E1B5' -%}
+  {%- when 'Naples Yellow Deep' -%}{%- assign color_hex = '#F2C649' -%}
+  {%- when 'Primary Yellow' -%}{%- assign color_hex = '#FFF200' -%}
   {%- when 'Yellow Ochre' -%}{%- assign color_hex = '#CCAE62' -%}
-  {%- when 'Zinc White' -%}{%- assign color_hex = '#F0F8FF' -%}
+  {%- when 'Yellow Ochre Lgt' -%}{%- assign color_hex = '#E3B778' -%}
+  {%- when 'Raw Sienna' -%}{%- assign color_hex = '#D68A59' -%}
+  {%- when 'Permanent Carmine' or 'Perman. Madder Deep' -%}{%- assign color_hex = '#A2231D' -%}
+  {%- when 'Quinacr. Rose Light' or 'Quinacridone Red' -%}{%- assign color_hex = '#E0115F' -%}
+  {%- when 'Cadmium Red Light' or 'Perman. Red Light' -%}{%- assign color_hex = '#FF2400' -%}
+  {%- when 'Cadmium Red Medium' -%}{%- assign color_hex = '#E30022' -%}
+  {%- when 'Cadmium Red Deep' or 'Perman. Red Deep' -%}{%- assign color_hex = '#8B0000' -%}
+  {%- when 'Mars Red' or 'Pozzuoli Earth' -%}{%- assign color_hex = '#964438' -%}
+  {%- when 'Perman. Red Orange' or 'Vermilion Lgt Hue' -%}{%- assign color_hex = '#FF4500' -%}
+  {%- when 'Prim. Red-Magenta' -%}{%- assign color_hex = '#CA1F7B' -%}
+  {%- when 'Venetian Red' -%}{%- assign color_hex = '#C80815' -%}
+  {%- when 'Burnt Sienna' -%}{%- assign color_hex = '#8C4521' -%}
+  {%- when 'Vermilion Deep Hue' -%}{%- assign color_hex = '#D22730' -%}
+  {%- when 'Cinnabar Green Lgt' or 'Perman. Green Light' -%}{%- assign color_hex = '#98FF98' -%}
+  {%- when 'Cinnabar Green Yel' -%}{%- assign color_hex = '#ADDFAD' -%}
+  {%- when 'Cinnabar Green Dp' or 'Sap Green' -%}{%- assign color_hex = '#507D2A' -%}
+  {%- when 'Green Lake' or 'Emerald Green' -%}{%- assign color_hex = '#50C878' -%}
+  {%- when 'Green Earth' or 'Chrome Oxide Green' -%}{%- assign color_hex = '#707662' -%}
+  {%- when 'Cadmium Green' or 'Permanent Green Dp' -%}{%- assign color_hex = '#008000' -%}
+  {%- when 'Phthalo Green' -%}{%- assign color_hex = '#123524' -%}
+  {%- when 'Cerulean Blue' or 'Kings Blue Light' -%}{%- assign color_hex = '#2A52BE' -%}
+  {%- when 'Cobalt Blue Lt. Hue' or 'Ercolano Blue' -%}{%- assign color_hex = '#0047AB' -%}
+  {%- when 'Cobalt Blue Dp Hue' or 'Ultramarine Deep' -%}{%- assign color_hex = '#120A8F' -%}
+  {%- when 'Ultramarine Light' -%}{%- assign color_hex = '#4166F5' -%}
+  {%- when 'Primary Blue-Cyan' or 'Sky Blue' -%}{%- assign color_hex = '#00B7EB' -%}
+  {%- when 'Prussian Blue' or 'Phthalo Blue Green' -%}{%- assign color_hex = '#003153' -%}
+  {%- when 'Turquoise Blue' -%}{%- assign color_hex = '#00CED1' -%}
+  {%- when 'Cobalt Violet Hue' -%}{%- assign color_hex = '#926EAE' -%}
+  {%- when 'Perman. Viol. Bluei.' -%}{%- assign color_hex = '#602F6B' -%}
+  {%- when 'Perm. Violet Redd.' -%}{%- assign color_hex = '#915C83' -%}
+  {%- when 'Vandyke Brown' or 'Brown Stil D. Grain' -%}{%- assign color_hex = '#664228' -%}
+  {%- when 'Cassel Earth' or 'Burnt Umber' -%}{%- assign color_hex = '#4E352E' -%}
+  {%- when 'Raw Umber' -%}{%- assign color_hex = '#826644' -%}
+  {%- when 'Paynes Grey' -%}{%- assign color_hex = '#40404F' -%}
+  {%- when 'Ivory Black' or 'Mars Black' -%}{%- assign color_hex = '#1B1B1B' -%}
+{%- endcase -%}
+
+  {%- comment -%} --- IRIS ACRYLIC 75ML RANGE --- {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Alizarin Crimson' -%}{%- assign color_hex = '#A2231D' -%}
+  {%- when 'Iris Acrylic 75ml Brilliant red' or 'Iris Acrylic 75ml Brilliant Red' -%}{%- assign color_hex = '#FF2400' -%}
+  {%- when 'Iris Acrylic 75ml Burnt Sienna' -%}{%- assign color_hex = '#8C4521' -%}
+  {%- when 'Iris Acrylic 75ml Burnt Umber' -%}{%- assign color_hex = '#4E352E' -%}
+  {%- when 'Iris Acrylic 75ml Cobalt Blue Hue' -%}{%- assign color_hex = '#0047AB' -%}
+  {%- when 'Iris Acrylic 75ml Cerulean Blue Hue' -%}{%- assign color_hex = '#2A52BE' -%}
+  {%- when 'Iris Acrylic 75ml Cad Orange Deep Hue' -%}{%- assign color_hex = '#FF8C00' -%}
+  {%- when 'Iris Acrylic 75ml Cad Red Hue PRIMARY' -%}{%- assign color_hex = '#E30022' -%}
+  {%- when 'Iris Acrylic 75ml Cad Yellow Deep Hue' -%}{%- assign color_hex = '#FFB300' -%}
+  {%- when 'Iris Acrylic 75ml Cad Yellow Med' -%}{%- assign color_hex = '#FFD700' -%}
+  {%- when 'Iris Acrylic 75ml Emerald Green' -%}{%- assign color_hex = '#50C878' -%}
+  {%- when 'Iris Acrylic 75ml Flesh Base' -%}{%- assign color_hex = '#FFCBA4' -%}
+  {%- when 'Iris Acrylic 75ml Green Light' -%}{%- assign color_hex = '#90EE90' -%}
+  {%- when 'Iris Acrylic 75ml Ivory Black' -%}{%- assign color_hex = '#231F20' -%}
+  {%- when 'Iris Acrylic 75ml Lemon Yellow' -%}{%- assign color_hex = '#FFF44F' -%}
+  {%- when 'Iris Acrylic 75ml Magenta' -%}{%- assign color_hex = '#FF00FF' -%}
+  {%- when 'Iris Acrylic 75ml Neutral Grey' -%}{%- assign color_hex = '#808080' -%}
+  {%- when 'Iris Acrylic 75ml Naples Yellow' -%}{%- assign color_hex = '#FADA5E' -%}
+  {%- when 'Iris Acrylic 75ml Phthalo Blue' -%}{%- assign color_hex = '#000F89' -%}
+  {%- when 'Iris Acrylic 75ml Primary Blue' -%}{%- assign color_hex = '#0047AB' -%}
+  {%- when 'Iris Acrylic 75ml Paynes Grey' -%}{%- assign color_hex = '#40404F' -%}
+  {%- when 'Iris acrylic 75ml Prussian Blue' or 'Iris Acrylic 75ml Prussian Blue' -%}{%- assign color_hex = '#003153' -%}
+  {%- when 'Iris Acrylic 75ml Rose Madder' -%}{%- assign color_hex = '#E32636' -%}
+  {%- when 'Iris Acrylic 75ml Raw Sienna' -%}{%- assign color_hex = '#D68A59' -%}
+  {%- when 'Iris Acrylic 75ml Raw Umber' -%}{%- assign color_hex = '#826644' -%}
+  {%- when 'Iris Acrylic 75ml Sap Green' -%}{%- assign color_hex = '#507D2A' -%}
+  {%- when 'Iris Acrylic 75ml Turquoise' -%}{%- assign color_hex = '#40E0D0' -%}
+  {%- when 'Iris Acrylic 75ml Ultramarine Blue' -%}{%- assign color_hex = '#120A8F' -%}
+  {%- when 'Iris Acrylic 75ml Violet' -%}{%- assign color_hex = '#8F00FF' -%}
+  {%- when 'Iris Acrylic 75ml White' -%}{%- assign color_hex = '#FFFFFF' -%}
+  {%- when 'Iris Acrylic 75ml Yellow Ochre' -%}{%- assign color_hex = '#CCAE62' -%}
+
+  {%- comment -%} --- UNIQUE IRIS SPECIALTY COLORS --- {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Floral Coral' -%}{%- assign color_hex = '#FF7F50' -%}
+  {%- when 'Iris Acrylic 75ml Chartreuse' -%}{%- assign color_hex = '#DFFF00' -%}
+  {%- when 'Iris Acrylic 75ml Blossom' -%}{%- assign color_hex = '#F4C2C2' -%}
+  {%- when 'Iris Acrylic 75ml Sage' -%}{%- assign color_hex = '#BCB88A' -%}
+  {%- when 'Iris Acrylic 75ml Aquamarine' -%}{%- assign color_hex = '#7FFFD4' -%}
+  {%- when 'Iris Acrylic 75ml Botanical Bliss' -%}{%- assign color_hex = '#2E8B57' -%}
+
+  {%- comment -%} --- IRIS ACRYLIC & OIL (ALL SIZES) --- {%- endcomment -%}
+  
+  {%- comment -%} WHITES & BLACKS {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml White' or 'Iris Acrylic 200ml Titanium White' or 'Iris Acrylic 500ml Titanium White' or 'Iris Acrylic 1000ml White' or 'IRIS Oil 200ml Titanium White' -%}
+    {%- assign color_hex = '#FFFFFF' -%}
+  {%- when 'Iris Acrylic 75ml Ivory Black' or 'Iris Acrylic 200ml Ivory Black' or 'Iris Acrylic 500ml Ivory Black' -%}
+    {%- assign color_hex = '#231F20' -%}
+  {%- when 'Iris Oil 200ml Carbon Black' -%}
+    {%- assign color_hex = '#0A0A0A' -%}
+  {%- when 'Iris Acrylic 75ml Neutral Grey' or 'Iris Acrylic 200ml Neutral Grey' -%}
+    {%- assign color_hex = '#808080' -%}
+  {%- when 'Iris Acrylic 75ml Paynes Grey' or 'Iris Acrylic 200ml Paynes Grey' or 'Iris Oil 200ml Paynes Grey' -%}
+    {%- assign color_hex = '#40404F' -%}
+
+  {%- comment -%} YELLOWS & ORANGES {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Lemon Yellow' or 'Iris Acrylic 200ml Lemon Yellow' or 'Iris Oil 200ml Cad Yellow Light (Hue)' -%}
+    {%- assign color_hex = '#FFF44F' -%}
+  {%- when 'Iris Acrylic 75ml Cad Yellow Med' or 'Iris Acrylic 200ml Cad. Yellow Medium' or 'Iris Acrylic 500ml Cadmium Yell Med Hue' or 'Iris Oil 200ml Cad Yellow Med (Hue)' -%}
+    {%- assign color_hex = '#FFD700' -%}
+  {%- when 'Iris Acrylic 75ml Cad Yellow Deep Hue' or 'Iris Acrylic 200ml Cad Yellow Deep' or 'Iris Oil 200ml Yellow Deep' -%}
+    {%- assign color_hex = '#FFB300' -%}
+  {%- when 'Iris Acrylic 75ml Cad Orange Deep Hue' or 'Iris Acrylic 200ml Cad. Orange Deep' -%}
+    {%- assign color_hex = '#FF8C00' -%}
+
+  {%- comment -%} REDS & PINKS {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Cad Red Hue PRIMARY' or 'Iris Acrylic 200ml Cadmium Red Hue' or 'Iris Acrylic 500ml Cadmium Red Med Hue' or 'Iris Oil 200ml Cad Red Light (Hue)' -%}
+    {%- assign color_hex = '#E30022' -%}
+  {%- when 'Iris Oil 200ml Vermillion' -%}
+    {%- assign color_hex = '#E34234' -%}
+  {%- when 'Iris Acrylic 75ml Alizarin Crimson' or 'Iris Acrylic 200ml Alizarin Crimson' or 'Iris Oil 200ml Carmine' -%}
+    {%- assign color_hex = '#A2231D' -%}
+  {%- when 'Iris Acrylic 75ml Magenta' or 'Iris Acrylic 200ml Magenta' or 'Iris Oil 200ml Rose' -%}
+    {%- assign color_hex = '#FF00FF' -%}
+  {%- when 'Iris Acrylic 200ml Lilac' or 'Iris Oil 200ml Violet' or 'Iris Acrylic 75ml Violet' -%}
+    {%- assign color_hex = '#8F00FF' -%}
+
+  {%- comment -%} BLUES & TURQUOISE {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Primary Blue' or 'Iris Acrylic 200ml Primary Blue' or 'Iris Acrylic 500ml Primary Blue' or 'Iris Oil 200ml Phthalo Blue' -%}
+    {%- assign color_hex = '#0047AB' -%}
+  {%- when 'Iris Acrylic 75ml Ultramarine Blue' or 'Iris Acrylic 200ml Ultramarine Blue' or 'Iris Oil 200ml Ultramarine Blue' -%}
+    {%- assign color_hex = '#120A8F' -%}
+  {%- when 'Iris Acrylic 75ml Cerulean Blue Hue' or 'Iris Acrylic 200ml Cerulean Blue Hue' or 'Iris Oil 200ml Cerulean Blue' -%}
+    {%- assign color_hex = '#2A52BE' -%}
+  {%- when 'Iris Acrylic 75ml Turquoise' or 'Iris Acrylic 200ml Turquoise' or 'Iris Oil 200ml Turquoise' -%}
+    {%- assign color_hex = '#40E0D0' -%}
+  {%- when 'Iris Oil 200ml Cobalt Blue' -%}
+    {%- assign color_hex = '#0047AB' -%}
+
+  {%- comment -%} GREENS {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Green Light' or 'Iris Acrylic 200ml Green Light' -%}
+    {%- assign color_hex = '#90EE90' -%}
+  {%- when 'Iris Acrylic 75ml Sap Green' or 'Iris Acrylic 200ml Sap Green' or 'Iris Oil 200ml Sap Green' -%}
+    {%- assign color_hex = '#507D2A' -%}
+  {%- when 'Iris Oil 200ml Green Olive' -%}
+    {%- assign color_hex = '#808000' -%}
+  {%- when 'Iris Oil 200ml Phthalo Green' -%}
+    {%- assign color_hex = '#123524' -%}
+
+  {%- comment -%} EARTHS {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Yellow Ochre' or 'Iris Acrylic 200ml Yellow Ochre' or 'Iris Oil 200ml Yellow Ochre' -%}
+    {%- assign color_hex = '#CCAE62' -%}
+  {%- when 'Iris Acrylic 75ml Raw Sienna' or 'Iris Acrylic 200ml Raw Sienna' or 'Iris Oil 200ml Raw Sienna' -%}
+    {%- assign color_hex = '#D68A59' -%}
+  {%- when 'Iris Acrylic 75ml Burnt Sienna' or 'Iris Acrylic 200ml Burnt Sienna' or 'Iris Oil 200ml Burnt Sienna' -%}
+    {%- assign color_hex = '#8C4521' -%}
+  {%- when 'Iris Acrylic 75ml Raw Umber' or 'Iris Acrylic 200ml Raw Umber' or 'Iris Oil 200ml Raw Umber' -%}
+    {%- assign color_hex = '#826644' -%}
+  {%- when 'Iris Acrylic 75ml Burnt Umber' or 'Iris Acrylic 200ml Burnt Umber' or 'Iris Oil 200ml Burnt Umber' -%}
+    {%- assign color_hex = '#4E352E' -%}
+
+  {%- comment -%} SPECIALS & FLUORESCENTS {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Fluro Blue' -%}{%- assign color_hex = '#00FFFF' -%}
+  {%- when 'Iris Acrylic 75ml Fluro Lemon Yellow' -%}{%- assign color_hex = '#CCFF00' -%}
+  {%- when 'Iris Acrylic 75ml Fluro Orange' -%}{%- assign color_hex = '#FF5F1F' -%}
+  {%- when 'Iris Acrylic 75ml Fluro Red' -%}{%- assign color_hex = '#FF3131' -%}
+  {%- when 'Iris Acrylic 75ml Fluro Rose' or 'Iris Acrylic 200ml Fluro Rose' -%}{%- assign color_hex = '#FF66CC' -%}
+  {%- when 'Iris Acrylic 75ml Gold' -%}{%- assign color_hex = '#D4AF37' -%}
+  {%- when 'Iris Acrylic 75ml Silver' -%}{%- assign color_hex = '#C0C0C0' -%}
+  {%- when 'Iris Acrylic 75ml Pearl White' or 'Iris Acrylic 200ml Pearl White' -%}{%- assign color_hex = '#F0F0F0' -%}
+  
+  {%- comment -%} GLITTERS {%- endcomment -%}
+  {%- when 'Iris Acrylic 75ml Galaxy Glitter' -%}{%- assign color_hex = '#4B0082' -%}
+  {%- when 'Iris Acrylic 75ml Gold Glitter' -%}{%- assign color_hex = '#EABE3F' -%}
+  {%- when 'Iris Acrylic 75ml Silver Glitter' -%}{%- assign color_hex = '#E5E4E2' -%}
 
   {%- comment -%} --- CLASSICO OIL RANGE --- {%- endcomment -%}
   {%- when 'Alizarin Crimson' -%}{%- assign color_hex = '#9E0508' -%}

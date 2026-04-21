@@ -1,55 +1,384 @@
-<section class="hero-video-container">
-  <div class="video-wrapper">
-    <video autoplay muted loop playsinline poster="" class="hero-video">
-      <source src="https://cdn.shopify.com/videos/c/o/v/445580544d5b40c38721dccf33b36110.mp4" type="video/mp4">
-    </video>
-    
+<section class="hero-video-section" aria-label="Hero">
+
+  {%- comment -%} ── VIDEO / FALLBACK BACKGROUND ── {%- endcomment -%}
+  <div class="hero-video-container">
+
+    {%- if section.settings.video_url != blank -%}
+      <video
+        class="hero-video"
+        src="{{ section.settings.video_url }}"
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-hidden="true"
+        preload="none">
+      </video>
+    {%- endif -%}
+
     <div class="hero-overlay">
-      <div class="page-width">
-        <div class="hero-content">
-          <h2 class="hero-title">{{ section.settings.title }}</h2>
-          <p class="hero-subtitle">{{ section.settings.subtitle }}</p>
-          <a href="{{ section.settings.button_link }}" class="btn-primary">
-            {{ section.settings.button_label }}
-          </a>
+      <div class="hero-content page-width">
+
+        <div class="hero-text">
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="hero-eyebrow">{{ section.settings.eyebrow }}</span>
+          {%- else -%}
+            <span class="hero-eyebrow">Hermanus · Est. 1994 · Professional Grade</span>
+          {%- endif -%}
+
+          <h1 class="hero-headline">
+            {%- if section.settings.title != blank -%}
+              {{ section.settings.title }}
+            {%- else -%}
+              Where South Africa's<br>finest artists<br><em>source their craft.</em>
+            {%- endif -%}
+          </h1>
+
+          {%- if section.settings.subtitle != blank -%}
+            <p class="hero-subtitle">{{ section.settings.subtitle }}</p>
+          {%- endif -%}
+
+          <div class="hero-ctas">
+            <a
+              href="{{ section.settings.button_link | default: '/collections/all' }}"
+              class="btn btn--primary btn--lg">
+              {{ section.settings.button_label | default: 'Shop Professional Grade' }}
+            </a>
+            <a href="#collections" class="btn btn--ghost btn--lg">
+              View Collections
+            </a>
+          </div>
         </div>
-      </div>
+
+        {%- comment -%} ── CREDENTIAL BADGE ── {%- endcomment -%}
+        <div class="hero-badge" aria-hidden="true">
+          <div class="hero-badge__inner">
+            <span class="hero-badge__number">30+</span>
+            <span class="hero-badge__label">Years Trusted<br>by Artists</span>
+          </div>
+          <div class="hero-badge__inner">
+            <span class="hero-badge__number">500+</span>
+            <span class="hero-badge__label">Professional<br>Grade SKUs</span>
+          </div>
+        </div>
+
+      </div>{%- comment -%} /.hero-content {%- endcomment -%}
+    </div>{%- comment -%} /.hero-overlay {%- endcomment -%}
+
+    {%- comment -%} ── SCROLL INDICATOR ── {%- endcomment -%}
+    <div class="hero-scroll-indicator" aria-hidden="true">
+      <span class="hero-scroll-indicator__line"></span>
+      <span class="hero-scroll-indicator__label">Scroll</span>
+    </div>
+
+  </div>{%- comment -%} /.hero-video-container {%- endcomment -%}
+
+</section>
+
+
+{%- comment -%} ── TRUST BAR ── {%- endcomment -%}
+<div class="trust-bar" role="complementary" aria-label="Store highlights">
+  <div class="trust-bar__inner page-width">
+    <div class="trust-bar__item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <span>Artist-tested materials</span>
+    </div>
+    <div class="trust-bar__item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 5v3h-7V8zM5.5 21a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM18.5 21a1.5 1.5 0 100-3 1.5 1.5 0 000 3z"/></svg>
+      <span>Free delivery over R800</span>
+    </div>
+    <div class="trust-bar__item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+      <span>In-store pickup · Hermanus</span>
+    </div>
+    <div class="trust-bar__item">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      <span>Institution accounts welcome</span>
     </div>
   </div>
-</section>
+</div>
+
+
+<style>
+  /* ─── HERO VIDEO SECTION ─── */
+  .hero-video-section {
+    position: relative;
+  }
+
+  .hero-video-container {
+    position: relative;
+    height: 92vh;
+    min-height: 600px;
+    max-height: 900px;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-black);
+  }
+
+  .hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+    opacity: 0.55; /* Dims video so text is always legible */
+  }
+
+  .hero-overlay {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      rgba(26, 10, 10, 0.3) 0%,
+      rgba(26, 10, 10, 0.55) 60%,
+      rgba(26, 10, 10, 0.85) 100%
+    );
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: var(--space-xl);
+  }
+
+  .hero-content {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-xl);
+    width: 100%;
+  }
+
+  /* ─── HERO TEXT ─── */
+  .hero-eyebrow {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--color-maroon-light);
+    margin-bottom: var(--space-md);
+  }
+
+  .hero-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--color-white);
+    margin-bottom: var(--space-md);
+    max-width: 560px;
+  }
+
+  .hero-headline em {
+    font-style: italic;
+    color: var(--color-maroon-light);
+  }
+
+  .hero-subtitle {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-on-dark-muted);
+    max-width: 380px;
+    margin-bottom: var(--space-lg);
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: var(--space-sm);
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  /* ─── CREDENTIAL BADGE ─── */
+  .hero-badge {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    flex-shrink: 0;
+    margin-bottom: var(--space-xs);
+  }
+
+  .hero-badge__inner {
+    background: rgba(139, 26, 46, 0.12);
+    border: var(--border-maroon);
+    padding: var(--space-sm) var(--space-md);
+    text-align: center;
+    min-width: 140px;
+  }
+
+  .hero-badge__number {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: var(--text-2xl);
+    font-weight: 500;
+    color: var(--color-maroon-light);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .hero-badge__label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--text-on-dark-muted);
+    line-height: 1.4;
+  }
+
+  /* ─── SCROLL INDICATOR ─── */
+  .hero-scroll-indicator {
+    position: absolute;
+    bottom: var(--space-md);
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 3;
+  }
+
+  .hero-scroll-indicator__line {
+    display: block;
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.3);
+    animation: heroScrollLine 2s ease-in-out infinite;
+  }
+
+  .hero-scroll-indicator__label {
+    font-size: 9px;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--text-on-dark-faint);
+  }
+
+  @keyframes heroScrollLine {
+    0%, 100% { opacity: 0.3; transform: scaleY(1); }
+    50%       { opacity: 0.8; transform: scaleY(1.15); }
+  }
+
+  /* ─── TRUST BAR ─── */
+  .trust-bar {
+    background: var(--color-maroon);
+    padding: 14px 0;
+  }
+
+  .trust-bar__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+  }
+
+  .trust-bar__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.88);
+    white-space: nowrap;
+  }
+
+  .trust-bar__item svg {
+    flex-shrink: 0;
+    opacity: 0.8;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media screen and (max-width: 990px) {
+    .hero-badge {
+      display: none; /* Hidden on tablet — too cramped */
+    }
+
+    .hero-content {
+      align-items: flex-end;
+    }
+
+    .trust-bar__inner {
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-sm) var(--space-md);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .hero-video-container {
+      height: 85vh;
+      min-height: 500px;
+    }
+
+    .hero-overlay {
+      padding-bottom: var(--space-lg);
+      align-items: flex-end;
+    }
+
+    .hero-headline {
+      font-size: 2rem;
+    }
+
+    .hero-ctas {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .hero-ctas .btn {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .trust-bar__item:nth-child(3),
+    .trust-bar__item:nth-child(4) {
+      display: none; /* Show only top 2 on mobile */
+    }
+  }
+</style>
+
 
 {% schema %}
 {
   "name": "Hero Video",
+  "tag": "section",
+  "class": "hero-section",
   "settings": [
     {
       "type": "text",
-      "id": "video_url",
-      "label": "Video URL",
-      "default": "https://videos.pexels.com/video-files/3847424/3847424-uhd_2560_1440_30fps.mp4"
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Hermanus · Est. 1994 · Professional Grade"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "Heading",
-      "default": "The Art of Precision"
+      "label": "Headline",
+      "default": "Where South Africa's finest artists source their craft."
     },
     {
       "type": "text",
       "id": "subtitle",
       "label": "Subheading",
-      "default": "Professional grade supplies for the modern studio."
+      "default": "Fine art materials curated for working professionals. Every medium, every grade."
     },
     {
       "type": "text",
       "id": "button_label",
-      "label": "Button Label",
-      "default": "Shop the Collection"
+      "label": "Primary button label",
+      "default": "Shop Professional Grade"
     },
     {
       "type": "url",
       "id": "button_link",
-      "label": "Button Link"
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "video_url",
+      "label": "Video URL",
+      "info": "Direct link to an MP4 video file (Pexels, Vimeo CDN, or Shopify CDN)"
     }
   ],
   "presets": [

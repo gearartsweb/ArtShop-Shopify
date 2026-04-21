@@ -1,90 +1,218 @@
-<div class="header-boutique page-width">
-  <div class="header-nav-container">
-    <input type="checkbox" id="menu-toggle" class="menu-toggle-checkbox">
-    <label for="menu-toggle" class="hamburger-icon">
-      <span></span><span></span><span></span>
-    </label>
-    <nav class="header-nav-left boutique-menu" role="navigation">
-      {% for link in linklists.main-menu.links %}
-        {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
-          <a href="{{ link.url }}">{{ link.title }}</a>
-        {%- endunless -%}
-      {% endfor %}
-    </nav>
-  </div>
+<header class="site-frame-header" role="banner">
+  <div class="header-boutique page-width">
 
-  <div class="header-logo-center">
-    <a href="{{ routes.root_url }}">
-      <img src="{{ 'logo-2.png' | asset_url }}" alt="The Art Shop" width="180" height="150" loading="eager">
-    </a>
-  </div>
+    {%- comment -%} ── LEFT: Hamburger + Nav ── {%- endcomment -%}
+    <div class="header-nav-container">
+      <input type="checkbox" id="menu-toggle" class="menu-toggle-checkbox" aria-hidden="true">
+      <label for="menu-toggle" class="hamburger-icon" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </label>
+      <nav class="header-nav-left boutique-menu" role="navigation" aria-label="Main navigation">
+        {% for link in linklists.main-menu.links %}
+          {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
+            <a href="{{ link.url }}"
+               {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
+              {{ link.title }}
+            </a>
+          {%- endunless -%}
+        {% endfor %}
+      </nav>
+    </div>
 
-  <div class="header-icons-right">
-    <button type="button" onclick="toggleSearch()" class="icon-btn search-trigger" aria-label="Search" style="background:none; border:none; cursor:pointer; padding:0; color:inherit;">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-    </button>
-  
-    <button type="button" onclick="window.toggleCart()" class="header-cart-link" id="cart-icon-bubble" style="background:none; border:none; cursor:pointer; padding:0; position: relative; color: inherit;">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0" />
-      </svg>
-      <span class="cart-count-number" style="{% if cart.item_count == 0 %}display:none;{% endif %} position: absolute; top: -5px; right: -10px; background: #800000; color: #fff; font-size: 10px; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-        {{ cart.item_count }}
-      </span>
-    </button>
-  </div>
-</div>
+    {%- comment -%} ── CENTER: Logo ── {%- endcomment -%}
+    <div class="header-logo-center">
+      <a href="{{ routes.root_url }}" class="site-logo-link" aria-label="{{ shop.name }} - Home">
+        {%- if settings.logo != blank -%}
+          <img
+            src="{{ settings.logo | image_url: width: 360 }}"
+            alt="{{ shop.name }}"
+            class="site-logo-image"
+            width="180"
+            height="60"
+            loading="eager">
+        {%- else -%}
+          <img
+            src="{{ 'logo-2.png' | asset_url }}"
+            alt="{{ shop.name }}"
+            class="site-logo-image"
+            width="180"
+            height="60"
+            loading="eager">
+        {%- endif -%}
+      </a>
+    </div>
 
-<div id="SearchDrawer" style="display: none; position: absolute; top: 100%; left: 0; width: 100%; background: #fff; border-bottom: 1px solid #eee; z-index: 1000; box-shadow: 0 10px 15px rgba(0,0,0,0.05); padding: 30px 0;">
-  <div class="page-width">
-    <form action="{{ routes.search_url }}" method="get" role="search" style="display: flex; gap: 20px; align-items: center; max-width: 800px; margin: 0 auto;">
-      <input 
-        type="search" 
-        name="q" 
+    {%- comment -%} ── RIGHT: Search + Cart ── {%- endcomment -%}
+    <div class="header-icons-right">
+      <button
+        type="button"
+        class="icon-btn search-trigger"
+        aria-label="Search"
+        aria-expanded="false"
+        aria-controls="SearchModal"
+        onclick="TheArtShop.toggleSearch(this)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+      </button>
+
+      <button
+        type="button"
+        class="icon-btn header-cart-link"
+        id="cart-icon-bubble"
+        aria-label="Open cart, {{ cart.item_count }} items"
+        onclick="window.toggleCart()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4H6zM3 6h18M16 10a4 4 0 01-8 0"/>
+        </svg>
+        <span
+          class="cart-count-number"
+          id="cart-count"
+          aria-live="polite"
+          {% if cart.item_count == 0 %}hidden{% endif %}>
+          {{ cart.item_count }}
+        </span>
+      </button>
+    </div>
+
+  </div>{%- comment -%} /.header-boutique {%- endcomment -%}
+</header>
+
+
+{%- comment -%} ── SEARCH MODAL (full overlay) ── {%- endcomment -%}
+<div
+  id="SearchModal"
+  class="search-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Search"
+  hidden>
+  <div class="search-modal-content">
+    <span class="eyebrow">Search The Art Shop</span>
+    <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+      <input
+        type="search"
+        name="q"
         id="SearchInput"
-        placeholder="SEARCH FOR SUPPLIES..." 
-        style="flex: 1; border: none; border-bottom: 1px solid #000; padding: 10px 0; font-size: 16px; outline: none; letter-spacing: 2px; font-family: inherit;"
-      >
+        class="search-input"
+        placeholder="Oil paints, brushes, canvas..."
+        autocomplete="off"
+        aria-label="Search products">
       <input type="hidden" name="type" value="product">
-      <button type="submit" style="background: #800000; color: #fff; border: none; padding: 12px 25px; cursor: pointer; font-size: 11px; letter-spacing: 2px; font-weight: 600;">GO</button>
-      <button type="button" onclick="toggleSearch()" style="background: none; border: none; font-size: 28px; cursor: pointer; color: #999;">&times;</button>
+      <button type="submit" class="search-submit" aria-label="Submit search">Search</button>
     </form>
+    <p class="search-hint">Try: Oils · Watercolour · Brushes · Canvas</p>
   </div>
+  <button
+    type="button"
+    class="search-close"
+    aria-label="Close search"
+    onclick="TheArtShop.closeSearch()">
+    &times;
+  </button>
 </div>
+
+{%- comment -%} ── SEARCH HINT STYLE ── {%- endcomment -%}
+<style>
+  .search-hint {
+    margin-top: 20px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: #999;
+    text-transform: uppercase;
+  }
+</style>
+
 
 <script>
-  function toggleSearch() {
-    const drawer = document.getElementById('SearchDrawer');
-    if (drawer.style.display === 'none') {
-      drawer.style.display = 'block';
-      setTimeout(() => {
-        document.getElementById('SearchInput').focus();
-      }, 50);
-    } else {
-      drawer.style.display = 'none';
-    }
-  }
+  /**
+   * The Art Shop — Header JS
+   * All header interactions in one clean namespace.
+   * No global function soup.
+   */
+  window.TheArtShop = window.TheArtShop || {};
 
-  // Close search drawer on Escape key
+  TheArtShop.toggleSearch = function(triggerBtn) {
+    const modal = document.getElementById('SearchModal');
+    const isHidden = modal.hasAttribute('hidden');
+
+    if (isHidden) {
+      modal.removeAttribute('hidden');
+      // Defer class add so CSS transition fires
+      requestAnimationFrame(() => modal.classList.add('is-active'));
+      document.getElementById('SearchInput').focus();
+      document.body.style.overflow = 'hidden';
+      if (triggerBtn) triggerBtn.setAttribute('aria-expanded', 'true');
+    } else {
+      TheArtShop.closeSearch();
+    }
+  };
+
+  TheArtShop.closeSearch = function() {
+    const modal = document.getElementById('SearchModal');
+    const triggerBtn = document.querySelector('.search-trigger');
+
+    modal.classList.remove('is-active');
+    document.body.style.overflow = '';
+    if (triggerBtn) triggerBtn.setAttribute('aria-expanded', 'false');
+
+    // Wait for transition then re-hide
+    modal.addEventListener('transitionend', function handler() {
+      modal.setAttribute('hidden', '');
+      modal.removeEventListener('transitionend', handler);
+    });
+  };
+
+  // Escape key closes search and mobile menu
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-      document.getElementById('SearchDrawer').style.display = 'none';
+      TheArtShop.closeSearch();
+      const menuToggle = document.getElementById('menu-toggle');
+      if (menuToggle && menuToggle.checked) menuToggle.checked = false;
     }
   });
 
-  // Keep your cart bubble update function alive
-  window.updateCartCountBubble = function() {
+  // Click outside search modal to close
+  document.getElementById('SearchModal').addEventListener('click', function(e) {
+    if (e.target === this) TheArtShop.closeSearch();
+  });
+
+  /**
+   * Cart count updater — called after any cart mutation
+   * Usage: TheArtShop.updateCartCount()
+   */
+  TheArtShop.updateCartCount = function() {
     fetch('/cart.js')
-      .then(res => res.json())
-      .then(cart => {
-        const bubble = document.querySelector('.cart-count-number');
-        if (bubble) {
-          bubble.textContent = cart.item_count;
-          bubble.style.display = cart.item_count > 0 ? 'flex' : 'none';
+      .then(function(res) { return res.json(); })
+      .then(function(cart) {
+        const countEl = document.getElementById('cart-count');
+        const cartBtn = document.getElementById('cart-icon-bubble');
+        if (!countEl) return;
+
+        countEl.textContent = cart.item_count;
+
+        if (cart.item_count > 0) {
+          countEl.removeAttribute('hidden');
+        } else {
+          countEl.setAttribute('hidden', '');
+        }
+
+        if (cartBtn) {
+          cartBtn.setAttribute(
+            'aria-label',
+            'Open cart, ' + cart.item_count + ' item' + (cart.item_count !== 1 ? 's' : '')
+          );
         }
       });
   };
+
+  // Keep legacy alias alive in case other sections call the old name
+  window.updateCartCountBubble = TheArtShop.updateCartCount;
 </script>
+
 
 {% schema %}
 {
