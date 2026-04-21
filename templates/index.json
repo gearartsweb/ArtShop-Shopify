@@ -12,11 +12,12 @@
     "hero_video": {
       "type": "hero-video",
       "settings": {
-        "video_url": "https://videos.pexels.com/video-files/3847424/3847424-uhd_2560_1440_30fps.mp4",
+        "eyebrow": "Hermanus · Est. 1994 · Professional Grade",
         "title": "The Art of Precision",
         "subtitle": "Fine Art supplies for the modern studio.",
         "button_label": "Shop the Collection",
-        "button_link": ""
+        "button_link": "",
+        "video_url": "https://www.pexels.com/video/a-person-doing-an-abstract-painting-8347735/"
       }
     },
     "about_studio_fkV74B": {
