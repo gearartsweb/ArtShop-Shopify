@@ -666,7 +666,7 @@ section {
   right: 0;
   width: 420px;
   height: 100%;
-  background: var(--color-white);
+  background: var(--color-off-white);
   z-index: var(--z-drawer);
   display: flex;
   flex-direction: column;

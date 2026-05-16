@@ -1,83 +1,317 @@
 {% comment %}
-  This section is used in the list-collections template to render a list of
-  collections.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
+  Template: list-collections
+  Renders the full collections browse page.
 {% endcomment %}
 
-<h1>{{ 'collections.title' | t }}</h1>
+<section class="collections-page">
+  <div class="page-width">
 
-<div
-  class="collections {{ section.settings.grid_item_width }}"
-  style="--grid-gap: {{ section.settings.grid_gap }}px"
->
-  {% for collection in collections %}
-    <a class="collection-card" href="{{ collection.url }}">
-      {% if collection.featured_image %}
-        {% render 'image',
-          class: 'collection-card__image',
-          image: collection.featured_image,
-          width: 600,
-          height: 600,
-          crop: 'center'
-        %}
-      {% endif %}
+    {%- comment -%} ── PAGE HEADER ── {%- endcomment -%}
+    <div class="collections-page__header">
+      <span class="eyebrow">Browse by Medium</span>
+      <h1 class="collections-page__title">All Collections</h1>
+      <p class="collections-page__desc">
+        Every medium, every grade. Curated for working artists.
+      </p>
+    </div>
 
-      <div class="collection-card__content">
-        <p>{{ collection.title }}</p>
+    {%- comment -%} ── COLLECTIONS GRID ── {%- endcomment -%}
+    <div class="collections-grid {{ section.settings.grid_item_width }}">
 
-        {% if collection.description %}
-          <p>{{ collection.description | strip_html | truncatewords: 15 }}</p>
-        {% endif %}
-      </div>
-    </a>
-  {% endfor %}
-</div>
+      {%- for collection in collections -%}
+        {%- unless collection.handle == 'frontpage' -%}
+          <a
+            class="collection-card reveal-on-scroll"
+            href="{{ collection.url }}"
+            aria-label="{{ collection.title }}">
 
-{% stylesheet %}
-  .collections {
+            {%- comment -%} IMAGE ── {%- endcomment -%}
+            <div class="collection-card__image-wrap">
+              {%- if collection.featured_image != blank -%}
+                {%- render 'image',
+                  class: 'collection-card__image',
+                  image: collection.featured_image,
+                  width: 600,
+                  height: 600,
+                  crop: 'center' -%}
+              {%- else -%}
+                {{ 'collection-' | append: forloop.index | placeholder_svg_tag: 'collection-card__image collection-card__placeholder' }}
+              {%- endif -%}
+
+              {%- comment -%} Overlay {%- endcomment -%}
+              <div class="collection-card__overlay" aria-hidden="true"></div>
+
+              {%- comment -%} Product count badge {%- endcomment -%}
+              <span class="collection-card__count" aria-hidden="true">
+                {{ collection.products_count }}
+                {%- if collection.products_count == 1 -%} product{%- else -%} products{%- endif -%}
+              </span>
+            </div>
+
+            {%- comment -%} CONTENT ── {%- endcomment -%}
+            <div class="collection-card__content">
+              <h2 class="collection-card__title">{{ collection.title }}</h2>
+
+              {%- if collection.description != blank -%}
+                <p class="collection-card__desc">
+                  {{ collection.description | strip_html | truncatewords: 12 }}
+                </p>
+              {%- endif -%}
+
+              <span class="collection-card__cta" aria-hidden="true">
+                Shop now
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                  <polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </span>
+            </div>
+
+          </a>
+        {%- endunless -%}
+      {%- else -%}
+
+        {%- comment -%} Placeholder cards if no collections exist yet {%- endcomment -%}
+        {%- assign ph_titles = "Oil Painting,Watercolour,Drawing & Sketching,Canvas & Paper,Acrylic,Mixed Media" | split: "," -%}
+        {%- for i in (1..6) -%}
+          <div class="collection-card collection-card--placeholder">
+            <div class="collection-card__image-wrap">
+              {{ 'collection-1' | placeholder_svg_tag: 'collection-card__image collection-card__placeholder' }}
+              <div class="collection-card__overlay"></div>
+            </div>
+            <div class="collection-card__content">
+              <h2 class="collection-card__title">{{ ph_titles[forloop.index0] }}</h2>
+              <span class="collection-card__cta">
+                Shop now
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                  <polyline points="12 5 19 12 12 19"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        {%- endfor -%}
+
+      {%- endfor -%}
+    </div>
+
+  </div>
+</section>
+
+
+<style>
+  /* ─── PAGE HEADER ─── */
+  .collections-page {
+    padding: var(--space-xl) 0 var(--space-2xl);
+  }
+
+  .collections-page__header {
+    text-align: center;
+    padding-bottom: var(--space-xl);
+    border-bottom: var(--border-default);
+    margin-bottom: var(--space-xl);
+  }
+
+  .collections-page__title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+    line-height: var(--leading-snug);
+  }
+
+  .collections-page__desc {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  /* ─── GRID ─── */
+  .collections-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(var(--collection-card-size), 100%), 1fr));
-    gap: var(--grid-gap);
+    gap: var(--space-md);
   }
-  .collections--compact {
-    --collection-card-size: 160px;
-  }
+
   .collections--full {
-    --collection-card-size: 280px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
+
+  .collections--compact {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  /* ─── COLLECTION CARD ─── */
   .collection-card {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
   }
-{% endstylesheet %}
+
+  /* Image wrap */
+  .collection-card__image-wrap {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    background: var(--color-surface);
+  }
+
+  .collection-card__image,
+  .collection-card__placeholder {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.55s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .collection-card:hover .collection-card__image,
+  .collection-card:hover .collection-card__placeholder {
+    transform: scale(1.04);
+  }
+
+  /* Gradient overlay — always on, deepens on hover */
+  .collection-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      transparent 40%,
+      rgba(26, 10, 10, 0.6) 100%
+    );
+    transition: var(--transition);
+    z-index: 1;
+  }
+
+  .collection-card:hover .collection-card__overlay {
+    background: linear-gradient(
+      to bottom,
+      transparent 20%,
+      rgba(26, 10, 10, 0.75) 100%
+    );
+  }
+
+  /* Product count badge */
+  .collection-card__count {
+    position: absolute;
+    top: var(--space-sm);
+    right: var(--space-sm);
+    background: rgba(26, 10, 10, 0.65);
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-xs);
+    z-index: 2;
+    backdrop-filter: blur(4px);
+  }
+
+  /* Content below image */
+  .collection-card__content {
+    padding: var(--space-md) 0 var(--space-sm);
+    border-bottom: var(--border-default);
+  }
+
+  .collection-card__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    transition: var(--transition-fast);
+    line-height: var(--leading-snug);
+  }
+
+  .collection-card:hover .collection-card__title {
+    color: var(--color-maroon);
+  }
+
+  .collection-card__desc {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    line-height: var(--leading-normal);
+    margin-bottom: var(--space-xs);
+  }
+
+  .collection-card__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-maroon);
+    margin-top: var(--space-xs);
+    transition: var(--transition-fast);
+  }
+
+  .collection-card:hover .collection-card__cta {
+    gap: 10px;
+  }
+
+  .collection-card__cta svg {
+    transition: transform 0.2s ease;
+  }
+
+  .collection-card:hover .collection-card__cta svg {
+    transform: translateX(3px);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media screen and (max-width: 749px) {
+    .collections--full {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-sm);
+    }
+
+    .collections--compact {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xs);
+    }
+
+    .collection-card__content {
+      padding: var(--space-sm) 0 var(--space-xs);
+    }
+
+    .collection-card__title {
+      font-size: var(--text-base);
+    }
+  }
+
+  @media screen and (max-width: 480px) {
+    .collections--full,
+    .collections--compact {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
 
 {% schema %}
 {
-  "name": "t:general.collections_grid",
+  "name": "Collections Grid",
+  "tag": "section",
   "settings": [
     {
       "type": "select",
       "id": "grid_item_width",
-      "label": "t:labels.grid_item_width",
+      "label": "Card size",
       "options": [
-        { "value": "collections--compact", "label": "t:options.size.small" },
-        { "value": "collections--full", "label": "t:options.size.large" }
+        { "value": "collections--compact", "label": "Small" },
+        { "value": "collections--full",    "label": "Large" }
       ],
       "default": "collections--full"
-    },
-    {
-      "type": "range",
-      "id": "grid_gap",
-      "label": "t:labels.grid_gap",
-      "min": 0,
-      "max": 50,
-      "step": 5,
-      "unit": "px",
-      "default": 10
     }
   ],
-  "presets": [{ "name": "t:general.collections_grid" }]
+  "presets": [
+    { "name": "Collections Grid" }
+  ]
 }
 {% endschema %}
