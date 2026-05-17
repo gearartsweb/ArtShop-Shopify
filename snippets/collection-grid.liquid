@@ -1,0 +1,395 @@
+{% doc %}
+  Renders the full collection page UI — header (title, description, count,
+  sort), active filter pills, sidebar facets, paginated product grid,
+  empty state, and pagination. Called from sections/collection.liquid
+  and sections/main-collection.liquid (legacy alias).
+
+  @param {number} [products_per_page] - Pagination size. Defaults to 24.
+  @param {boolean} [enable_filtering] - Whether to render the sidebar.
+                                        Auto-hidden if collection has no
+                                        Storefront Filters configured.
+
+  @example
+    {% render 'collection-grid',
+       products_per_page: section.settings.products_per_page,
+       enable_filtering:  section.settings.enable_filtering %}
+{% enddoc %}
+
+{%- assign per_page = products_per_page | default: 24 -%}
+{%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+{%- assign current_tags = collection.current_tags -%}
+
+{%- assign has_filters = false -%}
+{%- if enable_filtering and collection.filters.size > 0 -%}
+  {%- assign has_filters = true -%}
+{%- endif -%}
+
+<section class="collection-page">
+  <div class="page-width">
+
+    {%- comment -%} ── COLLECTION HEADER ── {%- endcomment -%}
+    <div class="collection-header">
+      <div class="collection-header__text">
+        <span class="eyebrow">
+          {%- if collection.handle == 'all' -%}
+            All Products
+          {%- else -%}
+            Collections
+          {%- endif -%}
+        </span>
+        <h1 class="collection-title">{{ collection.title }}</h1>
+        {%- if collection.description != blank -%}
+          <p class="collection-description">{{ collection.description | strip_html }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Product count + sort ── {%- endcomment -%}
+      <div class="collection-header__controls">
+        <p class="collection-count">
+          {{ collection.products_count }}
+          {%- if collection.products_count == 1 -%} product{%- else -%} products{%- endif -%}
+        </p>
+
+        <div class="collection-sort">
+          <label for="CollectionSort" class="collection-sort__label">Sort:</label>
+          <select
+            id="CollectionSort"
+            class="collection-sort__select"
+            onchange="(function(s){var u=new URL(window.location.href);u.searchParams.set('sort_by',s.value);window.location.href=u.toString();})(this)">
+            {%- for option in collection.sort_options -%}
+              <option
+                value="{{ option.value }}"
+                {% if option.value == sort_by %}selected{% endif %}>
+                {{ option.name }}
+              </option>
+            {%- endfor -%}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} ── ACTIVE FILTER PILLS (legacy tags) ── {%- endcomment -%}
+    {%- if current_tags.size > 0 -%}
+      <div class="filter-pills" aria-label="Active filters">
+        <span class="filter-pills__label">Filtered by:</span>
+        {%- for tag in current_tags -%}
+          <a
+            href="{{ collection.url }}/{{ current_tags | reject: tag | join: '+' }}"
+            class="filter-pill"
+            aria-label="Remove filter {{ tag }}">
+            {{ tag }}
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </a>
+        {%- endfor -%}
+        <a href="{{ collection.url }}" class="filter-pill filter-pill--clear">
+          Clear all
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} ── LAYOUT: SIDEBAR + GRID ── {%- endcomment -%}
+    <div class="collection-layout{% unless has_filters %} collection-layout--no-filters{% endunless %}">
+
+      {%- comment -%} ── SIDEBAR FILTERS ── {%- endcomment -%}
+      {%- if has_filters -%}
+        {%- render 'facets', results: collection -%}
+      {%- endif -%}
+
+      {%- comment -%} ── PRODUCT GRID ── {%- endcomment -%}
+      <div class="collection-main" id="CollectionProductGrid">
+
+        {%- comment -%} Mobile filter toggle {%- endcomment -%}
+        {%- if has_filters -%}
+          <button
+            type="button"
+            class="mobile-filter-toggle"
+            id="MobileFilterToggle"
+            aria-expanded="false"
+            aria-controls="CollectionFilters"
+            onclick="TheArtShop.toggleMobileFilters(this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <line x1="4" y1="6" x2="20" y2="6"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+              <line x1="11" y1="18" x2="13" y2="18"/>
+            </svg>
+            Filter & Sort
+            {%- if current_tags.size > 0 -%}
+              <span class="mobile-filter-toggle__count">{{ current_tags.size }}</span>
+            {%- endif -%}
+          </button>
+        {%- endif -%}
+
+        {%- paginate collection.products by per_page -%}
+
+          {%- if collection.products.size > 0 -%}
+            <div class="product-grid product-grid--collection">
+              {%- for product in collection.products -%}
+                <div class="reveal-on-scroll">
+                  {%- render 'product-card', product: product -%}
+                </div>
+              {%- endfor -%}
+            </div>
+
+          {%- else -%}
+            {%- comment -%} Empty state {%- endcomment -%}
+            <div class="collection-empty">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true" class="collection-empty__icon">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <h2 class="collection-empty__title">No products found</h2>
+              <p class="collection-empty__text">
+                Try removing some filters or
+                <a href="{{ collection.url }}">view all products</a>
+                in this collection.
+              </p>
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} ── PAGINATION ── {%- endcomment -%}
+          {%- if paginate.pages > 1 -%}
+            <nav class="pagination" aria-label="Pagination">
+              {%- if paginate.previous -%}
+                <a
+                  href="{{ paginate.previous.url }}"
+                  class="pagination__btn pagination__btn--prev"
+                  aria-label="Previous page">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <polyline points="15 18 9 12 15 6"/>
+                  </svg>
+                  Prev
+                </a>
+              {%- endif -%}
+
+              <div class="pagination__pages">
+                {%- for part in paginate.parts -%}
+                  {%- if part.is_link -%}
+                    <a
+                      href="{{ part.url }}"
+                      class="pagination__page"
+                      aria-label="Page {{ part.title }}">
+                      {{ part.title }}
+                    </a>
+                  {%- elsif part.title == paginate.current_page -%}
+                    <span
+                      class="pagination__page pagination__page--current"
+                      aria-current="page"
+                      aria-label="Page {{ part.title }}, current page">
+                      {{ part.title }}
+                    </span>
+                  {%- else -%}
+                    <span class="pagination__ellipsis">{{ part.title }}</span>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+
+              {%- if paginate.next -%}
+                <a
+                  href="{{ paginate.next.url }}"
+                  class="pagination__btn pagination__btn--next"
+                  aria-label="Next page">
+                  Next
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <polyline points="9 18 15 12 9 6"/>
+                  </svg>
+                </a>
+              {%- endif -%}
+            </nav>
+          {%- endif -%}
+
+        {%- endpaginate -%}
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+{% stylesheet %}
+  /* ─── PAGE ─── */
+  .collection-page {
+    padding: var(--space-lg) 0 var(--space-2xl);
+  }
+
+  /* ─── HEADER ─── */
+  .collection-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-lg);
+    padding-bottom: var(--space-lg);
+    border-bottom: var(--border-default);
+    margin-bottom: var(--space-lg);
+    flex-wrap: wrap;
+  }
+
+  .collection-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+    line-height: var(--leading-snug);
+  }
+
+  .collection-description {
+    font-size: var(--text-base);
+    color: var(--text-secondary);
+    max-width: 520px;
+    line-height: var(--leading-relaxed);
+    margin-top: var(--space-xs);
+  }
+
+  .collection-header__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    flex-shrink: 0;
+  }
+
+  .collection-count {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  /* ─── SORT ─── */
+  .collection-sort {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .collection-sort__label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+
+  .collection-sort__select {
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    background: var(--color-white);
+    border: var(--border-default);
+    padding: 7px var(--space-sm);
+    cursor: pointer;
+    outline: none;
+    border-radius: var(--radius-xs);
+    transition: var(--transition-fast);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239a8a8a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 30px;
+  }
+
+  .collection-sort__select:focus { border-color: var(--color-maroon); }
+
+  /* ─── FILTER PILLS ─── */
+  .filter-pills {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: var(--border-light);
+  }
+
+  .filter-pills__label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-right: 4px;
+  }
+
+  .filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    padding: 5px 12px;
+    background: var(--color-maroon-ghost);
+    border: var(--border-maroon);
+    border-radius: var(--radius-xs);
+    color: var(--color-maroon);
+    transition: var(--transition-fast);
+  }
+
+  .filter-pill:hover {
+    background: var(--color-maroon);
+    color: var(--color-white);
+  }
+
+  .filter-pill--clear {
+    background: transparent;
+    border-color: var(--border-default);
+    color: var(--text-muted);
+  }
+
+  .filter-pill--clear:hover {
+    background: var(--color-surface);
+    color: var(--text-primary);
+    border-color: var(--text-muted);
+  }
+
+  /* NOTE: .collection-layout, .product-grid--collection,
+     .mobile-filter-toggle, .collection-empty and .pagination live in
+     assets/critical.css §12 (shared with the search page). Only
+     collection-specific overrides remain here. */
+
+  /* ─── RESPONSIVE: collection-specific header reflow ─── */
+  @media screen and (max-width: 749px) {
+    .collection-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-md);
+    }
+
+    .collection-header__controls {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+{% endstylesheet %}
+
+
+{% javascript %}
+  window.TheArtShop = window.TheArtShop || {};
+
+  /* ── SORT ── */
+  TheArtShop.sortCollection = function(select) {
+    var url = new URL(window.location.href);
+    url.searchParams.set('sort_by', select.value);
+    window.location.href = url.toString();
+  };
+
+  /* ── MOBILE FILTER TOGGLE ── */
+  TheArtShop.toggleMobileFilters = function(btn) {
+    var sidebar = document.querySelector('.facets-sidebar');
+    var isOpen  = btn.getAttribute('aria-expanded') === 'true';
+
+    btn.setAttribute('aria-expanded', !isOpen);
+
+    if (sidebar) {
+      sidebar.classList.toggle('is-open', !isOpen);
+    }
+  };
+{% endjavascript %}

@@ -44,7 +44,13 @@
     </a>
 
     {%- comment -%} Quick add button — hover reveals on desktop, always visible on mobile {%- endcomment -%}
-    {%- form 'product', product, class: 'product-card-form', data-ajax-handled: 'true' -%}
+    {%- comment -%}
+      No local submit handler — the global cart-add interceptor in
+      layout/theme.liquid handles this form. Don't pass data-ajax-handled
+      here; {% form %} silently drops unknown kwargs and the attribute
+      never reaches the DOM.
+    {%- endcomment -%}
+    {%- form 'product', product, class: 'product-card-form' -%}
       <input
         type="hidden"
         name="id"

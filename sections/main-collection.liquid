@@ -1,96 +1,37 @@
-{% paginate collection.products by 48 %}
-<div class="collection-layout-wrapper">
-  
- {%- comment -%} 1. Mobile Filter Button (Top of Page) - Only visible on small screens {%- endcomment -%}
-  <div class="mobile-filter-bar small-hide-up medium-hide large-up-hide">
-    {% render 'facets', results: collection %}
-  </div>
+{% comment %}
+  DEPRECATED ALIAS — kept so legacy template references continue to
+  render the polished UI. All rendering logic is in
+  snippets/collection-grid.liquid, also used by sections/collection.liquid.
 
-  {%- comment -%} 2. Desktop Sidebar {%- endcomment -%}
-  <aside class="collection-sidebar small-hide">
-    {% render 'facets', results: collection %}
-  </aside>
+  No preset is exposed so this section cannot be selected from the
+  theme editor. Use Collection instead.
+{% endcomment %}
 
-  {%- comment -%} 3. Main Grid {%- endcomment -%}
-  <main class="collection-main">
-    <h1 class="collection-title">{{ collection.title }}</h1>
-    
-    <div class="studio-grid">
-      {% for product in collection.products %}
-        {% render 'product-card', product: product %}
-      {% else %}
-        <p>No products found in this collection.</p>
-      {% endfor %}
-    </div>
+{%- render 'collection-grid',
+  products_per_page: section.settings.products_per_page,
+  enable_filtering:  section.settings.enable_filtering -%}
 
-    {% if paginate.pages > 1 %}
-      <div class="pagination">{{ paginate | default_pagination }}</div>
-    {% endif %}
-  </main>
-
-</div> {% comment %} This closes .collection-layout-wrapper {% endcomment %}
-{% endpaginate %}
-
-<style>
-  /* Layout Architecture */
-  .collection-layout-wrapper { display: flex; gap: 40px; max-width: 1400px; margin: 40px auto; padding: 0 20px; }
-  .collection-sidebar { flex: 0 0 220px; border-right: 1px solid #eee; padding-right: 20px; }
-  .collection-main { flex: 1; }
-  .collection-title { font-size: 1.5rem; margin-bottom: 30px; font-weight: 300; text-transform: uppercase; letter-spacing: 2px; }
-  
-  /* The Grid */
-  .studio-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; }
-
-  /* Product Card + Spice (Hover Lift) */
-  .studio-product-card { 
-    position: relative; 
-    text-decoration: none; 
-    color: inherit; 
-    display: block;
-    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
-    background: #fff;
-    padding: 10px;
-  }
-
-  @media screen and (min-width: 750px) {
-    .studio-product-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.05);
-      z-index: 2;
+{% schema %}
+{
+  "name": "Main collection (legacy)",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "label": "Products per page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable filters sidebar",
+      "default": true
     }
-  }
-
-  .image-frame { 
-    height: 280px; 
-    background: #f9f9f9; 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    overflow: hidden; 
-    margin-bottom: 12px;
-    border: 1px solid #f0f0f0;
-    position: relative;
-  }
-  .grid-img { max-height: 85%; max-width: 85%; object-fit: contain; transition: transform 0.4s ease; }
-  
-  .brand-name { font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px; margin: 0; }
-  .product-title { font-size: 13px; margin: 5px 0; font-weight: 400; line-height: 1.4; height: 2.8em; overflow: hidden; }
-  .product-price { font-weight: 600; font-size: 14px; margin-top: 8px; }
-
-  /* Responsive Adjustments */
-  @media (max-width: 1100px) { .studio-grid { grid-template-columns: repeat(3, 1fr); } }
-  
- /* Responsive Adjustments */
-  @media screen and (max-width: 749px) { 
-    .collection-layout-wrapper { flex-direction: column; margin: 20px auto; }
-    .collection-sidebar { display: none !important; }
-    .studio-grid { grid-template-columns: repeat(2, 1fr); gap: 15px; }
-    .image-frame { height: 200px; }
-    .mobile-filter-bar { display: block !important; width: 100%; padding: 0 0 20px 0; }
-  }
-
-  @media screen and (min-width: 750px) {
-    .mobile-filter-bar { display: none !important; }
-    .collection-sidebar { display: block !important; }
-  }
-</style>
+  ],
+  "presets": []
+}
+{% endschema %}

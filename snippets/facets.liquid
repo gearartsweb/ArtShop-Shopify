@@ -1,95 +1,310 @@
 {% comment %}
   Renders filters for Collection and Search.
-  Usage: {% render 'facets', results: collection %}
+
+  Usage:
+    {% render 'facets', results: collection %}
+    {% render 'facets', results: search %}
+
+  Reads:
+    results.filters  — Shopify Storefront Filters
+                       (Online Store → Search & Discovery → Filters)
+    results.terms    — search query (preserved through filter submits)
+    results.url      — base URL for "Clear all"
+    results.sort_by  — preserved through clear
+
+  Auto-submits on checkbox change. Price range needs the explicit
+  Apply button so we don't spam refetches on every keystroke.
 {% endcomment %}
 
-<div id="MobileFilterTrigger">
-  <button type="button" class="mobile-toggle-btn" onclick="const f = document.getElementById('FacetFiltersForm'); f.classList.toggle('mobile-open'); window.scrollTo({top: f.offsetTop - 50, behavior: 'smooth'});">
-    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-filter" viewBox="0 0 20 20" style="width: 16px; margin-right: 10px; fill: currentColor;">
-      <path fill-rule="evenodd" d="M4.833 6.5a1.667 1.667 0 1 1 3.334 0 1.667 1.667 0 0 1-3.334 0ZM4.05 7h-.84a.5.5 0 0 1 0-1h.84a2.667 2.667 0 0 0 4.883 0h6.857a.5.5 0 0 1 0 1H8.933a2.667 2.667 0 0 0-4.883 0Zm8.15 6.5a1.667 1.667 0 1 1 3.334 0 1.667 1.667 0 0 1-3.334 0ZM11.383 13h-.84a.5.5 0 0 1 0-1h.84a2.667 2.667 0 0 0 4.884 0h.523a.5.5 0 0 1 0 1h-.523a2.667 2.667 0 0 0-4.884 0Z"></path>
-    </svg>
-    Filter & Sort
-  </button>
-</div>
+<aside class="facets-sidebar" id="CollectionFilters" aria-label="Filters">
+  <form id="FacetFiltersForm" class="facets-form">
+    {%- if results.terms -%}
+      <input type="hidden" name="q" value="{{ results.terms | escape }}">
+      <input name="options[prefix]" type="hidden" value="last">
+    {%- endif -%}
+    {%- if results.sort_by -%}
+      <input type="hidden" name="sort_by" value="{{ results.sort_by | escape }}">
+    {%- endif -%}
 
-<form id="FacetFiltersForm" class="facets-form">
-  {%- if results.terms -%}
-    <input type="hidden" name="q" value="{{ results.terms | escape }}">
-    <input name="options[prefix]" type="hidden" value="last">
-  {%- endif -%}
-
-  <div class="facets-container">
     <div class="facets-header">
-      <h3 style="font-size: 14px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 20px;">Filters</h3>
-      <a href="{{ results.url }}?sort_by={{ results.sort_by }}" class="clear-all" style="font-size: 11px; text-decoration: underline; color: #666;">Clear all</a>
+      <h3 class="facets-title">Filter</h3>
+      {%- if results.filters.size > 0 -%}
+        <a href="{{ results.url }}{% if results.sort_by %}?sort_by={{ results.sort_by }}{% endif %}" class="facets-clear">Clear all</a>
+      {%- endif -%}
     </div>
 
     {%- for filter in results.filters -%}
-      <details class="facet-details" open style="margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px;">
-        <summary style="cursor: pointer; font-weight: 600; font-size: 13px; list-style: none; display: flex; justify-content: space-between;">
-          <span>{{ filter.label }}</span>
-          <span class="icon-plus">+</span>
+      <details class="facet-group" open>
+        <summary class="facet-group__summary">
+          <span class="facet-group__label">{{ filter.label | escape }}</span>
+          <svg class="facet-group__chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
         </summary>
 
-        <div class="facet-content" style="margin-top: 15px;">
+        <div class="facet-group__content">
           {%- case filter.type -%}
             {%- when 'boolean' or 'list' -%}
-              <ul style="list-style: none; padding: 0; margin: 0;">
+              <ul class="facet-options">
                 {%- for value in filter.values -%}
-                  <li style="margin-bottom: 8px;">
-                    <label style="display: flex; align-items: center; cursor: pointer; font-size: 13px; color: #333;">
-                      <input type="checkbox"
+                  <li class="facet-option">
+                    <label class="facet-option__label">
+                      <input
+                        type="checkbox"
                         name="{{ value.param_name }}"
                         value="{{ value.value }}"
-                        id="Filter-{{ filter.label | escape }}-{{ forloop.index }}"
+                        id="Filter-{{ filter.label | handleize }}-{{ forloop.index }}"
+                        class="facet-option__checkbox"
                         {% if value.active %}checked{% endif %}
                         {% if value.count == 0 and value.active == false %}disabled{% endif %}
-                        onchange="this.form.submit()"
-                        style="margin-right: 10px;"
-                      >
-                      {{ value.label | escape }} 
-                      <span style="color: #999; font-size: 11px; margin-left: 5px;">({{ value.count }})</span>
+                        onchange="this.form.submit()">
+                      <span class="facet-option__text">{{ value.label | escape }}</span>
+                      <span class="facet-option__count">({{ value.count }})</span>
                     </label>
                   </li>
                 {%- endfor -%}
               </ul>
 
             {%- when 'price_range' -%}
-              <div class="price-range-inputs" style="display: flex; gap: 10px; align-items: center;">
-                <div class="field">
-                  <span style="font-size: 11px;">{{ cart.currency.symbol }}</span>
-                  <input name="{{ filter.min_value.param_name }}"
-                    id="Filter-{{ filter.label | escape }}-GTE"
-                    {% if filter.min_value.value -%}
-                      value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
-                    {%- endif %}
-                    type="number"
-                    placeholder="0"
-                    min="0"
-                    max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
-                    style="width: 60px; padding: 5px; border: 1px solid #ddd;"
-                  >
+              <div class="facet-price">
+                <div class="facet-price__row">
+                  <div class="facet-price__field">
+                    <span class="facet-price__currency">{{ cart.currency.symbol }}</span>
+                    <input
+                      type="number"
+                      name="{{ filter.min_value.param_name }}"
+                      id="Filter-{{ filter.label | handleize }}-GTE"
+                      {% if filter.min_value.value -%}
+                        value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"
+                      {%- endif %}
+                      placeholder="0"
+                      min="0"
+                      max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                      class="facet-price__input"
+                      aria-label="Minimum price">
+                  </div>
+                  <span class="facet-price__sep" aria-hidden="true">–</span>
+                  <div class="facet-price__field">
+                    <span class="facet-price__currency">{{ cart.currency.symbol }}</span>
+                    <input
+                      type="number"
+                      name="{{ filter.max_value.param_name }}"
+                      id="Filter-{{ filter.label | handleize }}-LTE"
+                      {% if filter.max_value.value -%}
+                        value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
+                      {%- endif %}
+                      placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                      min="0"
+                      max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
+                      class="facet-price__input"
+                      aria-label="Maximum price">
+                  </div>
                 </div>
-                <span>-</span>
-                <div class="field">
-                  <span style="font-size: 11px;">{{ cart.currency.symbol }}</span>
-                  <input name="{{ filter.max_value.param_name }}"
-                    id="Filter-{{ filter.label | escape }}-LTE"
-                    {% if filter.max_value.value -%}
-                      value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"
-                    {%- endif %}
-                    type="number"
-                    min="0"
-                    max="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
-                    placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}"
-                    style="width: 60px; padding: 5px; border: 1px solid #ddd;"
-                  >
-                </div>
+                <button type="submit" class="facet-price__apply">Apply</button>
               </div>
-              <button type="submit" style="margin-top: 10px; font-size: 11px; text-decoration: underline; background: none; border: none; cursor: pointer;">APPLY</button>
           {%- endcase -%}
         </div>
       </details>
     {%- endfor -%}
-  </div>
-</form>
+  </form>
+</aside>
+
+{% stylesheet %}
+  .facets-sidebar {
+    position: sticky;
+    top: calc(var(--header-height) + var(--space-md));
+  }
+
+  .facets-form {
+    font-family: var(--font-sans);
+  }
+
+  /* ── HEADER ── */
+  .facets-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding-bottom: var(--space-sm);
+    border-bottom: var(--border-default);
+    margin-bottom: var(--space-xs);
+  }
+
+  .facets-title {
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .facets-clear {
+    font-size: 11px;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: var(--transition-fast);
+  }
+
+  .facets-clear:hover { color: var(--color-maroon); }
+
+  /* ── GROUP ── */
+  .facet-group {
+    border-bottom: var(--border-light);
+    padding: var(--space-xs) 0 var(--space-sm);
+  }
+
+  .facet-group:last-of-type { border-bottom: none; }
+
+  .facet-group__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--text-primary);
+    list-style: none;
+    padding: var(--space-xs) 0;
+    transition: var(--transition-fast);
+  }
+
+  .facet-group__summary::-webkit-details-marker { display: none; }
+  .facet-group__summary:hover { color: var(--color-maroon); }
+
+  .facet-group__chevron {
+    color: var(--text-muted);
+    transition: transform 0.2s ease;
+  }
+
+  .facet-group[open] > .facet-group__summary .facet-group__chevron {
+    transform: rotate(180deg);
+  }
+
+  .facet-group__content { padding-top: var(--space-xs); }
+
+  /* ── OPTIONS ── */
+  .facet-options {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .facet-option__label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    transition: var(--transition-fast);
+    padding: 2px 0;
+  }
+
+  .facet-option__label:hover { color: var(--text-primary); }
+
+  .facet-option__checkbox {
+    width: 14px;
+    height: 14px;
+    accent-color: var(--color-maroon);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .facet-option__checkbox:disabled { cursor: not-allowed; }
+
+  .facet-option__checkbox:disabled ~ .facet-option__text,
+  .facet-option__checkbox:disabled ~ .facet-option__count {
+    opacity: 0.4;
+  }
+
+  .facet-option__text { flex: 1; }
+
+  .facet-option__count {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  /* ── PRICE ── */
+  .facet-price {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+  }
+
+  .facet-price__row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .facet-price__field {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border: var(--border-default);
+    padding: 6px 8px;
+    border-radius: var(--radius-xs);
+    background: var(--color-white);
+    transition: var(--transition-fast);
+    flex: 1;
+    min-width: 0;
+  }
+
+  .facet-price__field:focus-within { border-color: var(--color-maroon); }
+
+  .facet-price__currency {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .facet-price__input {
+    border: none;
+    outline: none;
+    font-size: var(--text-sm);
+    background: transparent;
+    width: 100%;
+    min-width: 0;
+    color: var(--text-primary);
+    -moz-appearance: textfield;
+  }
+
+  .facet-price__input::-webkit-outer-spin-button,
+  .facet-price__input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .facet-price__sep {
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .facet-price__apply {
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-maroon);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--space-xs) 0 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: var(--transition-fast);
+    align-self: flex-start;
+  }
+
+  .facet-price__apply:hover { color: var(--color-maroon-deep); }
+{% endstylesheet %}

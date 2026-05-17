@@ -277,10 +277,17 @@
 
     var dots = dotsWrap.querySelectorAll('.showcase-dot');
 
+    /* Read the actual gap from the slider so it stays in sync with
+       --space-md no matter how the design token changes. */
+    function getGap() {
+      var cs = window.getComputedStyle(slider);
+      return parseInt(cs.columnGap || cs.gap, 10) || 24;
+    }
+
     // ── UPDATE ACTIVE DOT & BUTTON STATES ──
     function updateState() {
       var scrollLeft  = slider.scrollLeft;
-      var itemWidth   = items[0] ? items[0].offsetWidth + 20 : 280; // 20 = gap
+      var itemWidth   = items[0] ? items[0].offsetWidth + getGap() : 280;
       var activeIndex = Math.round(scrollLeft / itemWidth);
 
       dots.forEach(function(d, i) {
@@ -296,7 +303,7 @@
 
     // ── SCROLL BY BUTTON ──
     TheArtShop.scrollShowcase = function(direction) {
-      var itemWidth = items[0] ? items[0].offsetWidth + 20 : 280;
+      var itemWidth = items[0] ? items[0].offsetWidth + getGap() : 280;
       slider.scrollBy({ left: itemWidth * direction, behavior: 'smooth' });
     };
   })();

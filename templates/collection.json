@@ -10,8 +10,11 @@
 {
   "sections": {
     "main": {
-      "type": "main-collection",
-      "settings": {}
+      "type": "collection",
+      "settings": {
+        "products_per_page": 24,
+        "enable_filtering": true
+      }
     }
   },
   "order": [

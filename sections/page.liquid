@@ -1,13 +1,112 @@
 {% comment %}
-  This section is used in the page template to render store pages like About us
-  or Contact us.
-
+  Generic page template — wraps a Shopify Page (About, Contact, FAQ, etc.)
+  in the design system with proper typography and spacing.
   https://shopify.dev/docs/storefronts/themes/architecture/templates/page
 {% endcomment %}
 
-<h1>{{ page.title }}</h1>
+<section class="page-section">
+  <div class="page-width page-width--narrow">
+    <header class="page-section__header">
+      <span class="eyebrow">{{ page.template_suffix | default: 'Information' | replace: '-', ' ' | capitalize }}</span>
+      <h1 class="page-section__title">{{ page.title }}</h1>
+    </header>
 
-{{ page.content }}
+    <article class="page-section__body rte">
+      {{ page.content }}
+    </article>
+  </div>
+</section>
+
+{% stylesheet %}
+  .page-section {
+    padding: var(--space-2xl) 0;
+  }
+
+  .page-section__header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: var(--border-default);
+  }
+
+  .page-section__title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-top: var(--space-xs);
+    line-height: var(--leading-snug);
+  }
+
+  /* Rich-text editor output — Shopify page body */
+  .rte {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+  }
+
+  .rte h2, .rte h3, .rte h4 {
+    font-family: var(--font-serif);
+    color: var(--text-primary);
+    margin: var(--space-lg) 0 var(--space-sm);
+    line-height: var(--leading-snug);
+  }
+
+  .rte h2 { font-size: var(--text-xl); }
+  .rte h3 { font-size: var(--text-lg); }
+  .rte h4 { font-size: var(--text-md); }
+
+  .rte p { margin-bottom: var(--space-md); }
+
+  .rte a {
+    color: var(--color-maroon);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    transition: var(--transition-fast);
+  }
+
+  .rte a:hover { color: var(--color-maroon-deep); }
+
+  .rte ul, .rte ol {
+    padding-left: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
+  .rte ul { list-style: disc; }
+  .rte ol { list-style: decimal; }
+  .rte li { margin-bottom: var(--space-xs); }
+
+  .rte img {
+    max-width: 100%;
+    height: auto;
+    margin: var(--space-md) 0;
+    border-radius: var(--radius-xs);
+  }
+
+  .rte blockquote {
+    border-left: 2px solid var(--color-maroon);
+    padding-left: var(--space-md);
+    margin: var(--space-md) 0;
+    font-style: italic;
+    color: var(--text-primary);
+  }
+
+  .rte hr {
+    border: none;
+    border-top: var(--border-default);
+    margin: var(--space-lg) 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .page-section {
+      padding: var(--space-xl) 0;
+    }
+
+    .page-section__header {
+      margin-bottom: var(--space-lg);
+    }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

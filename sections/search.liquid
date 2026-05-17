@@ -1,125 +1,339 @@
-{{ 'critical.css' | asset_url | stylesheet_tag }}
+{% comment %}
+  Search results page.
 
-<div class="page-width" style="padding: 60px 20px;">
-  <div class="search-header" style="text-align: center; margin-bottom: 50px;">
-    <h1 class="collection-title" style="font-size: 1.5rem; font-weight: 300; text-transform: uppercase; letter-spacing: 2px;">
-      {% if search.performed %}
-        {% if search.results_count == 1 %}
-          1 Result for "{{ search.terms }}"
-        {% else %}
-          {{ search.results_count }} Results for "{{ search.terms }}"
-        {% endif %}
-      {% else %}
-        Search Our Studio
-      {% endif %}
-    </h1>
+  Renders the search bar (always), results header (when search performed),
+  optional facets sidebar, and a paginated grid of results. Products use
+  the standard product-card snippet; pages and articles render as text
+  cards.
+{% endcomment %}
 
-    {% comment %} Search bar on the results page for quick adjustments {% endcomment %}
-    <form action="{{ routes.search_url }}" method="get" role="search" style="max-width: 500px; margin: 30px auto; display: flex; gap: 10px; border-bottom: 1px solid #eee; padding-bottom: 10px;">
-      <input 
-        type="search" 
-        name="q" 
-        value="{{ search.terms | escape }}" 
-        placeholder="Search again..." 
-        style="flex: 1; border: none; outline: none; font-family: inherit; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;"
-      >
-      <button type="submit" style="background: none; border: none; font-weight: 600; cursor: pointer; font-size: 12px; letter-spacing: 1px;">GO</button>
-    </form>
-  </div>
+{%- assign has_filters = false -%}
+{%- if section.settings.enable_filtering and search.performed and search.filters.size > 0 -%}
+  {%- assign has_filters = true -%}
+{%- endif -%}
 
-  <div class="collection-layout-wrapper">
-    {% comment %} Sidebar with Dynamic Filters {% endcomment %}
-    <aside class="collection-sidebar">
-      {% render 'facets', results: search %}
-    </aside>
+<section class="search-page">
+  <div class="page-width">
 
-    <main class="collection-main">
-      {% paginate search.results by 32 %}
-        {% if search.performed %}
-          <div class="studio-grid">
-            {% for item in search.results %}
-              {% comment %} 
-                Ensure we only show products. 
-                If you want to show pages/articles, we would need a different card style.
-              {% endcomment %}
-              {% if item.object_type == 'product' %}
-                {% render 'product-card', product: item %}
-              {% endif %}
-            {% else %}
-              <p style="text-align: center; grid-column: 1 / -1; padding: 40px; color: #666;">
-                No items matched your search for "{{ search.terms }}".
+    {%- comment -%} ── SEARCH HEADER ── {%- endcomment -%}
+    <div class="search-header">
+      <span class="eyebrow">{%- if search.performed -%}Results{%- else -%}Search{%- endif -%}</span>
+      <h1 class="search-title">
+        {%- if search.performed -%}
+          {%- if search.results_count == 0 -%}
+            No results for "{{ search.terms }}"
+          {%- elsif search.results_count == 1 -%}
+            1 result for "{{ search.terms }}"
+          {%- else -%}
+            {{ search.results_count }} results for "{{ search.terms }}"
+          {%- endif -%}
+        {%- else -%}
+          Search our studio
+        {%- endif -%}
+      </h1>
+
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-form">
+        <input type="hidden" name="options[prefix]" value="last">
+        <label for="SearchInput" class="visually-hidden">Search</label>
+        <svg class="search-form__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input
+          id="SearchInput"
+          type="search"
+          name="q"
+          value="{{ search.terms | escape }}"
+          placeholder="Search products, brands, materials..."
+          class="search-form__input"
+          autocomplete="off">
+        <button type="submit" class="search-form__submit">Go</button>
+      </form>
+    </div>
+
+    {%- comment -%} ── LAYOUT ── {%- endcomment -%}
+    <div class="collection-layout{% unless has_filters %} collection-layout--no-filters{% endunless %}">
+
+      {%- if has_filters -%}
+        {%- render 'facets', results: search -%}
+      {%- endif -%}
+
+      <div class="collection-main">
+
+        {%- if has_filters -%}
+          <button
+            type="button"
+            class="mobile-filter-toggle"
+            aria-expanded="false"
+            aria-controls="CollectionFilters"
+            onclick="TheArtShop.toggleMobileFilters(this)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+              <line x1="4" y1="6" x2="20" y2="6"/>
+              <line x1="8" y1="12" x2="16" y2="12"/>
+              <line x1="11" y1="18" x2="13" y2="18"/>
+            </svg>
+            Filter
+          </button>
+        {%- endif -%}
+
+        {%- if search.performed -%}
+
+          {%- if search.results_count > 0 -%}
+            {%- paginate search.results by section.settings.results_per_page -%}
+
+              <div class="product-grid product-grid--collection">
+                {%- for item in search.results -%}
+                  <div class="reveal-on-scroll">
+                    {%- case item.object_type -%}
+                      {%- when 'product' -%}
+                        {%- render 'product-card', product: item -%}
+                      {%- when 'article' -%}
+                        <a href="{{ item.url }}" class="search-card search-card--article">
+                          <span class="search-card__type">Article</span>
+                          <h3 class="search-card__title">{{ item.title }}</h3>
+                          {%- if item.excerpt_or_content != blank -%}
+                            <p class="search-card__excerpt">{{ item.excerpt_or_content | strip_html | truncate: 140 }}</p>
+                          {%- endif -%}
+                        </a>
+                      {%- when 'page' -%}
+                        <a href="{{ item.url }}" class="search-card search-card--page">
+                          <span class="search-card__type">Page</span>
+                          <h3 class="search-card__title">{{ item.title }}</h3>
+                          {%- if item.content != blank -%}
+                            <p class="search-card__excerpt">{{ item.content | strip_html | truncate: 140 }}</p>
+                          {%- endif -%}
+                        </a>
+                    {%- endcase -%}
+                  </div>
+                {%- endfor -%}
+              </div>
+
+              {%- if paginate.pages > 1 -%}
+                <nav class="pagination" aria-label="Pagination">
+                  {%- if paginate.previous -%}
+                    <a href="{{ paginate.previous.url }}" class="pagination__btn pagination__btn--prev" aria-label="Previous page">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                        <polyline points="15 18 9 12 15 6"/>
+                      </svg>
+                      Prev
+                    </a>
+                  {%- endif -%}
+
+                  <div class="pagination__pages">
+                    {%- for part in paginate.parts -%}
+                      {%- if part.is_link -%}
+                        <a href="{{ part.url }}" class="pagination__page" aria-label="Page {{ part.title }}">{{ part.title }}</a>
+                      {%- elsif part.title == paginate.current_page -%}
+                        <span class="pagination__page pagination__page--current" aria-current="page">{{ part.title }}</span>
+                      {%- else -%}
+                        <span class="pagination__ellipsis">{{ part.title }}</span>
+                      {%- endif -%}
+                    {%- endfor -%}
+                  </div>
+
+                  {%- if paginate.next -%}
+                    <a href="{{ paginate.next.url }}" class="pagination__btn pagination__btn--next" aria-label="Next page">
+                      Next
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                        <polyline points="9 18 15 12 9 6"/>
+                      </svg>
+                    </a>
+                  {%- endif -%}
+                </nav>
+              {%- endif -%}
+
+            {%- endpaginate -%}
+
+          {%- else -%}
+            {%- comment -%} Empty results state {%- endcomment -%}
+            <div class="collection-empty">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" aria-hidden="true" class="collection-empty__icon">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <h2 class="collection-empty__title">Nothing matched your search</h2>
+              <p class="collection-empty__text">
+                Try a broader term, check the spelling, or
+                <a href="{{ routes.collections_url }}">browse all collections</a>.
               </p>
-            {% endfor %}
-          </div>
-        {% endif %}
+            </div>
+          {%- endif -%}
 
-        {% if paginate.pages > 1 %}
-          <div class="pagination" style="margin-top: 50px; text-align: center; display: flex; justify-content: center; gap: 15px;">
-            {{ paginate | default_pagination }}
+        {%- else -%}
+          {%- comment -%} Idle / no-query state {%- endcomment -%}
+          <div class="collection-empty">
+            <p class="collection-empty__text">
+              Enter a search term above to find products, articles or pages.
+            </p>
           </div>
-        {% endif %}
-      {% endpaginate %}
-    </main>
+        {%- endif -%}
+
+      </div>
+    </div>
+
   </div>
-</div>
+</section>
 
-<style>
-  /* Layout Architecture - Matches your Collection Page */
-  .collection-layout-wrapper { 
-    display: flex; 
-    gap: 40px; 
-    max-width: 1400px; 
-    margin: 0 auto; 
-  }
-  
-  .collection-sidebar { 
-    flex: 0 0 220px; 
-    border-right: 1px solid #eee; 
-    padding-right: 20px; 
-  }
-  
-  .collection-main { 
-    flex: 1; 
+
+{% stylesheet %}
+  /* ── PAGE ── */
+  .search-page {
+    padding: var(--space-lg) 0 var(--space-2xl);
   }
 
-  /* The Studio Grid */
-  .studio-grid { 
-    display: grid; 
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 25px; 
+  /* ── HEADER ── */
+  .search-header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: var(--border-default);
   }
 
-  /* Mobile Responsiveness */
-  @media (max-width: 1200px) {
-    .studio-grid { grid-template-columns: repeat(3, 1fr); }
+  .search-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin: var(--space-xs) 0 var(--space-md);
+    line-height: var(--leading-snug);
   }
 
-  @media (max-width: 768px) {
-    .collection-layout-wrapper { flex-direction: column; }
-    .collection-sidebar { display: none; } /* Hide sidebar on mobile to save space */
-    .studio-grid { grid-template-columns: repeat(2, 1fr); }
-    .collection-title { font-size: 1.2rem; }
+  /* ── SEARCH FORM ── */
+  .search-form {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    max-width: 540px;
+    margin: 0 auto;
+    padding: 10px var(--space-sm);
+    border: var(--border-default);
+    border-radius: var(--radius-xs);
+    background: var(--color-white);
+    transition: var(--transition-fast);
   }
 
-  /* Ensure the facets snippet styling is supported */
-  .facet-details { border-bottom: 1px solid #eee; padding: 15px 0; }
-  .facet-details summary { cursor: pointer; font-size: 12px; text-transform: uppercase; font-weight: 600; list-style: none; }
-  .facet-details summary::-webkit-details-marker { display: none; }
-</style>
+  .search-form:focus-within {
+    border-color: var(--color-maroon);
+  }
+
+  .search-form__icon {
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .search-form__input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    min-width: 0;
+  }
+
+  .search-form__input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .search-form__submit {
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-maroon);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px var(--space-xs);
+    transition: var(--transition-fast);
+  }
+
+  .search-form__submit:hover {
+    color: var(--color-maroon-deep);
+  }
+
+  /* ── ARTICLE / PAGE RESULT CARDS ── */
+  .search-card {
+    display: block;
+    padding: var(--space-md);
+    background: var(--color-off-white);
+    border: var(--border-light);
+    border-radius: var(--radius-xs);
+    transition: var(--transition-fast);
+    color: inherit;
+    height: 100%;
+  }
+
+  .search-card:hover {
+    border-color: var(--color-maroon-border);
+    background: var(--color-surface);
+  }
+
+  .search-card__type {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-widest);
+    text-transform: uppercase;
+    color: var(--color-maroon);
+    margin-bottom: var(--space-xs);
+  }
+
+  .search-card__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-md);
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: var(--leading-snug);
+    margin-bottom: var(--space-xs);
+  }
+
+  .search-card__excerpt {
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* ── RESPONSIVE ── */
+  @media screen and (max-width: 749px) {
+    .search-header {
+      margin-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
+    }
+
+    .search-form {
+      max-width: 100%;
+    }
+  }
+{% endstylesheet %}
+
 
 {% schema %}
 {
-  "name": "Search Results",
+  "name": "Search results",
+  "tag": "section",
   "settings": [
     {
       "type": "range",
-      "id": "products_per_page",
-      "min": 8,
+      "id": "results_per_page",
+      "label": "Results per page",
+      "min": 12,
       "max": 48,
       "step": 4,
-      "default": 24,
-      "label": "Products per page"
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable filters sidebar",
+      "info": "Requires Storefront Filters configured in Online Store → Search & Discovery.",
+      "default": true
     }
-  ]
+  ],
+  "presets": []
 }
 {% endschema %}

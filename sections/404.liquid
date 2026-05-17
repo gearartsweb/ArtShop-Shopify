@@ -1,19 +1,69 @@
 {% comment %}
-  This section is used in the 404 template to render page shown when customers
-  enter an invalid store URL.
-
+  404 page — branded, centered, with a clear path back to the catalogue.
   https://shopify.dev/docs/storefronts/themes/architecture/templates/404
 {% endcomment %}
 
-<h1>{{ '404.title' | t }}</h1>
+<section class="error-404">
+  <div class="page-width page-width--narrow">
+    <div class="error-404__inner">
+      <span class="eyebrow">404</span>
+      <h1 class="error-404__title">{{ '404.title' | t }}</h1>
+      <p class="error-404__text">{{ '404.not_found' | t }}</p>
 
-<p>
-  {{ '404.not_found' | t }}
-</p>
+      <div class="error-404__actions">
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary btn--lg">
+          {{ '404.back_to_shopping' | t }}
+        </a>
+        <a href="{{ routes.root_url }}" class="btn btn--ghost btn--lg">
+          Back to home
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
 
-<a href="{{ routes.all_products_collection_url }}">
-  {{ '404.back_to_shopping' | t }}
-</a>
+{% stylesheet %}
+  .error-404 {
+    padding: var(--space-3xl) 0;
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+  }
+
+  .error-404__inner {
+    text-align: center;
+  }
+
+  .error-404__title {
+    font-family: var(--font-serif);
+    font-size: clamp(2rem, 5vw, 3.4rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: var(--leading-snug);
+    margin: var(--space-xs) 0 var(--space-md);
+  }
+
+  .error-404__text {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+    max-width: 480px;
+    margin: 0 auto var(--space-lg);
+  }
+
+  .error-404__actions {
+    display: inline-flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  @media screen and (max-width: 480px) {
+    .error-404 { padding: var(--space-2xl) 0; }
+    .error-404__actions { width: 100%; flex-direction: column; }
+    .error-404__actions .btn { width: 100%; justify-content: center; }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

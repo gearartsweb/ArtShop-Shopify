@@ -187,7 +187,9 @@
     display: block;
     margin-bottom: var(--space-md);
     opacity: 0.85;
-    filter: brightness(10); /* Makes dark logos visible on dark bg */
+    /* Whitens any logo (including colored marks) for the dark footer bg.
+       Prefer a transparent white SVG logo if you want hue control. */
+    filter: brightness(0) invert(1);
   }
 
   .footer-brand__desc {

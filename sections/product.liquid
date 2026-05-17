@@ -106,7 +106,13 @@
           {%- assign variant_count = product.variants.size -%}
 
           {%- comment -%} ── PAINT MATRIX (multi-variant products) ── {%- endcomment -%}
-          {%- if variant_count > 1 -%}
+          {%- assign is_paint = false -%}
+          {%- if product.type == 'Paint' or product.type == 'Paints' or product.tags contains 'Paint' or product.tags contains 'Paints' -%}
+            {%- assign is_paint = true -%}
+          {%- endif -%}
+
+          {%- comment -%} Paint matrix only shows for paint products {%- endcomment -%}
+          {%- if variant_count > 1 and is_paint -%}
             <div class="paint-matrix">
 
               {%- comment -%} Size pills {%- endcomment -%}
@@ -201,6 +207,31 @@
                 <span id="current-selection-label">{{ current_variant.title }}</span>
               </div>
 
+            </div>
+          {%- endif -%}
+
+          {%- comment -%} ── STANDARD VARIANT SELECTOR (non-paint multi-variant) ── {%- endcomment -%}
+          {%- if variant_count > 1 and is_paint == false -%}
+            <div class="standard-variant-selector">
+              {%- for option in product.options_with_values -%}
+                <div class="variant-option-group">
+                  <label class="variant-option-label" for="Option-{{ option.name | handleize }}">
+                    {{ option.name }}
+                  </label>
+                  <select
+                    id="Option-{{ option.name | handleize }}"
+                    class="variant-option-select"
+                    data-option-index="{{ forloop.index0 }}"
+                    onchange="TheArtShop.updateVariantFromSelects()">
+                    {%- for value in option.values -%}
+                      <option value="{{ value | escape }}"
+                        {% if option.selected_value == value %}selected{% endif %}>
+                        {{ value }}
+                      </option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              {%- endfor -%}
             </div>
           {%- endif -%}
 
@@ -370,7 +401,7 @@
 
   .product-sticky-content {
     position: sticky;
-    top: 84px;
+    top: calc(var(--header-height) + var(--space-md));
     width: 100%;
   }
 
@@ -667,6 +698,52 @@
     outline: none;
   }
 
+  /* ─── STANDARD VARIANT SELECTOR ─── */
+  .standard-variant-selector {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .variant-option-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2xs);
+  }
+
+  .variant-option-label {
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-secondary);
+  }
+
+  .variant-option-select {
+    width: 100%;
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    background: var(--color-white);
+    border: var(--border-default);
+    padding: 10px var(--space-sm);
+    cursor: pointer;
+    outline: none;
+    border-radius: var(--radius-xs);
+    transition: var(--transition-fast);
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%239a8a8a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 36px;
+  }
+
+  .variant-option-select:focus {
+    border-color: var(--color-maroon);
+    outline: none;
+  }
+
   /* ─── RESPONSIVE ─── */
   @media screen and (max-width: 990px) {
     .product-main-container {
@@ -860,6 +937,10 @@ document.addEventListener('DOMContentLoaded', function() {
     productForm.addEventListener('submit', function(e) {
       e.preventDefault();
 
+      /* Tell the global cart-add interceptor (in theme.liquid) to skip
+         this form — we handle it locally with JSON + variant + qty. */
+      productForm.dataset.ajaxHandled = 'true';
+
       var variantId = document.getElementById('selected-variant-id').value;
       var quantity  = parseInt(qtyInput ? qtyInput.value : 1, 10) || 1;
 
@@ -907,6 +988,53 @@ document.addEventListener('DOMContentLoaded', function() {
   sizePills.forEach(function(pill) { pill.addEventListener('change', filterGrid); });
 
   filterGrid();
+
+  /* ── STANDARD VARIANT SELECTOR (non-paint products) ── */
+  TheArtShop = window.TheArtShop || {};
+  TheArtShop.updateVariantFromSelects = function() {
+    var selects = document.querySelectorAll('.variant-option-select');
+    var selectedOptions = Array.from(selects).map(function(s) { return s.value; });
+
+    var allVariants = {{ product.variants | json }};
+    var matched = allVariants.find(function(v) {
+      return v.options.every(function(opt, i) { return opt === selectedOptions[i]; });
+    });
+
+    if (!matched) return;
+
+    var hiddenInput = document.getElementById('selected-variant-id');
+    if (hiddenInput) hiddenInput.value = matched.id;
+
+    var priceEl = document.getElementById('product-price');
+    if (priceEl) priceEl.textContent = TheArtShop._formatMoney(matched.price);
+
+    var comparePriceEl = document.getElementById('product-compare-price');
+    var saleBadgeEl    = document.getElementById('product-sale-badge');
+    if (comparePriceEl && saleBadgeEl) {
+      if (matched.compare_at_price && matched.compare_at_price > matched.price) {
+        comparePriceEl.textContent = TheArtShop._formatMoney(matched.compare_at_price);
+        comparePriceEl.removeAttribute('hidden');
+        saleBadgeEl.removeAttribute('hidden');
+      } else {
+        comparePriceEl.setAttribute('hidden', '');
+        saleBadgeEl.setAttribute('hidden', '');
+      }
+    }
+
+    var addBtn     = document.getElementById('add-to-cart-btn');
+    var addBtnText = document.getElementById('add-to-cart-text');
+    if (addBtn && addBtnText) {
+      addBtn.disabled = !matched.available;
+      addBtnText.textContent = matched.available ? 'Add to Cart' : 'Out of Stock';
+    }
+
+    if (matched.featured_image && mainImg) {
+      var src = matched.featured_image.src
+        .replace(/(\.[^.]+)$/, '_1000x$1')
+        .replace(/\?.*/, '');
+      mainImg.src = src;
+    }
+  };
 });
 </script>
 

@@ -1,35 +1,235 @@
 {% comment %}
-  This section is used in the blog template to render the blog page listing all
-  articles within a blog.
-
+  Blog index — lists articles within a blog with hero image, title,
+  excerpt, and metadata. Uses the design system; pagination matches
+  the catalogue page.
   https://shopify.dev/docs/storefronts/themes/architecture/templates/blog
 {% endcomment %}
 
-<h1>{{ blog.title }}</h1>
+<section class="blog-index">
+  <div class="page-width">
 
-{% paginate blog.articles by 5 %}
-  {% for article in blog.articles %}
-    <div>
-      {% if article.image %}
-        {{ article.image | image_url: width: 1000 | image_tag }}
+    <header class="blog-index__header">
+      <span class="eyebrow">Journal</span>
+      <h1 class="blog-index__title">{{ blog.title }}</h1>
+    </header>
+
+    {% paginate blog.articles by section.settings.posts_per_page %}
+
+      {% if blog.articles.size > 0 %}
+        <ul class="blog-grid">
+          {% for article in blog.articles %}
+            <li class="blog-card reveal-on-scroll">
+              <a href="{{ article.url }}" class="blog-card__media">
+                {% if article.image %}
+                  {{ article.image | image_url: width: 800 | image_tag: loading: 'lazy', class: 'blog-card__img', alt: article.title | escape }}
+                {% else %}
+                  <div class="blog-card__placeholder"></div>
+                {% endif %}
+              </a>
+              <div class="blog-card__body">
+                {% assign date = article.published_at | time_tag: format: 'date' %}
+                <p class="blog-card__meta">{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
+                <h2 class="blog-card__title">
+                  <a href="{{ article.url }}">{{ article.title }}</a>
+                </h2>
+                {% if article.excerpt != blank %}
+                  <p class="blog-card__excerpt">{{ article.excerpt | strip_html | truncate: 160 }}</p>
+                {% endif %}
+                <a href="{{ article.url }}" class="blog-card__read-more">
+                  Read article
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                  </svg>
+                </a>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+
+        {% if paginate.pages > 1 %}
+          <nav class="pagination" aria-label="Pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="pagination__btn pagination__btn--prev" aria-label="Previous page">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polyline points="15 18 9 12 15 6"/></svg>
+                Prev
+              </a>
+            {% endif %}
+
+            <div class="pagination__pages">
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="pagination__page" aria-label="Page {{ part.title }}">{{ part.title }}</a>
+                {% elsif part.title == paginate.current_page %}
+                  <span class="pagination__page pagination__page--current" aria-current="page">{{ part.title }}</span>
+                {% else %}
+                  <span class="pagination__ellipsis">{{ part.title }}</span>
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="pagination__btn pagination__btn--next" aria-label="Next page">
+                Next
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            {% endif %}
+          </nav>
+        {% endif %}
+
+      {% else %}
+        <div class="collection-empty">
+          <p class="collection-empty__text">No articles published yet. Check back soon.</p>
+        </div>
       {% endif %}
-      <h2>
-        {{ article.title | link_to: article.url }}
-      </h2>
-      {% assign date = article.published_at | time_tag: format: 'date' %}
-      <p>{{ 'blog.article_metadata_html' | t: date: date, author: article.author }}</p>
-      <p>{{ article.excerpt }}</p>
-    </div>
-  {% endfor %}
 
-  {%- if paginate.pages > 1 -%}
-    {{- paginate | default_pagination -}}
-  {%- endif -%}
-{% endpaginate %}
+    {% endpaginate %}
+
+  </div>
+</section>
+
+{% stylesheet %}
+  .blog-index {
+    padding: var(--space-xl) 0 var(--space-2xl);
+  }
+
+  .blog-index__header {
+    text-align: center;
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: var(--border-default);
+  }
+
+  .blog-index__title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-top: var(--space-xs);
+    line-height: var(--leading-snug);
+  }
+
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-lg) var(--space-md);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .blog-card__media {
+    display: block;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+    margin-bottom: var(--space-sm);
+    border: var(--border-light);
+    border-radius: var(--radius-xs);
+    background: var(--color-surface);
+  }
+
+  .blog-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .blog-card:hover .blog-card__img {
+    transform: scale(1.04);
+  }
+
+  .blog-card__placeholder {
+    width: 100%;
+    height: 100%;
+    background:
+      linear-gradient(135deg, var(--color-surface) 25%, transparent 25%) 0 0,
+      linear-gradient(225deg, var(--color-surface) 25%, transparent 25%) 0 0;
+    background-size: 24px 24px;
+    background-color: var(--color-off-white);
+  }
+
+  .blog-card__meta {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: var(--space-xs);
+  }
+
+  .blog-card__title {
+    font-family: var(--font-serif);
+    font-size: var(--text-lg);
+    font-weight: 500;
+    line-height: var(--leading-snug);
+    color: var(--text-primary);
+    margin-bottom: var(--space-xs);
+  }
+
+  .blog-card__title a {
+    transition: var(--transition-fast);
+  }
+
+  .blog-card__title a:hover {
+    color: var(--color-maroon);
+  }
+
+  .blog-card__excerpt {
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+  }
+
+  .blog-card__read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: var(--tracking-wider);
+    text-transform: uppercase;
+    color: var(--color-maroon);
+    transition: var(--transition-fast);
+    margin-top: auto;
+  }
+
+  .blog-card__read-more:hover {
+    color: var(--color-maroon-deep);
+    gap: 10px;
+  }
+
+  @media screen and (max-width: 990px) {
+    .blog-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media screen and (max-width: 600px) {
+    .blog-grid { grid-template-columns: 1fr; gap: var(--space-lg); }
+    .blog-index { padding: var(--space-lg) 0 var(--space-xl); }
+  }
+{% endstylesheet %}
 
 {% schema %}
 {
   "name": "t:general.blog",
-  "settings": []
+  "settings": [
+    {
+      "type": "range",
+      "id": "posts_per_page",
+      "label": "Posts per page",
+      "min": 3,
+      "max": 24,
+      "step": 1,
+      "default": 9
+    }
+  ]
 }
 {% endschema %}

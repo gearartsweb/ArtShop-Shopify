@@ -13,7 +13,8 @@
       loop
       playsinline
       aria-hidden="true"
-      preload="auto">
+      preload="metadata"
+      {% if section.settings.poster %}poster="{{ section.settings.poster | image_url: width: 1600 }}"{% endif %}>
     </video>
 
     <div class="hero-overlay">
@@ -341,6 +342,28 @@
 </style>
 
 
+<script>
+  /* Respect reduced-motion preference: pause hero video for users
+     who've opted into reduced motion. Stays in sync if the system
+     setting flips mid-session. */
+  (function() {
+    var v = document.querySelector('.hero-video');
+    if (!v) return;
+    var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    function sync() {
+      if (mq.matches) {
+        v.pause();
+        v.removeAttribute('autoplay');
+      } else {
+        v.play().catch(function() { /* autoplay blocked is fine */ });
+      }
+    }
+    sync();
+    if (mq.addEventListener) mq.addEventListener('change', sync);
+    else if (mq.addListener) mq.addListener(sync); /* Safari < 14 */
+  })();
+</script>
+
 {% schema %}
 {
   "name": "Hero Video",
@@ -351,7 +374,7 @@
       "type": "text",
       "id": "eyebrow",
       "label": "Eyebrow text",
-      "default": "Hermanus · Est. 1994 · Professional Grade"
+      "default": "Hermanus · Est. 2006 · Professional Grade"
     },
     {
       "type": "text",
@@ -381,6 +404,12 @@
       "id": "video_url",
       "label": "Video URL",
       "info": "Direct link to an MP4 video file (Pexels, Vimeo CDN, or Shopify CDN)"
+    },
+    {
+      "type": "image_picker",
+      "id": "poster",
+      "label": "Video poster image",
+      "info": "Shown until the video loads and to users with reduced-motion preference. Strongly recommended for LCP."
     }
   ],
   "presets": [

@@ -1,159 +1,142 @@
-<div id="CartDrawer" class="cart-drawer" aria-hidden="true">
-  <div class="cart-drawer__overlay" onclick="window.toggleCart()"></div>
-  <div class="cart-drawer__inner">
-    <div class="cart-drawer-header">
-      <h3 style="margin:0; letter-spacing: 2px;">YOUR STUDIO BAG</h3>
-      <button type="button" class="close-drawer" onclick="window.toggleCart()" style="background:none; border:none; font-size:30px; cursor:pointer;">&times;</button>
-    </div>
+{% comment %}
+  Cart drawer — slides in from the right when the cart icon is tapped
+  or after Add to Cart succeeds.
 
-    <div id="CartDrawerItems" class="cart-drawer-scroll-area">
-      {% render 'cart-drawer-items' %}
-    </div>
+  CRITICAL: All JS here uses a plain <script> tag, NOT {% javascript %}.
+  Shopify bundles {% javascript %} blocks asynchronously across sections,
+  which means window.toggleCart may not exist when the header renders its
+  onclick="window.toggleCart()". A plain <script> tag executes in document
+  order and is always defined before the header button is clicked.
+{% endcomment %}
 
-    <div id="CartDrawerFooter" class="cart-drawer-footer">
-      {% if cart.item_count > 0 %}
-        <div class="cart-total-row">
-          <span>TOTAL</span>
-          <span>{{ cart.total_price | money }}</span>
-        </div>
-        <p class="shipping-note">Taxes and shipping calculated at checkout.</p>
-        <a href="/checkout" class="drawer-checkout-btn">PROCEED TO CHECKOUT</a>
-      {% endif %}
-    </div>
+<div
+  id="cart-drawer-overlay"
+  class="cart-drawer-overlay"
+  onclick="window.toggleCart()"
+  aria-hidden="true"></div>
+
+<aside
+  id="CartDrawer"
+  class="cart-drawer"
+  role="dialog"
+  aria-label="Shopping cart"
+  aria-hidden="true">
+
+  <header class="cart-drawer-header">
+    <h3>Your studio bag</h3>
+    <button
+      type="button"
+      class="close-drawer"
+      onclick="window.toggleCart()"
+      aria-label="Close cart">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+  </header>
+
+  <div id="CartDrawerItems" class="cart-drawer-scroll-area">
+    {% render 'cart-drawer-items' %}
   </div>
-</div>
 
-<style>
-  /* Base Drawer - Hidden by default */
-  .cart-drawer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 999999;
-    visibility: hidden; /* This prevents the "White Page" */
-    pointer-events: none;
-    transition: all 0.3s ease;
-  }
-
-  .cart-drawer.is-active {
-    visibility: visible;
-    pointer-events: all;
-  }
-
-  .cart-drawer__overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-
-  .cart-drawer.is-active .cart-drawer__overlay {
-    opacity: 1;
-  }
-
-  .cart-drawer__inner {
-    position: absolute;
-    top: 0;
-    right: -450px;
-    width: 400px;
-    height: 100%;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    transition: right 0.3s ease-in-out;
-    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-  }
-
-  .cart-drawer.is-active .cart-drawer__inner {
-    right: 0;
-  }
-
-  /* Sandwich Structure */
-  .cart-drawer-header { flex: 0 0 auto; padding: 25px 30px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-  .cart-drawer-scroll-area { flex: 1 1 auto; overflow-y: auto; padding: 30px; }
-  .cart-drawer-footer { flex: 0 0 auto; padding: 30px; border-top: 1px solid #eee; background: #fff; }
-
-  /* Buttons & Text */
-  .drawer-checkout-btn { display: block; width: 100%; background: #800000; color: #fff; text-align: center; padding: 18px; text-decoration: none; font-size: 12px; font-weight: 600; letter-spacing: 0.2em; }
-  .cart-total-row { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 10px; }
-  .shipping-note { font-size: 11px; color: #888; margin-bottom: 20px; text-align: center; }
-
-  @media (max-width: 450px) {
-    .cart-drawer__inner { width: 100%; right: -100%; }
-  }
-</style>
+  <footer id="CartDrawerFooter" class="cart-drawer-footer">
+    {% if cart.item_count > 0 %}
+      <div class="cart-total-row">
+        <span>Total</span>
+        <span>{{ cart.total_price | money }}</span>
+      </div>
+      <p class="shipping-note">Taxes and shipping calculated at checkout.</p>
+      <a href="/checkout" class="drawer-checkout-btn">Proceed to checkout</a>
+    {% endif %}
+  </footer>
+</aside>
 
 <script>
   window.toggleCart = function() {
-    const drawer = document.getElementById('CartDrawer');
-    if (drawer) {
-      drawer.classList.toggle('is-active');
-      document.body.style.overflow = drawer.classList.contains('is-active') ? 'hidden' : '';
+    var drawer  = document.getElementById('CartDrawer');
+    var overlay = document.getElementById('cart-drawer-overlay');
+    if (!drawer || !overlay) return;
+    var open = !drawer.classList.contains('is-active');
+    drawer.classList.toggle('is-active', open);
+    overlay.classList.toggle('is-active', open);
+    drawer.setAttribute('aria-hidden', String(!open));
+    overlay.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      var close = drawer.querySelector('.close-drawer');
+      if (close) setTimeout(function() { close.focus(); }, 50);
     }
   };
 
- window.updateQty = function(line, qty) {
-  const itemsContainer = document.getElementById('CartDrawerItems');
-  if (itemsContainer) itemsContainer.style.opacity = '0.5';
-
-  const params = new URLSearchParams();
-  // Changed from 'id' to 'line' to bypass key-matching errors
-  params.append('line', parseInt(line));
-  params.append('quantity', parseInt(qty));
-  params.append('sections', 'cart-drawer');
-
-  fetch(window.Shopify.routes.root + 'cart/change.js', {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'X-Requested-With': 'XMLHttpRequest' 
-    },
-    body: params
-  })
-  .then(res => {
-    if (!res.ok) return res.json().then(json => { throw new Error(json.description || 'API Error'); });
-    return res.json();
-  })
-  .then(json => {
-    if (json.sections && json.sections['cart-drawer']) {
-      const parser = new DOMParser();
-      const html = parser.parseFromString(json.sections['cart-drawer'], 'text/html');
-      document.getElementById('CartDrawerItems').innerHTML = html.getElementById('CartDrawerItems').innerHTML;
-      document.getElementById('CartDrawerFooter').innerHTML = html.getElementById('CartDrawerFooter').innerHTML;
-    }
-    if (itemsContainer) itemsContainer.style.opacity = '1';
-    if (window.updateCartCountBubble) window.updateCartCountBubble();
-  })
-  .catch(err => {
-    console.error('Final Cart Error:', err.message);
-    
-    // If it's a "Sold Out" error, notify the user and refresh the cart to reflect truth
-    if (err.message.includes('sold out') || err.message.includes('stock')) {
-      alert("Note: This item just sold out and has been adjusted.");
-      window.refreshDrawer(); 
-    } else {
-      alert("Cart Error: " + err.message);
-    }
-    
-    if (itemsContainer) itemsContainer.style.opacity = '1';
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    var drawer = document.getElementById('CartDrawer');
+    if (drawer && drawer.classList.contains('is-active')) window.toggleCart();
   });
-};
+
+  window.updateQty = function(line, qty) {
+    var itemsEl = document.getElementById('CartDrawerItems');
+    if (itemsEl) itemsEl.style.opacity = '0.45';
+    var params = new URLSearchParams();
+    params.append('line',     parseInt(line, 10));
+    params.append('quantity', parseInt(qty,  10));
+    params.append('sections', 'cart-drawer');
+    fetch(window.Shopify.routes.root + 'cart/change.js', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+      body: params
+    })
+    .then(function(res) {
+      if (!res.ok) return res.json().then(function(j) { throw new Error(j.description || 'Cart update failed'); });
+      return res.json();
+    })
+    .then(function(json) {
+      if (json.sections && json.sections['cart-drawer']) {
+        var doc = new DOMParser().parseFromString(json.sections['cart-drawer'], 'text/html');
+        var newItems = doc.getElementById('CartDrawerItems');
+        var newFoot  = doc.getElementById('CartDrawerFooter');
+        if (newItems && itemsEl) itemsEl.innerHTML = newItems.innerHTML;
+        if (newFoot) { var footEl = document.getElementById('CartDrawerFooter'); if (footEl) footEl.innerHTML = newFoot.innerHTML; }
+      }
+      if (itemsEl) itemsEl.style.opacity = '1';
+      if (window.TheArtShop && window.TheArtShop.updateCartCount) window.TheArtShop.updateCartCount();
+      else if (window.updateCartCountBubble) window.updateCartCountBubble();
+    })
+    .catch(function(err) {
+      console.error('Cart error:', err.message);
+      if (itemsEl) itemsEl.style.opacity = '1';
+      if (/sold.?out|stock/i.test(err.message)) window.refreshDrawer();
+    });
+  };
 
   window.refreshDrawer = function() {
-    return fetch(window.location.pathname + '?sections=cart-drawer&t=' + Date.now())
-      .then(res => res.json())
-      .then(json => {
-        const html = new DOMParser().parseFromString(json['cart-drawer'], 'text/html');
-        document.getElementById('CartDrawerItems').innerHTML = html.getElementById('CartDrawerItems').innerHTML;
-        document.getElementById('CartDrawerFooter').innerHTML = html.getElementById('CartDrawerFooter').innerHTML;
+    return fetch(window.Shopify.routes.root + 'cart?sections=cart-drawer&t=' + Date.now())
+      .then(function(res) { return res.json(); })
+      .then(function(json) {
+        if (!json['cart-drawer']) return;
+        var doc = new DOMParser().parseFromString(json['cart-drawer'], 'text/html');
+        var itemsEl = document.getElementById('CartDrawerItems');
+        var footEl  = document.getElementById('CartDrawerFooter');
+        var ni = doc.getElementById('CartDrawerItems');
+        var nf = doc.getElementById('CartDrawerFooter');
+        if (ni && itemsEl) itemsEl.innerHTML = ni.innerHTML;
+        if (nf && footEl)  footEl.innerHTML  = nf.innerHTML;
       });
   };
+
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest('#CartDrawerItems [data-line]');
+    if (!btn || btn.hasAttribute('disabled')) return;
+    var line = parseInt(btn.getAttribute('data-line'), 10);
+    var qty  = parseInt(btn.getAttribute('data-qty'),  10);
+    if (!isNaN(line) && !isNaN(qty)) window.updateQty(line, qty);
+  });
 </script>
 
-{% schema %} { "name": "Cart Drawer", "settings": [] } {% endschema %}
+{% schema %}
+{
+  "name": "Cart drawer",
+  "settings": []
+}
+{% endschema %}

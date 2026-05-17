@@ -5,7 +5,10 @@
   {{ settings.type_primary_font | font_modify: 'weight', 'bold' | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
   {{ settings.type_primary_font | font_modify: 'style', 'italic' | font_face: font_display: 'swap' }}
 
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&family=Inter:wght@300;400;500&display=swap');
+  /* Google Fonts loaded via <link rel="stylesheet"> in layout/theme.liquid
+     for non-render-blocking behaviour and proper preconnect handling.
+     Do NOT use @import here — it blocks render and re-downloads on every
+     parse. */
 
   :root {
 
@@ -100,6 +103,7 @@
 
     /* ─── LAYOUT ─── */
     --max-width:            1280px;
+    --header-height:        100px;
     --section-padding-y:    var(--space-xl);
     --section-padding-x:    var(--space-lg);
 
