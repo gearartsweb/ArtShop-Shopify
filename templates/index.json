@@ -37,7 +37,7 @@
       "settings": {
         "title": "Best Sellers",
         "subtitle": "Our most loved supplies",
-        "collection": "",
+        "collection": "bestsellers",
         "products_to_show": 4
       }
     },
