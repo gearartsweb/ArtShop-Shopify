@@ -48,7 +48,7 @@
         "title": "Studio Essentials",
         "collection": "studio-essentials",
         "products_to_show": 4,
-        "view_all_link": ""
+        "view_all_link": "shopify://collections/all"
       }
     },
     "boutique_contact": {
