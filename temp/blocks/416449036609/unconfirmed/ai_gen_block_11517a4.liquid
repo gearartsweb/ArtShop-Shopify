@@ -1,6 +1,313 @@
+{% doc %}
+  @prompt
+    When a customer selects a different product variant (e.g. a different brush size) on the product page, the displayed price in the product heading or price area should automatically update to reflect that variant's price. Add the necessary functionality to ensure the price updates dynamically when a variant option is selected, without requiring a page reload., When a customer selects a different product variant (e.g. a different brush size) on the product page, the displayed price in the product heading or price area should automatically update to reflect that variant's price. Add the necessary functionality to ensure the price updates dynamically when a variant option is selected, without requiring a page reload.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-variant-price-updater-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+  }
+
+  .ai-variant-price-container-{{ ai_gen_id }} {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ai-variant-price-current-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_size }}px;
+    font-weight: {{ block.settings.price_weight }};
+    color: {{ block.settings.price_color }};
+    line-height: 1.2;
+  }
+
+  .ai-variant-price-compare-{{ ai_gen_id }} {
+    font-size: {{ block.settings.compare_price_size }}px;
+    color: {{ block.settings.compare_price_color }};
+    text-decoration: line-through;
+    opacity: 0.7;
+  }
+
+  .ai-variant-price-badge-{{ ai_gen_id }} {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: {{ block.settings.badge_bg_color }};
+    color: {{ block.settings.badge_text_color }};
+    font-size: {{ block.settings.badge_size }}px;
+    font-weight: 600;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-variant-price-hidden-{{ ai_gen_id }} {
+    display: none;
+  }
+{% endstyle %}
+
+<variant-price-updater-{{ ai_gen_id }}
+  class="ai-variant-price-updater-{{ ai_gen_id }}"
+  data-product-id="{{ product.id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-variant-price-container-{{ ai_gen_id }}">
+    <div class="ai-variant-price-current-{{ ai_gen_id }}" data-current-price>
+      {{ product.selected_or_first_available_variant.price | money }}
+    </div>
+    
+    {% if product.selected_or_first_available_variant.compare_at_price > product.selected_or_first_available_variant.price %}
+      <div class="ai-variant-price-compare-{{ ai_gen_id }}" data-compare-price>
+        {{ product.selected_or_first_available_variant.compare_at_price | money }}
+      </div>
+      {% if block.settings.show_sale_badge %}
+        <span class="ai-variant-price-badge-{{ ai_gen_id }}" data-sale-badge>
+          {{ block.settings.sale_badge_text }}
+        </span>
+      {% endif %}
+    {% else %}
+      <div class="ai-variant-price-compare-{{ ai_gen_id }} ai-variant-price-hidden-{{ ai_gen_id }}" data-compare-price></div>
+      {% if block.settings.show_sale_badge %}
+        <span class="ai-variant-price-badge-{{ ai_gen_id }} ai-variant-price-hidden-{{ ai_gen_id }}" data-sale-badge>
+          {{ block.settings.sale_badge_text }}
+        </span>
+      {% endif %}
+    {% endif %}
+  </div>
+</variant-price-updater-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VariantPriceUpdater{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.productId = this.dataset.productId;
+        this.currentPriceEl = this.querySelector('[data-current-price]');
+        this.comparePriceEl = this.querySelector('[data-compare-price]');
+        this.saleBadgeEl = this.querySelector('[data-sale-badge]');
+      }
+
+      connectedCallback() {
+        this.setupVariantListener();
+      }
+
+      setupVariantListener() {
+        const productForm = document.querySelector(`form[action*="/cart/add"][data-product-id="${this.productId}"]`) || 
+                           document.querySelector('form[action*="/cart/add"]');
+        
+        if (!productForm) {
+          this.setupFallbackListener();
+          return;
+        }
+
+        const variantIdInput = productForm.querySelector('input[name="id"]') || 
+                              productForm.querySelector('select[name="id"]');
+        
+        if (variantIdInput) {
+          if (variantIdInput.tagName === 'SELECT') {
+            variantIdInput.addEventListener('change', () => this.handleVariantChange(variantIdInput.value));
+          } else {
+            const observer = new MutationObserver(() => {
+              this.handleVariantChange(variantIdInput.value);
+            });
+            observer.observe(variantIdInput, { attributes: true, attributeFilter: ['value'] });
+          }
+        }
+
+        productForm.addEventListener('change', (e) => {
+          if (e.target.name && e.target.name.startsWith('option')) {
+            setTimeout(() => {
+              const currentVariantId = variantIdInput ? variantIdInput.value : null;
+              if (currentVariantId) {
+                this.handleVariantChange(currentVariantId);
+              }
+            }, 50);
+          }
+        });
+      }
+
+      setupFallbackListener() {
+        document.addEventListener('change', (e) => {
+          if (e.target.name === 'id' || (e.target.name && e.target.name.startsWith('option'))) {
+            const variantIdInput = document.querySelector('input[name="id"]') || 
+                                  document.querySelector('select[name="id"]');
+            if (variantIdInput && variantIdInput.value) {
+              setTimeout(() => this.handleVariantChange(variantIdInput.value), 50);
+            }
+          }
+        });
+      }
+
+      handleVariantChange(variantId) {
+        if (!variantId) return;
+
+        fetch(`${window.Shopify.routes.root}products/${this.getProductHandle()}.js`)
+          .then(response => response.json())
+          .then(product => {
+            const variant = product.variants.find(v => v.id == variantId);
+            if (variant) {
+              this.updatePrice(variant);
+            }
+          })
+          .catch(error => {
+            console.error('Error fetching product data:', error);
+          });
+      }
+
+      getProductHandle() {
+        const productUrl = window.location.pathname;
+        const match = productUrl.match(/\/products\/([^\/]+)/);
+        return match ? match[1] : '';
+      }
+
+      updatePrice(variant) {
+        if (this.currentPriceEl) {
+          this.currentPriceEl.textContent = this.formatMoney(variant.price);
+        }
+
+        const hasComparePrice = variant.compare_at_price && variant.compare_at_price > variant.price;
+
+        if (this.comparePriceEl) {
+          if (hasComparePrice) {
+            this.comparePriceEl.textContent = this.formatMoney(variant.compare_at_price);
+            this.comparePriceEl.classList.remove('ai-variant-price-hidden-{{ ai_gen_id }}');
+          } else {
+            this.comparePriceEl.classList.add('ai-variant-price-hidden-{{ ai_gen_id }}');
+          }
+        }
+
+        if (this.saleBadgeEl) {
+          if (hasComparePrice) {
+            this.saleBadgeEl.classList.remove('ai-variant-price-hidden-{{ ai_gen_id }}');
+          } else {
+            this.saleBadgeEl.classList.add('ai-variant-price-hidden-{{ ai_gen_id }}');
+          }
+        }
+      }
+
+      formatMoney(cents) {
+        if (typeof Shopify !== 'undefined' && Shopify.formatMoney) {
+          return Shopify.formatMoney(cents, window.theme?.moneyFormat || '{{amount}}');
+        }
+        const amount = (cents / 100).toFixed(2);
+        return `R ${amount}`;
+      }
+    }
+
+    customElements.define('variant-price-updater-{{ ai_gen_id }}', VariantPriceUpdater{{ ai_gen_id }});
+  })();
+</script>
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Variant price updater",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Current price"
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "label": "Size",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "price_weight",
+      "label": "Weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Compare at price"
+    },
+    {
+      "type": "range",
+      "id": "compare_price_size",
+      "min": 12,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "label": "Size",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "compare_price_color",
+      "label": "Color",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Sale badge"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sale_badge",
+      "label": "Show sale badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "sale_badge_text",
+      "label": "Badge text",
+      "default": "Sale"
+    },
+    {
+      "type": "range",
+      "id": "badge_size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Badge size",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Badge background",
+      "default": "#D82C0D"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Badge text color",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Variant price updater"
+    }
+  ]
+}
 {% endschema %}
