@@ -7,14 +7,26 @@
  * made to this file may be overwritten.
  * ------------------------------------------------------------
  */
- {
+{
   "sections": {
     "main": {
       "type": "404",
       "settings": {}
+    },
+    "about_studio_i4E7Xz": {
+      "type": "about-studio",
+      "name": "About Studio",
+      "settings": {
+        "eyebrow": "Our Story",
+        "title": "The Art Shop Hermanus",
+        "text": "<p>Since 2006, The Art Shop Hermanus has served as a cornerstone of the Western Cape’s creative community. What began as a local retail space has grown into a trusted hub for artists, crafters, and visionaries across the region.<br/><br/>We specialize in high-end fine art supplies, focusing on a curated selection of both local and imported products. Our philosophy is simple: premium quality shouldn’t come with a premium barrier. We stretch our margins to ensure that the best tools remain affordable for every creator.<br/><br/>When you walk through our doors, you aren’t just a customer—you’re a peer. Our promise is a professional, helpful experience defined by a warm smile and a commitment to your craft. If we don’t have what you need on the floor, we’ll go above and beyond to find it for you.</p>",
+        "image": "shopify://shop_images/Art_Shop_Bus.png",
+        "bg_color": "#ffffff"
+      }
     }
   },
   "order": [
-    "main"
+    "main",
+    "about_studio_i4E7Xz"
   ]
 }
