@@ -11,6 +11,7 @@
   "sections": {
     "main": {
       "type": "404",
+      "disabled": true,
       "settings": {}
     },
     "about_studio_i4E7Xz": {
