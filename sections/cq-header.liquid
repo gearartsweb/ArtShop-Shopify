@@ -1,0 +1,63 @@
+{%- comment -%} CONQUEST — Header / nav. Pulls links from a chosen menu. {%- endcomment -%}
+<header class="cq cq-header" id="cq-header">
+  <div class="cq-wrap cq-nav">
+    <a href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      <img class="cq-logo" src="{{ 'conquest-wordmark.png' | asset_url }}" alt="{{ shop.name }}" width="160" height="26">
+    </a>
+
+    <ul>
+      {%- if section.settings.menu != blank and section.settings.menu.links.size > 0 -%}
+        {%- for link in section.settings.menu.links -%}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {%- endfor -%}
+      {%- else -%}
+        <li><a href="{{ routes.all_products_collection_url }}">The Forge</a></li>
+        <li><a href="/#cq-creed">The War</a></li>
+        <li><a href="/#cq-marks">The Marks</a></li>
+        <li><a href="/#cq-about">About</a></li>
+        <li><a href="/#cq-called">The Called</a></li>
+      {%- endif -%}
+    </ul>
+
+    <div class="cq-nav-right">
+      <a class="cq-cart" href="{{ routes.cart_url }}" aria-label="Cart">
+        Cart<span class="cq-cart-count" data-cq-cart-count>{{ cart.item_count }}</span>
+      </a>
+      {%- comment -%} Elements Dawn's cart.js re-renders after add/remove — required or cart removal silently fails. {%- endcomment -%}
+      <div id="cart-icon-bubble" hidden>{{ cart.item_count }}</div>
+      <span id="cart-live-region-text" class="visually-hidden" aria-live="polite" role="status"></span>
+      <a class="cq-cta" href="{{ section.settings.cta_link | default: routes.all_products_collection_url }}">
+        {{ section.settings.cta_label | default: 'Enter' }} <span>&rarr;</span>
+      </a>
+      <button class="cq-burger" id="cq-burger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<nav class="cq-mobile" id="cq-mobile" aria-label="Mobile">
+  {%- if section.settings.menu != blank and section.settings.menu.links.size > 0 -%}
+    {%- for link in section.settings.menu.links -%}
+      <a href="{{ link.url }}">{{ link.title }}</a>
+    {%- endfor -%}
+  {%- else -%}
+    <a href="{{ routes.all_products_collection_url }}">The Forge</a>
+    <a href="/#cq-creed">The War</a>
+    <a href="/#cq-marks">The Marks</a>
+    <a href="/#cq-about">About</a>
+    <a href="/#cq-called">The Called</a>
+  {%- endif -%}
+  <a href="{{ routes.cart_url }}">Cart (<span data-cq-cart-count>{{ cart.item_count }}</span>)</a>
+</nav>
+
+{% schema %}
+{
+  "name": "CQ Header",
+  "settings": [
+    { "type": "link_list", "id": "menu", "label": "Menu", "info": "Build this in Navigation. Suggested: The Forge, The War, The Marks, The Called." },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Enter" },
+    { "type": "url", "id": "cta_link", "label": "CTA link" }
+  ]
+}
+{% endschema %}

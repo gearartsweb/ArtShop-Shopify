@@ -1,0 +1,149 @@
+{%- comment -%} CONQUEST — Catalogue (custom bold gallery grid) {%- endcomment -%}
+{%- paginate collection.products by section.settings.per_page -%}
+<section class="cq cq-cat" id="cq-catalogue">
+  <div class="cq-wrap">
+
+    <header class="cq-cat-head cq-reveal">
+      {%- if section.settings.eyebrow != blank -%}<div class="idx">{{ section.settings.eyebrow }}</div>{%- endif -%}
+      <h1>{{ collection.title | default: 'The Armory' }}</h1>
+      {%- if section.settings.show_description and collection.description != blank -%}
+        <div class="cq-cat-desc">{{ collection.description }}</div>
+      {%- endif -%}
+    </header>
+
+    {%- comment -%} One GET form drives both filters and sort so neither wipes the other. {%- endcomment -%}
+    <form method="get" class="cq-cat-controls">
+      <div class="cq-cat-bar">
+        <span class="count">
+          {{ collection.products_count }} {% if collection.products_count == 1 %}piece{% else %}pieces{% endif %}
+        </span>
+
+        <div class="cq-cat-tools">
+          {%- if section.settings.enable_filters -%}
+            {%- for filter in collection.filters -%}
+              <details class="cq-filter">
+                <summary>{{ filter.label }}{% if filter.active_values.size > 0 %} <em>·{{ filter.active_values.size }}</em>{% endif %}</summary>
+                <div class="cq-filter-pop">
+                  {%- case filter.type -%}
+                    {%- when 'list', 'boolean' -%}
+                      {%- for value in filter.values -%}
+                        <label class="cq-fval{% if value.count == 0 and value.active == false %} disabled{% endif %}">
+                          <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}"{% if value.active %} checked{% endif %}{% if value.count == 0 and value.active == false %} disabled{% endif %}>
+                          <span>{{ value.label }} <em>{{ value.count }}</em></span>
+                        </label>
+                      {%- endfor -%}
+                    {%- when 'price_range' -%}
+                      <div class="cq-price">
+                        <input type="number" name="{{ filter.min_value.param_name }}" placeholder="Min" value="{{ filter.min_value.value }}" min="0" inputmode="numeric">
+                        <span>&ndash;</span>
+                        <input type="number" name="{{ filter.max_value.param_name }}" placeholder="Max" value="{{ filter.max_value.value }}" min="0" inputmode="numeric">
+                      </div>
+                  {%- endcase -%}
+                </div>
+              </details>
+            {%- endfor -%}
+          {%- endif -%}
+
+          <div class="cq-sort">
+            <label for="cq-sort-by">Sort</label>
+            <select id="cq-sort-by" name="sort_by" onchange="this.form.submit()">
+              {%- assign sort_now = collection.sort_by | default: collection.default_sort_by -%}
+              {%- for option in collection.sort_options -%}
+                <option value="{{ option.value }}"{% if option.value == sort_now %} selected{% endif %}>{{ option.name }}</option>
+              {%- endfor -%}
+            </select>
+          </div>
+
+          {%- if section.settings.enable_filters and collection.filters.size > 0 -%}
+            <button type="submit" class="cq-cat-apply">Apply</button>
+            {%- if current_tags or collection.filters != blank -%}
+              <a href="{{ collection.url }}" class="cq-cat-clear">Clear</a>
+            {%- endif -%}
+          {%- endif -%}
+        </div>
+      </div>
+    </form>
+
+    <div class="cq-cat-grid" style="--cols:{{ section.settings.columns }};">
+      {%- for product in collection.products -%}
+        {%- assign second = product.media[1] -%}
+        <article class="cq-cat-card cq-reveal">
+          <a class="cq-cat-media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+            {%- if product.featured_media -%}
+              <img class="primary" src="{{ product.featured_media | image_url: width: 900 }}" alt="{{ product.title | escape }}" width="900" height="1125" loading="lazy">
+            {%- else -%}
+              <img class="primary mark" src="{{ 'conquest-mark.png' | asset_url }}" alt="{{ product.title | escape }}" loading="lazy">
+            {%- endif -%}
+            {%- if section.settings.hover_second and second -%}
+              <img class="secondary" src="{{ second | image_url: width: 900 }}" alt="" width="900" height="1125" loading="lazy">
+            {%- endif -%}
+          </a>
+
+          <div class="cq-cat-info">
+            <h3><a href="{{ product.url }}">{{ product.title }}</a></h3>
+            <div class="cq-cat-price">
+              {%- if product.compare_at_price > product.price -%}
+                <span class="sale">{{ product.price | money }}</span> <s>{{ product.compare_at_price | money }}</s>
+              {%- else -%}
+                {{ product.price | money }}
+              {%- endif -%}
+            </div>
+
+            {%- if section.settings.enable_quick_add -%}
+              {%- comment -%} Availability forced ON — Shopify's `available` flag is stuck false on this store. {%- endcomment -%}
+              {%- assign fallback_id = product.selected_or_first_available_variant.id | default: product.variants.first.id -%}
+              <form action="{{ routes.cart_add_url }}" method="post" class="cq-quick" data-cq-add>
+                {%- if product.variants.size > 1 -%}
+                  <select name="id" aria-label="Choose option for {{ product.title | escape }}">
+                    {%- for v in product.variants -%}
+                      <option value="{{ v.id }}">{{ v.title }}</option>
+                    {%- endfor -%}
+                  </select>
+                {%- else -%}
+                  <input type="hidden" name="id" value="{{ fallback_id }}">
+                {%- endif -%}
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit">{{ section.settings.quick_add_label | default: 'Take it up' }}</button>
+              </form>
+            {%- endif -%}
+          </div>
+        </article>
+      {%- else -%}
+        <p class="cq-cat-empty">No pieces here yet. The forge is still hot.</p>
+      {%- endfor -%}
+    </div>
+
+    {%- if paginate.pages > 1 -%}
+      <nav class="cq-cat-pager" aria-label="Pagination">
+        {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">&larr;</a>{%- endif -%}
+        {%- for part in paginate.parts -%}
+          {%- if part.is_link -%}
+            <a href="{{ part.url }}">{{ part.title }}</a>
+          {%- else -%}
+            <span class="current">{{ part.title }}</span>
+          {%- endif -%}
+        {%- endfor -%}
+        {%- if paginate.next -%}<a href="{{ paginate.next.url }}">&rarr;</a>{%- endif -%}
+      </nav>
+    {%- endif -%}
+
+  </div>
+</section>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "CQ Catalogue",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow / verse", "default": "What the Fire Made" },
+    { "type": "checkbox", "id": "show_description", "label": "Show collection description", "default": true },
+    { "type": "range", "id": "columns", "label": "Columns (desktop)", "min": 2, "max": 4, "step": 1, "default": 4 },
+    { "type": "range", "id": "per_page", "label": "Products per page", "min": 8, "max": 24, "step": 4, "default": 12 },
+    { "type": "checkbox", "id": "hover_second", "label": "Swap to 2nd image on hover", "default": true },
+    { "type": "checkbox", "id": "enable_filters", "label": "Enable filters", "default": true },
+    { "type": "checkbox", "id": "enable_quick_add", "label": "Enable quick add to cart", "default": true },
+    { "type": "text", "id": "quick_add_label", "label": "Quick-add button label", "default": "Take it up" }
+  ],
+  "presets": [{ "name": "CQ Catalogue" }]
+}
+{% endschema %}
