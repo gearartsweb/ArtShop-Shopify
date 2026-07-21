@@ -1566,6 +1566,7 @@ section {
 ───────────────────────────────────────────── */
 
 .reveal-on-scroll {
+  position: relative;       /* Makes z-index below take effect predictably */
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.7s ease-out, transform 0.9s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -1575,6 +1576,15 @@ section {
 .reveal-on-scroll.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* CRITICAL: reveal-on-scroll uses `transform`, which creates a stacking
+   context. That trapped the card's z-index bump inside its own wrapper
+   and let later-DOM reveal wrappers paint over it — which is why the
+   variant dropdown clipped behind lower cards. Lift the WHOLE wrapper
+   here so the dropdown paints above adjacent rows. */
+.reveal-on-scroll:has(.grid-variant-disclosure[open]) {
+  z-index: 50;
 }
 
 @keyframes studioFadeInUp {
