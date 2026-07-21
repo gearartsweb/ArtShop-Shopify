@@ -75,13 +75,38 @@
     if (drawer && drawer.classList.contains('is-active')) window.toggleCart();
   });
 
+  /* Grabs the freshest cart-drawer markup by fetching /cart as HTML.
+     We can't use the Section Rendering API (?sections=cart-drawer)
+     because it only returns sections registered in the currently-served
+     TEMPLATE, and cart-drawer is a LAYOUT section — so the response
+     came back without our section, no swap happened, and the UI froze.
+     Fetching /cart as HTML always includes the drawer (layout renders it
+     on every page) and DOMParser lets us pluck the two containers we need. */
+  window.refreshDrawer = function() {
+    return fetch(window.Shopify.routes.root + 'cart?t=' + Date.now(), {
+      headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' }
+    })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Cart page fetch failed: ' + res.status);
+        return res.text();
+      })
+      .then(function(html) {
+        var doc     = new DOMParser().parseFromString(html, 'text/html');
+        var itemsEl = document.getElementById('CartDrawerItems');
+        var footEl  = document.getElementById('CartDrawerFooter');
+        var ni      = doc.getElementById('CartDrawerItems');
+        var nf      = doc.getElementById('CartDrawerFooter');
+        if (ni && itemsEl) itemsEl.innerHTML = ni.innerHTML;
+        if (nf && footEl)  footEl.innerHTML  = nf.innerHTML;
+      });
+  };
+
   window.updateQty = function(line, qty) {
     var itemsEl = document.getElementById('CartDrawerItems');
     if (itemsEl) itemsEl.style.opacity = '0.45';
     var params = new URLSearchParams();
     params.append('line',     parseInt(line, 10));
     params.append('quantity', parseInt(qty,  10));
-    params.append('sections', 'cart-drawer');
     fetch(window.Shopify.routes.root + 'cart/change.js', {
       method:  'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
@@ -91,14 +116,11 @@
       if (!res.ok) return res.json().then(function(j) { throw new Error(j.description || 'Cart update failed'); });
       return res.json();
     })
-    .then(function(json) {
-      if (json.sections && json.sections['cart-drawer']) {
-        var doc = new DOMParser().parseFromString(json.sections['cart-drawer'], 'text/html');
-        var newItems = doc.getElementById('CartDrawerItems');
-        var newFoot  = doc.getElementById('CartDrawerFooter');
-        if (newItems && itemsEl) itemsEl.innerHTML = newItems.innerHTML;
-        if (newFoot) { var footEl = document.getElementById('CartDrawerFooter'); if (footEl) footEl.innerHTML = newFoot.innerHTML; }
-      }
+    .then(function() {
+      /* Always refresh from /cart — see refreshDrawer note above. */
+      return window.refreshDrawer();
+    })
+    .then(function() {
       if (itemsEl) itemsEl.style.opacity = '1';
       if (window.TheArtShop && window.TheArtShop.updateCartCount) window.TheArtShop.updateCartCount();
       else if (window.updateCartCountBubble) window.updateCartCountBubble();
@@ -106,23 +128,9 @@
     .catch(function(err) {
       console.error('Cart error:', err.message);
       if (itemsEl) itemsEl.style.opacity = '1';
+      /* On sold-out / stock errors, refresh anyway so the UI matches truth. */
       if (/sold.?out|stock/i.test(err.message)) window.refreshDrawer();
     });
-  };
-
-  window.refreshDrawer = function() {
-    return fetch(window.Shopify.routes.root + 'cart?sections=cart-drawer&t=' + Date.now())
-      .then(function(res) { return res.json(); })
-      .then(function(json) {
-        if (!json['cart-drawer']) return;
-        var doc = new DOMParser().parseFromString(json['cart-drawer'], 'text/html');
-        var itemsEl = document.getElementById('CartDrawerItems');
-        var footEl  = document.getElementById('CartDrawerFooter');
-        var ni = doc.getElementById('CartDrawerItems');
-        var nf = doc.getElementById('CartDrawerFooter');
-        if (ni && itemsEl) itemsEl.innerHTML = ni.innerHTML;
-        if (nf && footEl)  footEl.innerHTML  = nf.innerHTML;
-      });
   };
 
   document.addEventListener('click', function(e) {

@@ -136,9 +136,14 @@
     transition: z-index 0s;
   }
 
+  /* Raise the card whenever it needs to render UI over its neighbours.
+     :has() covers the open-disclosure case that used to clip on tap —
+     the dropdown was rendered under later-DOM cards because only :hover
+     and :focus-within lifted the card, and tap doesn't reliably focus. */
   .studio-product-card:hover,
-  .studio-product-card:focus-within {
-    z-index: var(--z-raised);
+  .studio-product-card:focus-within,
+  .studio-product-card:has(.grid-variant-disclosure[open]) {
+    z-index: 50;
   }
 
   /* ─── IMAGE FRAME ─── */
@@ -304,7 +309,7 @@
     flex-shrink: 0;
   }
 
-  /* ─── MOBILE: Quick add always visible ─── */
+  /* ─── MOBILE: Quick add always visible + thumb-friendly tap targets ─── */
   @media screen and (max-width: 749px) {
     .product-card-form {
       position: relative;
@@ -319,6 +324,24 @@
 
     .product-card-form .quick-add-btn {
       border-radius: var(--radius-xs);
+      padding: 14px;         /* ≈ 44px hit-zone including text */
+      font-size: 11px;
+    }
+
+    .grid-variant-summary {
+      padding: 12px var(--space-sm);   /* was 8px vertical — too small */
+      font-size: 11px;
+      min-height: 44px;                /* WCAG tap target */
+    }
+
+    .grid-variant-option {
+      padding: 12px var(--space-sm);   /* was 9px — too small to hit reliably */
+      font-size: 12px;
+      min-height: 44px;
+    }
+
+    .grid-variant-option__price {
+      font-size: 11px;
     }
   }
 </style>

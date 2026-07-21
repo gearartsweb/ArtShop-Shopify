@@ -996,8 +996,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var selectedOptions = Array.from(selects).map(function(s) { return s.value; });
 
     var allVariants = {{ product.variants | json }};
+    /* Iterate over selectedOptions (length = number of real <select>s),
+       NOT v.options (always length 3, padded with null). Iterating v.options
+       compared null === undefined on the padding and no variant ever matched
+       for products with fewer than 3 options. Result: price never updated. */
     var matched = allVariants.find(function(v) {
-      return v.options.every(function(opt, i) { return opt === selectedOptions[i]; });
+      return selectedOptions.every(function(opt, i) { return v.options[i] === opt; });
     });
 
     if (!matched) return;
@@ -1006,13 +1010,17 @@ document.addEventListener('DOMContentLoaded', function() {
     if (hiddenInput) hiddenInput.value = matched.id;
 
     var priceEl = document.getElementById('product-price');
-    if (priceEl) priceEl.textContent = TheArtShop._formatMoney(matched.price);
+    /* Use the local formatMoney (line ~884). TheArtShop._formatMoney is
+       defined in sections/cart.liquid which doesn't load on the PDP —
+       calling it here threw "undefined is not a function" and the price
+       silently stayed stale. */
+    if (priceEl) priceEl.textContent = formatMoney(matched.price);
 
     var comparePriceEl = document.getElementById('product-compare-price');
     var saleBadgeEl    = document.getElementById('product-sale-badge');
     if (comparePriceEl && saleBadgeEl) {
       if (matched.compare_at_price && matched.compare_at_price > matched.price) {
-        comparePriceEl.textContent = TheArtShop._formatMoney(matched.compare_at_price);
+        comparePriceEl.textContent = formatMoney(matched.compare_at_price);
         comparePriceEl.removeAttribute('hidden');
         saleBadgeEl.removeAttribute('hidden');
       } else {

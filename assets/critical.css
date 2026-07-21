@@ -966,6 +966,57 @@ section {
   }
 }
 
+/* ── Mobile: bigger tap targets across drawer + qty controls ── */
+@media (max-width: 749px) {
+  .cart-drawer-header {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .close-drawer {
+    width: 44px;
+    height: 44px;
+  }
+
+  .cart-drawer-scroll-area {
+    padding: var(--space-sm) var(--space-md);
+  }
+
+  .cart-drawer-item {
+    padding-bottom: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+
+  .cart-item-image-wrapper {
+    width: 64px;
+    height: 64px;
+  }
+
+  .qty-stepper__btn {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+  }
+
+  .qty-stepper__value {
+    min-width: 32px;
+    font-size: var(--text-md);
+  }
+
+  .cart-item-controls {
+    gap: var(--space-sm);
+  }
+
+  .remove-link {
+    padding: 10px 0;         /* larger vertical hit-zone */
+    font-size: 11px;
+  }
+
+  .drawer-checkout-btn {
+    padding: 18px;           /* thumb-friendly */
+    font-size: var(--text-sm);
+  }
+}
+
 
 /* ─────────────────────────────────────────────
    9. SEARCH OVERLAY

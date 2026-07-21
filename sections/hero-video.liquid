@@ -12,8 +12,10 @@
       muted
       loop
       playsinline
+      webkit-playsinline
+      disableRemotePlayback
       aria-hidden="true"
-      preload="metadata"
+      preload="auto"
       {% if section.settings.poster %}poster="{{ section.settings.poster | image_url: width: 1600 }}"{% endif %}>
     </video>
 
@@ -311,12 +313,19 @@
 
   @media screen and (max-width: 749px) {
     .hero-video-container {
-      height: 85vh;
-      min-height: 500px;
+      /* Was 85vh/500px min — ate the entire fold and pushed everything
+         below. Tighter now so trust bar + CTAs are visible on first paint. */
+      height: 65vh;
+      min-height: 380px;
+      max-height: 600px;
+    }
+
+    .hero-scroll-indicator {
+      display: none; /* Redundant on touch — swipe is native */
     }
 
     .hero-overlay {
-      padding-bottom: var(--space-lg);
+      padding-bottom: var(--space-md);
       align-items: flex-end;
     }
 
@@ -343,24 +352,45 @@
 
 
 <script>
-  /* Respect reduced-motion preference: pause hero video for users
-     who've opted into reduced motion. Stays in sync if the system
-     setting flips mid-session. */
+  /* Hero video controller — three jobs:
+     (1) Respect prefers-reduced-motion by pausing.
+     (2) NEVER call v.play() on load. On iOS Safari a scripted play()
+         without a user gesture can be blocked, which then prevents the
+         browser's own attribute-driven autoplay from running. Let the
+         HTML attributes (autoplay + muted + playsinline) do their job.
+     (3) Loop fallback: some browsers (especially with preload=metadata
+         or on flaky connections) drop the built-in loop restart. Bind
+         'ended' → seek to 0 → play(). Safe because this only fires
+         AFTER playback, which counts as an implicit user context. */
   (function() {
     var v = document.querySelector('.hero-video');
     if (!v) return;
+
     var mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var wePaused = false;
+
     function sync() {
       if (mq.matches) {
         v.pause();
-        v.removeAttribute('autoplay');
-      } else {
-        v.play().catch(function() { /* autoplay blocked is fine */ });
+        wePaused = true;
+      } else if (wePaused) {
+        v.play().catch(function() { /* browser blocked — poster shows */ });
+        wePaused = false;
       }
+      /* If motion is fine and we never paused, don't touch the video —
+         it's either autoplaying (native), or blocked (nothing we can do). */
     }
+
     sync();
-    if (mq.addEventListener) mq.addEventListener('change', sync);
-    else if (mq.addListener) mq.addListener(sync); /* Safari < 14 */
+    if (mq.addEventListener)      mq.addEventListener('change', sync);
+    else if (mq.addListener)      mq.addListener(sync); /* Safari < 14 */
+
+    /* Explicit loop fallback */
+    v.addEventListener('ended', function() {
+      if (mq.matches) return;
+      try { v.currentTime = 0; } catch (e) {}
+      v.play().catch(function() {});
+    });
   })();
 </script>
 
