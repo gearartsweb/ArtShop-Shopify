@@ -38,7 +38,7 @@
   "presets": {},
   "platform_customizations": {
     "custom_css": [
-      "header img {max-width: 200px; width: 100%;}"
+      ".site-logo-image {max-width: 200px; width: 100%; height: auto;}"
     ]
   }
 }
