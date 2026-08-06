@@ -8,6 +8,37 @@
  * ------------------------------------------------------------
  */
 {
-  "current": {},
-  "presets": {}
+  "current": {
+    "sections": {
+      "header": {
+        "type": "header",
+        "custom_css": [
+          ".header__heading-logo {max-width: 200px; width: 100%;}"
+        ],
+        "settings": {}
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "brand_description": "Fine art materials for working professionals. Curated in Hermanus, trusted across South Africa.",
+          "address": "13 Mitchell St, Hermanus",
+          "hours": "Mon–Fri 9am–5pm · Sat 9am–2pm",
+          "email": "artshophermanus@gmail.com",
+          "instagram": "",
+          "facebook": ""
+        }
+      },
+      "cart-drawer": {
+        "type": "cart-drawer",
+        "settings": {}
+      }
+    },
+    "content_for_index": []
+  },
+  "presets": {},
+  "platform_customizations": {
+    "custom_css": [
+      ".header__heading-logo {width: 200px; max-width: 200px;}"
+    ]
+  }
 }
