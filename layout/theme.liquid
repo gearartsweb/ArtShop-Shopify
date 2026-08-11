@@ -54,6 +54,30 @@
   </footer>
 
   {%- comment -%} ── CART DRAWER ── {%- endcomment -%}
+  <script>
+  window.toggleCart = function() {
+    var drawer  = document.getElementById('CartDrawer');
+    var overlay = document.getElementById('cart-drawer-overlay');
+    if (!drawer || !overlay) return;
+    var open = !drawer.classList.contains('is-active');
+    drawer.classList.toggle('is-active', open);
+    overlay.classList.toggle('is-active', open);
+    drawer.setAttribute('aria-hidden', String(!open));
+    overlay.setAttribute('aria-hidden', String(!open));
+    document.body.style.overflow = open ? 'hidden' : '';
+    if (open) {
+      var close = drawer.querySelector('.close-drawer');
+      if (close) setTimeout(function() { close.focus(); }, 50);
+    }
+  };
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key !== 'Escape') return;
+    var drawer = document.getElementById('CartDrawer');
+    if (drawer && drawer.classList.contains('is-active')) window.toggleCart();
+  });
+</script>
+
   {%- section 'cart-drawer' -%}
 
 
