@@ -53,35 +53,38 @@
 </aside>
 
 <script>
-  window.toggleCart = function() {
-    var drawer  = document.getElementById('CartDrawer');
-    var overlay = document.getElementById('cart-drawer-overlay');
-    if (!drawer || !overlay) return;
-    var open = !drawer.classList.contains('is-active');
-    drawer.classList.toggle('is-active', open);
-    overlay.classList.toggle('is-active', open);
-    drawer.setAttribute('aria-hidden', String(!open));
-    overlay.setAttribute('aria-hidden', String(!open));
-    document.body.style.overflow = open ? 'hidden' : '';
-    if (open) {
-      var close = drawer.querySelector('.close-drawer');
-      if (close) setTimeout(function() { close.focus(); }, 50);
-    }
-  };
+   document.addEventListener('submit', function(e) {
+    var form = e.target.closest('form[action*="/cart/add"]');
+    if (!form) return;
+    e.preventDefault();
 
-  document.addEventListener('keydown', function(e) {
-    if (e.key !== 'Escape') return;
-    var drawer = document.getElementById('CartDrawer');
-    if (drawer && drawer.classList.contains('is-active')) window.toggleCart();
-  });
+    var btn = form.querySelector('[type="submit"]');
+    var originalText = btn ? btn.textContent : null;
+    if (btn) { btn.disabled = true; btn.textContent = 'Adding\u2026'; }
 
-  /* Grabs the freshest cart-drawer markup by fetching /cart as HTML.
-     We can't use the Section Rendering API (?sections=cart-drawer)
-     because it only returns sections registered in the currently-served
-     TEMPLATE, and cart-drawer is a LAYOUT section — so the response
-     came back without our section, no swap happened, and the UI froze.
-     Fetching /cart as HTML always includes the drawer (layout renders it
-     on every page) and DOMParser lets us pluck the two containers we need. */
+    fetch(window.Shopify.routes.root + 'cart/add.js', {
+      method: 'POST',
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      body: new FormData(form)
+    })
+    .then(function(res) {
+      if (!res.ok) return res.json().then(function(j) { throw new Error(j.description || 'Add to cart failed'); });
+      return res.json();
+    })
+    .then(function() {
+      return window.refreshDrawer ? window.refreshDrawer() : Promise.resolve();
+    })
+    .then(function() {
+      if (window.toggleCart) window.toggleCart();
+      if (btn) { btn.disabled = false; btn.textContent = originalText; }
+    })
+    .catch(function(err) {
+      console.error('Add to cart error:', err.message);
+      if (btn) { btn.disabled = false; btn.textContent = originalText; }
+      form.submit();
+    });
+  }, true);
+</script>
   window.refreshDrawer = function() {
     return fetch(window.Shopify.routes.root + 'cart?t=' + Date.now(), {
       headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'text/html' }
