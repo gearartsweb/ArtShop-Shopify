@@ -4,6 +4,7 @@
    Loaded after Dawn's base.css so these rules win.
    ============================================================ */
 
+
 @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@500;700&family=Oswald:wght@300;400;500;600;700&display=swap');
 
@@ -16,13 +17,12 @@ body, p, a, nav, button, input, select, textarea {
 }
 
 /* Logo — top left */
-.header__heading {
+.header-logo-center {
+  display: flex;
   justify-content: flex-start !important;
+  width: 100%;
 }
 
-.header {
-  justify-content: flex-start !important;
-}
 
 :root{
   --cq-obsidian:#0B0B0D; --cq-ink:#17181C; --cq-ash:#9A9CA1; --cq-ash-dim:#5A5B60;
