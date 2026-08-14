@@ -16,6 +16,15 @@ body, p, a, nav, button, input, select, textarea {
 
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@500;700&family=Oswald:wght@300;400;500;600;700&display=swap');
 
+/* Logo — top left */
+.header__heading {
+  justify-content: flex-start !important;
+}
+
+.header {
+  justify-content: flex-start !important;
+}
+
 :root{
   --cq-obsidian:#0B0B0D; --cq-ink:#17181C; --cq-ash:#9A9CA1; --cq-ash-dim:#5A5B60;
   --cq-bone:#EDE8DE; --cq-oxblood:#6E1414; --cq-blood:#A82A2A; --cq-blood-lift:#C4322F;
