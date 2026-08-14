@@ -1,9 +1,11 @@
-/* ============================================================
+  /* ============================================================
    CONQUEST — custom theme layer for Dawn
    Blood & Ash palette + Slayer-energy motion
    Loaded after Dawn's base.css so these rules win.
    ============================================================ */
-   @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@500;700&family=Oswald:wght@300;400;500;600;700&display=swap');
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Lora', Georgia, serif;
@@ -12,9 +14,6 @@ h1, h2, h3, h4, h5, h6 {
 body, p, a, nav, button, input, select, textarea {
   font-family: 'Lora', Georgia, serif;
 }
-
-
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@500;700&family=Oswald:wght@300;400;500;600;700&display=swap');
 
 /* Logo — top left */
 .header__heading {
