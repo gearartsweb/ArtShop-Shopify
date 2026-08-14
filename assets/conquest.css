@@ -1,0 +1,386 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Lora', Georgia, serif;
+}
+
+body, p, a, nav, button, input, select, textarea {
+  font-family: 'Lora', Georgia, serif;
+}
+
+
+/* ============================================================
+   CONQUEST — custom theme layer for Dawn
+   Blood & Ash palette + Slayer-energy motion
+   Loaded after Dawn's base.css so these rules win.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Cinzel:wght@500;700&family=Oswald:wght@300;400;500;600;700&display=swap');
+
+:root{
+  --cq-obsidian:#0B0B0D; --cq-ink:#17181C; --cq-ash:#9A9CA1; --cq-ash-dim:#5A5B60;
+  --cq-bone:#EDE8DE; --cq-oxblood:#6E1414; --cq-blood:#A82A2A; --cq-blood-lift:#C4322F;
+  --cq-edge:rgba(237,232,222,.10);
+}
+
+/* ---- Global base override (Dawn) ---- */
+html{ background-color:var(--cq-obsidian); }
+body,
+body.gradient{
+  background-color:var(--cq-obsidian) !important;
+  background-image:none !important;
+  color:var(--cq-bone);
+  font-family:'Oswald',system-ui,sans-serif; font-weight:300;
+}
+/* Dawn wraps sections in color-scheme classes with their own backgrounds.
+   Neutralise those on the homepage so our sections keep the dark canvas. */
+.template-index .shopify-section{ background-color:var(--cq-obsidian); }
+.cq-hero, .cq-sec, .cq-scripture, .cq-join{ background-color:var(--cq-obsidian); }
+.cq ::selection, ::selection{background:var(--cq-blood); color:var(--cq-bone)}
+.cq a{color:inherit; text-decoration:none}
+.cq img{display:block; max-width:100%}
+.cq-wrap{width:min(1280px,92vw); margin-inline:auto}
+.cq-eyebrow{font-family:'Cinzel',serif; font-weight:700; letter-spacing:.32em; font-size:clamp(.85rem,1.05vw,1.1rem); color:var(--cq-blood); text-transform:uppercase}
+.cq-display{font-family:'Anton',sans-serif; text-transform:uppercase; line-height:.9}
+.cq-reveal{opacity:0; transform:translateY(40px)}
+
+/* ---- Buttons ---- */
+.cq-cta{font-family:'Oswald'; font-weight:600; letter-spacing:.16em; text-transform:uppercase; font-size:clamp(.9rem,1.05vw,1.08rem);
+  padding:1rem 2rem; border:1px solid var(--cq-blood); color:var(--cq-bone); background:var(--cq-oxblood);
+  display:inline-flex; align-items:center; gap:.5rem; transition:background .25s ease, transform .1s ease; cursor:pointer}
+.cq-cta:hover{background:var(--cq-blood)}
+.cq-cta:active{transform:scale(.97)}
+.cq-cta.ghost{background:transparent; border-color:var(--cq-edge)}
+.cq-cta.ghost:hover{border-color:var(--cq-bone)}
+
+/* ---- Preloader ---- */
+#cq-loader{position:fixed; inset:0; z-index:2000; background:var(--cq-obsidian);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2rem}
+#cq-loader img{width:min(440px,70vw); opacity:.95}
+#cq-loader .cq-bar{width:min(440px,70vw); height:2px; background:var(--cq-ash-dim); position:relative; overflow:hidden}
+#cq-loader .cq-bar span{position:absolute; inset:0; width:0%; background:var(--cq-blood)}
+#cq-loader .cq-pct{font-family:'Anton'; font-size:clamp(3rem,10vw,6rem); color:var(--cq-bone); line-height:1}
+#cq-loader .cq-tag{font-family:'Cinzel',serif; letter-spacing:.32em; font-size:.7rem; color:var(--cq-ash); text-transform:uppercase}
+#cq-curtain{position:fixed; inset:0; z-index:1999; background:var(--cq-obsidian)}
+
+/* ---- Header / nav (restyle Dawn header) ---- */
+.cq-header{position:fixed; top:0; left:0; right:0; z-index:1300; padding:1.4rem 0;
+  border-bottom:1px solid transparent; transition:background .4s ease, padding .4s ease, border-color .4s ease}
+.cq-header.solid{background:rgba(11,11,13,.85); backdrop-filter:blur(10px); padding:.75rem 0; border-color:var(--cq-edge)}
+.cq-nav{display:flex; align-items:center; justify-content:space-between}
+.cq-nav .cq-logo{height:26px; width:auto}
+.cq-nav ul{display:flex; gap:2.2rem; list-style:none; margin:0; padding:0}
+.cq-nav ul a{font-size:clamp(.95rem,1.05vw,1.1rem); letter-spacing:.16em; text-transform:uppercase; font-weight:500; color:var(--cq-bone); position:relative; padding:.2rem 0}
+.cq-nav ul a::after{content:''; position:absolute; left:0; bottom:-2px; width:0; height:2px; background:var(--cq-blood); transition:width .3s ease}
+.cq-nav ul a:hover::after{width:100%}
+.cq-burger{display:none; flex-direction:column; gap:5px; background:none; border:0; cursor:pointer; padding:6px}
+.cq-burger span{width:26px; height:2px; background:var(--cq-bone); transition:.3s}
+.cq-mobile{position:fixed; inset:0; z-index:1200; background:var(--cq-obsidian) !important;
+  transform:translateX(100%); transition:transform .45s cubic-bezier(.7,0,.3,1);
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.6rem;
+  padding:5rem 1.5rem 2rem; overflow-y:auto; list-style:none; margin:0}
+.cq-mobile.open{transform:translateX(0)}
+.cq-mobile a{font-family:'Anton',sans-serif !important; font-size:2rem; line-height:1; text-transform:uppercase;
+  letter-spacing:.02em; color:var(--cq-bone) !important; text-decoration:none !important; padding:.2rem 0}
+.cq-mobile a:hover, .cq-mobile a:focus{color:var(--cq-blood) !important}
+
+/* ---- Hero ---- */
+.cq-hero{min-height:100svh; display:flex; flex-direction:column; justify-content:center; position:relative; overflow:hidden; padding-top:6rem}
+.cq-hero-mark{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); height:118%; opacity:.05; pointer-events:none; z-index:0}
+.cq-hero::before{content:''; position:absolute; inset:0; z-index:0; background:radial-gradient(120% 90% at 50% 58%, rgba(110,20,20,.28), transparent 55%)}
+.cq-hero .cq-wrap{position:relative; z-index:1; text-align:center}
+.cq-hero .cq-eyebrow{display:block; margin-bottom:1.4rem}
+.cq-hero h1{font-family:'Anton'; text-transform:uppercase; line-height:.86; font-size:clamp(3.4rem,13vw,11rem); color:var(--cq-bone); margin:0}
+.cq-hero h1 .line{display:block; overflow:hidden}
+.cq-hero h1 .line>span{display:inline-block}
+.cq-hero h1 .blood{color:var(--cq-blood)}
+.cq-hero p.sub{max-width:44ch; margin:2rem auto 2.4rem; font-size:clamp(1.15rem,1.7vw,1.6rem); color:var(--cq-ash); font-weight:300; line-height:1.7}
+.cq-hero .actions{display:flex; gap:1rem; flex-wrap:wrap; justify-content:center}
+.cq-scrollcue{position:absolute; bottom:2rem; left:50%; transform:translateX(-50%); z-index:1; font-size:.68rem; letter-spacing:.35em; text-transform:uppercase; color:var(--cq-ash); display:flex; flex-direction:column; align-items:center; gap:.6rem}
+.cq-scrollcue .l{width:1px; height:38px; background:linear-gradient(var(--cq-blood),transparent); animation:cq-cue 1.8s infinite}
+@keyframes cq-cue{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}50.1%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ---- Marquee ---- */
+.cq-marquee{background:var(--cq-oxblood); border-block:1px solid var(--cq-blood); padding:1.1rem 0; overflow:hidden; white-space:nowrap}
+.cq-marquee .track{display:inline-flex; gap:2.5rem; animation:cq-scroll 26s linear infinite; will-change:transform}
+.cq-marquee.rev .track{animation-direction:reverse}
+.cq-marquee span{font-family:'Anton'; font-size:1.5rem; letter-spacing:.06em; text-transform:uppercase; color:var(--cq-bone); display:inline-flex; align-items:center; gap:2.5rem}
+.cq-marquee span::after{content:'\271D'; color:var(--cq-blood-lift); font-size:1rem}
+@keyframes cq-scroll{to{transform:translateX(-50%)}}
+
+/* ---- Scripture interstitial ---- */
+.cq-scripture{padding:9rem 0; text-align:center; position:relative; overflow:hidden}
+.cq-scripture::before{content:''; position:absolute; inset:0; background:radial-gradient(70% 100% at 50% 50%, rgba(110,20,20,.22), transparent 62%)}
+.cq-scripture .cq-wrap{position:relative}
+.cq-scripture .v{font-family:'Cinzel',serif; font-weight:700; letter-spacing:.3em; font-size:clamp(.85rem,1.05vw,1.1rem); color:var(--cq-blood); text-transform:uppercase; margin-bottom:1.8rem; display:block}
+.cq-scripture h2{font-family:'Anton'; text-transform:uppercase; font-size:clamp(2.3rem,7.5vw,6rem); line-height:.94; color:var(--cq-bone); margin:0}
+.cq-scripture h2 .blood{color:var(--cq-blood)}
+
+/* ---- Section shell ---- */
+.cq-sec{padding:7rem 0; position:relative}
+.cq-sec-head{display:flex; align-items:flex-end; justify-content:space-between; gap:2rem; margin-bottom:3.5rem; flex-wrap:wrap}
+.cq-sec-head .idx{font-family:'Cinzel',serif; font-weight:700; font-size:clamp(.85rem,1.05vw,1.1rem); color:var(--cq-blood); letter-spacing:.3em; text-transform:uppercase; margin-bottom:1rem; display:block}
+.cq-sec-head h2{font-family:'Anton'; text-transform:uppercase; font-size:clamp(2.4rem,7vw,5.5rem); line-height:.9; color:var(--cq-bone); margin:0}
+.cq-sec-head p{max-width:42ch; color:var(--cq-ash); font-weight:300; margin:0; font-size:clamp(1.05rem,1.5vw,1.3rem); line-height:1.65}
+
+/* ---- Forge (product grid) ---- */
+.cq-grid-prod{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--cq-edge); border:1px solid var(--cq-edge)}
+.cq-card{background:var(--cq-obsidian); padding:1.4rem 1.2rem 1.3rem; position:relative; overflow:hidden; transition:background .35s ease; display:block}
+.cq-card:hover{background:var(--cq-ink)}
+.cq-card .thumb{aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; margin-bottom:1.4rem; position:relative; overflow:hidden}
+.cq-card .thumb::before{content:''; position:absolute; inset:0; background:radial-gradient(60% 60% at 50% 45%, rgba(110,20,20,.35), transparent 70%); opacity:0; transition:opacity .35s ease}
+.cq-card:hover .thumb::before{opacity:1}
+.cq-card .thumb img{height:100%; width:100%; object-fit:cover; opacity:.92; transition:transform .5s cubic-bezier(.7,0,.3,1)}
+.cq-card .thumb img.mark{height:44%; width:auto; object-fit:contain}
+.cq-card:hover .thumb img{transform:scale(1.06)}
+.cq-card .tag{position:absolute; top:1rem; left:1rem; z-index:2; font-size:.6rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cq-blood); font-weight:600}
+.cq-card h3{font-family:'Oswald'; font-weight:600; text-transform:uppercase; letter-spacing:.06em; font-size:1.05rem; margin:0 0 .3rem; color:var(--cq-bone)}
+.cq-card .price{color:var(--cq-bone); font-size:1.1rem; font-weight:500}
+.cq-card .buy{margin-top:1rem; font-size:.72rem; letter-spacing:.2em; text-transform:uppercase; color:var(--cq-bone); display:inline-flex; align-items:center; gap:.5rem; opacity:0; transform:translateY(6px); transition:.3s}
+.cq-card:hover .buy{opacity:1; transform:translateY(0)}
+@media(hover:none){ .cq-card .buy{opacity:1; transform:none} }
+
+/* ---- Creed ---- */
+.cq-creed{background:var(--cq-ink); border-block:1px solid var(--cq-edge)}
+.cq-creed .cq-wrap{display:grid; grid-template-columns:1fr 1fr; gap:4rem; align-items:center}
+.cq-creed h2{font-family:'Anton'; text-transform:uppercase; font-size:clamp(2.6rem,7vw,6rem); line-height:.88; margin:0; color:var(--cq-bone)}
+.cq-creed h2 .blood{color:var(--cq-blood)}
+.cq-creed .verse{font-family:'Cinzel',serif; font-weight:700; color:var(--cq-blood); letter-spacing:.24em; font-size:clamp(.85rem,1.05vw,1.1rem); margin-bottom:1.5rem; display:block}
+.cq-creed .body p{color:var(--cq-ash); font-weight:300; margin:0 0 1.3rem; font-size:clamp(1.1rem,1.45vw,1.35rem); line-height:1.75}
+.cq-creed .body strong{color:var(--cq-bone); font-weight:600}
+
+/* ---- Marks ---- */
+.cq-grid-col{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--cq-edge); border:1px solid var(--cq-edge)}
+.cq-tile{background:var(--cq-obsidian); aspect-ratio:1/1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.7rem; position:relative; overflow:hidden; transition:background .4s ease}
+.cq-tile::after{content:''; position:absolute; inset:0; background:radial-gradient(70% 70% at 50% 50%, rgba(110,20,20,.32), transparent 72%); opacity:0; transition:opacity .45s ease}
+.cq-tile:hover{background:var(--cq-ink)}
+.cq-tile:hover::after{opacity:1}
+.cq-tile .art{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; opacity:.85; transition:transform .6s cubic-bezier(.7,0,.3,1), opacity .4s ease; z-index:0}
+.cq-tile:has(.art)::before{content:''; position:absolute; inset:0; z-index:1; background:linear-gradient(to top, rgba(11,11,13,.9), rgba(11,11,13,.15) 55%)}
+.cq-tile:hover .art{transform:scale(1.06); opacity:1}
+.cq-tile:has(.art) .name{position:absolute; bottom:1.1rem; left:0; right:0; z-index:2}
+.cq-tile .cross{font-size:1.9rem; line-height:1; color:var(--cq-ash-dim); transition:color .45s ease, transform .5s cubic-bezier(.7,0,.3,1); z-index:1}
+.cq-tile:hover .cross{color:var(--cq-blood); transform:scale(1.15) rotate(-3deg)}
+.cq-tile .name{font-family:'Cinzel',serif; letter-spacing:.28em; font-size:.9rem; text-transform:uppercase; color:var(--cq-bone); z-index:1}
+
+/* ---- Called (newsletter) ---- */
+.cq-join{position:relative; text-align:center; padding:8rem 0; overflow:hidden}
+.cq-join::before{content:''; position:absolute; inset:0; background:radial-gradient(80% 120% at 50% 0%, rgba(110,20,20,.35), transparent 60%)}
+.cq-join .cq-wrap{position:relative}
+.cq-join .cq-eyebrow{display:block; margin-bottom:1.3rem}
+.cq-join h2{font-family:'Anton'; text-transform:uppercase; font-size:clamp(2.8rem,9vw,7rem); line-height:.88; margin:0 0 1.6rem; color:var(--cq-bone)}
+.cq-join p{max-width:46ch; margin:0 auto 2.2rem; color:var(--cq-ash); font-weight:300; font-size:clamp(1.1rem,1.5vw,1.35rem); line-height:1.65}
+.cq-join form{display:flex; gap:.6rem; max-width:480px; margin:0 auto; flex-wrap:wrap; justify-content:center}
+.cq-join input{flex:1; min-width:240px; background:var(--cq-ink); border:1px solid var(--cq-edge); color:var(--cq-bone); padding:1.05rem 1.2rem; font-family:'Oswald'; letter-spacing:.05em; font-size:clamp(1rem,1.2vw,1.15rem)}
+.cq-join input:focus{outline:none; border-color:var(--cq-blood)}
+.cq-join .note{font-size:.8rem; color:var(--cq-blood-lift); margin-top:1rem}
+
+/* ---- Cart remove link (replaces Dawn's blocked AJAX remove) ---- */
+.cq-cart-remove{ display:inline-block; margin-top:.5rem; font-family:'Oswald',sans-serif; font-weight:500;
+  text-transform:uppercase; letter-spacing:.1em; font-size:.8rem; color:var(--cq-ash) !important;
+  text-decoration:underline; text-underline-offset:3px; cursor:pointer; background:none; border:0; }
+.cq-cart-remove:hover{ color:var(--cq-blood) !important; }
+
+/* ---- About / The Calling ---- */
+.cq-about{ padding:8rem 0; text-align:center; position:relative; overflow:hidden; border-top:1px solid var(--cq-edge); }
+.cq-about::before{ content:''; position:absolute; inset:0; background:radial-gradient(70% 100% at 50% 40%, rgba(110,20,20,.18), transparent 62%); }
+.cq-about .cq-wrap{ position:relative; max-width:820px; }
+.cq-about .cq-eyebrow{ display:block; margin-bottom:1.4rem; }
+.cq-about h2{ font-family:'Anton'; text-transform:uppercase; font-size:clamp(2.4rem,6vw,4.6rem); line-height:.92; color:var(--cq-bone); margin:0 0 2rem; }
+.cq-about h2 .blood{ color:var(--cq-blood); }
+.cq-about-body{ color:var(--cq-ash); font-weight:300; font-size:clamp(1.05rem,1.4vw,1.3rem); line-height:1.8; }
+.cq-about-body p{ margin:0 0 1.2rem; }
+.cq-about-body strong{ color:var(--cq-bone); font-weight:600; }
+.cq-social{ display:flex; gap:1rem; justify-content:center; margin-top:2.6rem; flex-wrap:wrap; }
+.cq-social-btn{ display:inline-flex; align-items:center; gap:.6rem; }
+.cq-social-btn svg{ display:block; }
+
+/* ============================================================
+   PRODUCT PAGE — restyle Dawn's product template (Blood & Ash)
+   ============================================================ */
+/* Force every Dawn colour scheme to the brand so product, cart and
+   collection pages stay dark without per-section fiddling. */
+[class*="color-scheme-"]{
+  --color-background:11,11,13;
+  --gradient-background:#0B0B0D;
+  --color-foreground:237,232,222;
+  --color-button:110,20,20;
+  --color-button-text:237,232,222;
+  --color-link:168,42,42;
+}
+
+.product__info-container{ padding-left:clamp(0rem,2vw,2.5rem); }
+.product__title, .product__title h1, .product__title>*{
+  font-family:'Anton',sans-serif !important; text-transform:uppercase; letter-spacing:.01em;
+  line-height:.95; font-size:clamp(2.2rem,4.5vw,3.6rem) !important; color:var(--cq-bone);
+}
+.product .price, .product .price .price-item{
+  font-family:'Oswald',sans-serif; font-weight:500; color:var(--cq-bone);
+  font-size:clamp(1.2rem,1.6vw,1.5rem) !important;
+}
+.product .price__sale .price-item--sale{ color:var(--cq-blood); }
+.product .price s{ color:var(--cq-ash); }
+.product__description, .product .rte, .product__description p{
+  color:var(--cq-ash) !important; font-weight:300; font-size:clamp(1rem,1.2vw,1.15rem); line-height:1.75;
+}
+.product__description strong, .product .rte strong{ color:var(--cq-bone); }
+
+/* Variant option labels */
+.product-form__input .form__label{
+  font-family:'Cinzel',serif; font-weight:700; letter-spacing:.2em; text-transform:uppercase;
+  font-size:.8rem; color:var(--cq-ash);
+}
+/* Pills, swatches and dropdowns */
+.product-form__input--pill input[type="radio"]+label,
+.product-form__input .select__select,
+.product-form__input select{
+  background:var(--cq-ink) !important; color:var(--cq-bone) !important;
+  border:1px solid var(--cq-edge) !important; border-radius:0 !important;
+  text-transform:uppercase; letter-spacing:.05em; font-family:'Oswald'; font-weight:500;
+  transition:border-color .2s ease, background .2s ease;
+}
+.product-form__input--pill input[type="radio"]:checked+label{
+  border-color:var(--cq-blood) !important; background:var(--cq-oxblood) !important; color:var(--cq-bone) !important;
+}
+.product-form__input--pill input[type="radio"]+label:hover{ border-color:var(--cq-bone) !important; }
+
+/* Quantity selector */
+.quantity{ border:1px solid var(--cq-edge) !important; background:var(--cq-ink); border-radius:0 !important; }
+.quantity__input, .quantity__button{ color:var(--cq-bone); background:transparent; }
+.quantity__button:hover{ color:var(--cq-blood); }
+
+/* Add-to-cart + dynamic checkout */
+.product-form__submit, .shopify-payment-button__button{
+  font-family:'Oswald' !important; font-weight:600 !important; letter-spacing:.16em !important;
+  text-transform:uppercase !important; border-radius:0 !important; min-height:56px;
+  font-size:clamp(.9rem,1.05vw,1.05rem) !important;
+}
+.product-form__submit{
+  background:var(--cq-oxblood) !important; color:var(--cq-bone) !important; border:1px solid var(--cq-blood) !important;
+}
+.product-form__submit:hover:not([disabled]){ background:var(--cq-blood) !important; }
+.product-form__submit[disabled]{ background:var(--cq-ash-dim) !important; color:var(--cq-ash) !important; border-color:var(--cq-ash-dim) !important; }
+.shopify-payment-button__button--unbranded{ background:var(--cq-bone) !important; color:var(--cq-obsidian) !important; }
+.shopify-payment-button__button--unbranded:hover{ background:#fff !important; }
+
+/* Media gallery */
+.product__media, .product__media-item .media, .product__modal-opener{
+  border:1px solid var(--cq-edge); border-radius:0; background:var(--cq-ink);
+}
+.product__media img{ border-radius:0; }
+.thumbnail{ border-radius:0 !important; border:1px solid var(--cq-edge) !important; }
+.thumbnail[aria-current]{ border-color:var(--cq-blood) !important; }
+
+/* Collapsible rows / accordions */
+.product .accordion summary, .product details summary, .product__accordion .summary__title{
+  font-family:'Oswald'; font-weight:600; text-transform:uppercase; letter-spacing:.08em; color:var(--cq-bone);
+}
+.product .accordion, .product__accordion{ border-top:1px solid var(--cq-edge); }
+.product .rte a{ color:var(--cq-blood); }
+
+/* Badges (Sale / Sold out) */
+.product .badge{
+  background:var(--cq-oxblood); color:var(--cq-bone); border:1px solid var(--cq-blood);
+  border-radius:0; text-transform:uppercase; letter-spacing:.08em;
+}
+
+/* ============================================================
+   CATALOGUE — custom collection page (bold gallery grid)
+   ============================================================ */
+.cq-cat{ padding:8rem 0 6rem; }
+.cq-cat-head{ text-align:center; margin-bottom:1rem; }
+.cq-cat-head .idx{ font-family:'Cinzel',serif; font-weight:700; letter-spacing:.3em; text-transform:uppercase; font-size:clamp(.85rem,1.05vw,1.1rem); color:var(--cq-blood); display:block; margin-bottom:1rem; }
+.cq-cat-head h1{ font-family:'Anton'; text-transform:uppercase; font-size:clamp(2.8rem,7vw,6rem); line-height:.9; color:var(--cq-bone); margin:0; }
+.cq-cat-desc{ color:var(--cq-ash); max-width:60ch; margin:1.2rem auto 0; font-weight:300; font-size:clamp(1rem,1.2vw,1.2rem); line-height:1.7; }
+
+.cq-cat-bar{ display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; border-block:1px solid var(--cq-edge); padding:1rem 0; margin:2.5rem 0; }
+.cq-cat-bar .count{ font-family:'Cinzel',serif; letter-spacing:.2em; text-transform:uppercase; font-size:.92rem; color:var(--cq-ash); }
+.cq-cat-tools{ display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; }
+.cq-filter{ position:relative; }
+.cq-filter summary{ list-style:none; cursor:pointer; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.12em; font-size:.92rem; color:var(--cq-bone); padding:.55rem .95rem; border:1px solid var(--cq-edge); }
+.cq-filter summary::-webkit-details-marker{ display:none; }
+.cq-filter[open] summary{ border-color:var(--cq-blood); }
+.cq-filter summary em{ color:var(--cq-blood); font-style:normal; }
+.cq-filter-pop{ position:absolute; z-index:20; top:calc(100% + 4px); left:0; min-width:220px; max-height:320px; overflow:auto; background:var(--cq-ink); border:1px solid var(--cq-edge); padding:.8rem; }
+.cq-fval{ display:flex; align-items:center; gap:.6rem; padding:.45rem 0; font-size:.98rem; color:var(--cq-bone); cursor:pointer; }
+.cq-fval em{ color:var(--cq-ash); font-style:normal; font-size:.82rem; margin-left:auto; }
+.cq-fval.disabled{ opacity:.4; }
+.cq-price{ display:flex; align-items:center; gap:.5rem; }
+.cq-price input{ width:90px; background:var(--cq-obsidian); border:1px solid var(--cq-edge); color:var(--cq-bone); padding:.5rem; }
+.cq-sort{ display:flex; align-items:center; gap:.5rem; }
+.cq-sort label{ font-size:.85rem; text-transform:uppercase; letter-spacing:.15em; color:var(--cq-ash); }
+.cq-sort select{ background:var(--cq-ink); color:var(--cq-bone); border:1px solid var(--cq-edge); padding:.55rem .7rem; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.06em; font-size:.92rem; }
+.cq-cat-apply{ background:var(--cq-oxblood); color:var(--cq-bone); border:1px solid var(--cq-blood); padding:.6rem 1.1rem; cursor:pointer; font-family:'Oswald'; font-weight:600; text-transform:uppercase; letter-spacing:.08em; font-size:.92rem; }
+.cq-cat-apply:hover{ background:var(--cq-blood); }
+.cq-cat-clear{ font-size:.85rem; text-transform:uppercase; letter-spacing:.12em; color:var(--cq-ash); }
+.cq-cat-clear:hover{ color:var(--cq-blood); }
+
+.cq-cat-grid{ display:grid; grid-template-columns:repeat(var(--cols,3),1fr); gap:1px; background:var(--cq-edge); border:1px solid var(--cq-edge); }
+.cq-cat-card{ background:var(--cq-obsidian); display:flex; flex-direction:column; }
+.cq-cat-media{ position:relative; display:block; aspect-ratio:4/5; overflow:hidden; background:var(--cq-ink); }
+.cq-cat-media img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; transition:transform .6s cubic-bezier(.7,0,.3,1), opacity .45s ease; }
+.cq-cat-media img.mark{ object-fit:contain; padding:22%; opacity:.4; }
+.cq-cat-media .secondary{ opacity:0; }
+.cq-cat-media:has(.secondary):hover .primary{ opacity:0; }
+.cq-cat-media:hover .secondary{ opacity:1; }
+.cq-cat-media:hover img{ transform:scale(1.04); }
+.cq-cat-sold{ position:absolute; top:1rem; left:1rem; z-index:2; background:var(--cq-oxblood); color:var(--cq-bone); border:1px solid var(--cq-blood); padding:.3rem .7rem; text-transform:uppercase; letter-spacing:.12em; font-size:.62rem; font-weight:600; }
+.cq-cat-info{ padding:1.2rem 1.2rem 1.5rem; display:flex; flex-direction:column; gap:.5rem; }
+.cq-cat-info h3{ margin:0; font-family:'Anton'; text-transform:uppercase; line-height:1.02; font-size:clamp(1.2rem,1.4vw,1.5rem); }
+.cq-cat-info h3 a{ color:var(--cq-bone); }
+.cq-cat-info h3 a:hover{ color:var(--cq-blood); }
+.cq-cat-price{ font-family:'Oswald'; font-weight:500; color:var(--cq-bone); font-size:1.2rem; }
+.cq-cat-price .sale{ color:var(--cq-blood); }
+.cq-cat-price s{ color:var(--cq-ash-dim); margin-left:.4rem; }
+.cq-quick{ display:flex; flex-direction:column; gap:.5rem; margin-top:.9rem; }
+.cq-quick select{ width:100%; background:var(--cq-ink); color:var(--cq-bone); border:1px solid var(--cq-edge); padding:.7rem .8rem; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.04em; font-size:.95rem; }
+.cq-quick button{ width:100%; background:var(--cq-oxblood); color:var(--cq-bone); border:1px solid var(--cq-blood); padding:.85rem 1rem; font-family:'Oswald'; font-weight:600; text-transform:uppercase; letter-spacing:.12em; font-size:.9rem; cursor:pointer; transition:background .2s ease; }
+.cq-quick button:hover{ background:var(--cq-blood); }
+.cq-quick button[disabled]{ background:var(--cq-ash-dim); border-color:var(--cq-ash-dim); color:var(--cq-ash); cursor:default; }
+.cq-quick-sold{ margin-top:.9rem; display:block; text-align:center; color:var(--cq-ash); text-transform:uppercase; letter-spacing:.1em; font-size:.85rem; border:1px solid var(--cq-edge); padding:.8rem 1rem; }
+.cq-cat-empty{ grid-column:1/-1; text-align:center; padding:4rem 1rem; color:var(--cq-ash); font-family:'Cinzel',serif; letter-spacing:.1em; }
+.cq-cat-pager{ display:flex; justify-content:center; align-items:center; gap:.4rem; margin-top:3rem; }
+.cq-cat-pager a, .cq-cat-pager .current{ min-width:44px; height:44px; display:inline-flex; align-items:center; justify-content:center; font-family:'Oswald'; font-size:.9rem; border:1px solid var(--cq-edge); color:var(--cq-bone); }
+.cq-cat-pager a:hover{ border-color:var(--cq-blood); color:var(--cq-blood); }
+.cq-cat-pager .current{ background:var(--cq-oxblood); border-color:var(--cq-blood); }
+
+/* Header cart badge */
+.cq-nav-right{ display:flex; align-items:center; gap:1.3rem; }
+.cq-cart{ font-family:'Oswald'; font-size:.82rem; letter-spacing:.16em; text-transform:uppercase; font-weight:500; color:var(--cq-bone); display:inline-flex; align-items:center; }
+.cq-cart:hover{ color:var(--cq-blood); }
+.cq-cart-count{ margin-left:.5rem; min-width:1.5em; height:1.5em; padding:0 .35em; display:inline-flex; align-items:center; justify-content:center; background:var(--cq-oxblood); border:1px solid var(--cq-blood); color:var(--cq-bone); font-size:.7rem; line-height:1; }
+.cq-loc{ margin:0; }
+.cq-loc select{ background:transparent; color:var(--cq-bone); border:1px solid var(--cq-edge); padding:.4rem .55rem; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.08em; font-size:.74rem; cursor:pointer; }
+.cq-loc select:hover{ border-color:var(--cq-blood); }
+.cq-loc option{ background:var(--cq-obsidian); color:var(--cq-bone); }
+
+/* Add-to-cart toast */
+#cq-toast{ position:fixed; bottom:1.5rem; right:1.5rem; z-index:1500; background:var(--cq-ink); border:1px solid var(--cq-blood); color:var(--cq-bone); padding:.9rem 1.2rem; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.1em; font-size:.8rem; transform:translateY(20px); opacity:0; pointer-events:none; transition:opacity .3s ease, transform .3s ease; }
+#cq-toast.show{ opacity:1; transform:translateY(0); }
+
+/* ---- Responsive ---- */
+@media(max-width:1200px){
+  .cq-cat-grid{ grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:960px){
+  .cq-cat-grid{ grid-template-columns:repeat(2,1fr); }
+  .cq-grid-prod{grid-template-columns:repeat(2,1fr)}
+  .cq-creed .cq-wrap{grid-template-columns:1fr; gap:2.5rem}
+}
+@media(max-width:640px){
+  .cq-nav ul, .cq-nav .cq-cta{display:none}
+  .cq-burger{display:flex}
+  .cq-grid-col{grid-template-columns:repeat(2,1fr)}
+  .cq-cat-grid{grid-template-columns:1fr}
+  .cq-cat{padding:6rem 0 4rem}
+  .cq-sec{padding:4.5rem 0}
+  .cq-marquee span{font-size:1.15rem}
+}
+@media(min-width:1100px){
+  .cq-marquee span{ font-size:1.9rem; }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .cq-reveal{opacity:1; transform:none}
+  *{animation-duration:.001ms!important; transition-duration:.001ms!important}
+}
