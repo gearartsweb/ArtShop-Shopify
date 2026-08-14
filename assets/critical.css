@@ -24,14 +24,7 @@ body, p, a, nav, button, input, select, textarea {
   font-family: 'Lora', Georgia, serif;
 }
 
-/* Logo — top left */
-.header__heading {
-  justify-content: flex-start !important;
-}
 
-.header {
-  justify-content: flex-start !important;
-}
 
 
 *, *::before, *::after {
