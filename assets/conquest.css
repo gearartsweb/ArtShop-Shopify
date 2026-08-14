@@ -17,11 +17,25 @@ body, p, a, nav, button, input, select, textarea {
 }
 
 /* Logo — top left */
-.header-logo-center {
-  display: flex;
-  justify-content: flex-start !important;
-  width: 100%;
+.header-boutique {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
 }
+
+.header-nav-container {
+  order: 2;
+}
+
+.header-logo-center {
+  order: 1;
+  justify-self: start;
+}
+
+.header-icons-right {
+  order: 3;
+}
+
 
 
 :root{
