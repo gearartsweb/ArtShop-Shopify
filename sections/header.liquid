@@ -43,6 +43,9 @@
         {%- endif -%}
       </a>
     </div>
+    <a href="{{ link.url }}"
+               {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
+
 
     {%- comment -%} ── RIGHT: Search + Cart ── {%- endcomment -%}
     <div class="header-icons-right">

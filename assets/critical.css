@@ -1680,4 +1680,9 @@ nav.boutique-menu a,
   font-size: 0.9rem !important;
   font-style: italic !important;
 }
+@media (max-width: 768px) {
+  .nav-inline-logo {
+    width: 90px;
+  }
+}
 
