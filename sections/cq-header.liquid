@@ -10,7 +10,9 @@
         {%- for link in section.settings.menu.links -%}
           <li><a href="{{ link.url }}">{{ link.title }}</a></li>
         {%- endfor -%}
-      {%- else -%}
+      {%- else -%}<a href="{{ link.url }}"
+               {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
+
         <li><a href="{{ routes.all_products_collection_url }}">The Forge</a></li>
         <li><a href="/#cq-creed">The War</a></li>
         <li><a href="/#cq-marks">The Marks</a></li>
