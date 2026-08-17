@@ -154,9 +154,37 @@
   else document.addEventListener('DOMContentLoaded', run);
 })();
 
-/* Increase nav link font size */
-.header-nav-left a {
-  font-size: 3.1rem !important;
-  font-style: italic !important;
+/* ---- Responsive ---- */
+@media(max-width:1200px){
+  .cq-cat-grid{ grid-template-columns:repeat(3,1fr); }
 }
+@media(max-width:960px){
+  .cq-cat-grid{ grid-template-columns:repeat(2,1fr); }
+  .cq-grid-prod{grid-template-columns:repeat(2,1fr)}
+  .cq-creed .cq-wrap{grid-template-columns:1fr; gap:2.5rem}
+}
+@media(max-width:640px){
+  .cq-nav ul, .cq-nav .cq-cta{display:none}
+  .cq-burger{display:flex}
+  .cq-grid-col{grid-template-columns:repeat(2,1fr)}
+  .cq-cat-grid{grid-template-columns:1fr}
+  .cq-cat{padding:6rem 0 4rem}
+  .cq-sec{padding:4.5rem 0}
+  .cq-marquee span{font-size:1.15rem}
+}
+@media(min-width:1100px){
+  .cq-marquee span{ font-size:1.9rem; }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .cq-reveal{opacity:1; transform:none}
+  *{animation-duration:.001ms!important; transition-duration:.001ms!important}
+
+/* Increase nav link font size */
+nav.header-nav-left a,
+nav.boutique-menu a,
+.header-nav-container nav a {
+  font-size: 3.1rem !important;
+  font-style: italic !important;}
+
 
