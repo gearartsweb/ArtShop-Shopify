@@ -407,10 +407,14 @@ body.gradient{
   *{animation-duration:.001ms!important; transition-duration:.001ms!important}
 
 /* Increase nav link font size */
-.header-nav-left a {
+nav.header-nav-left a,
+nav.boutique-menu a,
+.header-nav-container nav a {
   font-size: 3.1rem !important;
-  font-style: italic !important;
-}
+  font-style: italic !important;}
+
+
+
 
 
 
