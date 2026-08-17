@@ -179,6 +179,7 @@
 @media(prefers-reduced-motion:reduce){
   .cq-reveal{opacity:1; transform:none}
   *{animation-duration:.001ms!important; transition-duration:.001ms!important}
+}
 
 /* Increase nav link font size */
 nav.header-nav-left a,
@@ -186,5 +187,7 @@ nav.boutique-menu a,
 .header-nav-container nav a {
   font-size: 3.1rem !important;
   font-style: italic !important;}
+
+
 
 
