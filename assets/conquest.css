@@ -406,3 +406,9 @@ body.gradient{
   .cq-reveal{opacity:1; transform:none}
   *{animation-duration:.001ms!important; transition-duration:.001ms!important}
 }
+/* Increase nav link font size */
+header nav a,
+.header__menu-item a,
+.site-nav__link {
+  font-size: 1.25rem !important; /* adjust as needed */
+}
