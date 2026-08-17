@@ -1,24 +1,20 @@
 <header class="site-frame-header" role="banner">
   <div class="header-boutique page-width">
 
-    {%- comment -%} ── LEFT: Hamburger + Nav ── {%- endcomment -%}
-    <div class="header-nav-container">
-      <input type="checkbox" id="menu-toggle" class="menu-toggle-checkbox" aria-hidden="true">
-      <label for="menu-toggle" class="hamburger-icon" aria-label="Toggle menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </label>
-      <nav class="header-nav-left boutique-menu" role="navigation" aria-label="Main navigation">
-        {% for link in linklists.main-menu.links %}
-          {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
-            <a href="{{ link.url }}"
-               {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
-              {{ link.title }}
-            </a>
-          {%- endunless -%}
-        {% endfor %}
-      </nav>
+<nav class="header-nav-left boutique-menu" role="navigation" aria-label="Main navigation">
+  {% for link in linklists.main-menu.links %}
+    {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
+      <a href="{{ link.url }}"
+         {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
+        {{ link.title }}
+      </a>
+      {%- if link.title == 'Contact' -%}
+        <img src="{{ 'logo-2.png' | asset_url }}" alt="{{ shop.name }}" class="nav-inline-logo" loading="lazy">
+      {%- endif -%}
+    {%- endunless -%}
+  {% endfor %}
+</nav>
+
     </div>
 
     {%- comment -%} ── CENTER: Logo ── {%- endcomment -%}
