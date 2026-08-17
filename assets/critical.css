@@ -1665,3 +1665,11 @@ section {
   .hide-mobile { display: none; }
   .show-mobile { display: block; }
 }
+
+/* Increase nav link font size */
+nav.header-nav-left a,
+nav.boutique-menu a,
+.header-nav-container nav a {
+  font-size: 3.1rem !important;
+  font-style: italic !important;
+}
