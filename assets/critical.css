@@ -47,7 +47,7 @@ html {
 nav.header-nav-left a,
 nav.boutique-menu a,
 .header-nav-container nav a {
-  font-size: 1.1rem !important;
+  font-size: 0.5rem !important;
   font-style: italic !important;
 }
 
