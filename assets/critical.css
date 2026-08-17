@@ -1685,4 +1685,12 @@ nav.boutique-menu a,
     width: 90px;
   }
 }
+.nav-inline-logo {
+  display: inline-block;
+  vertical-align: middle;
+  width: 70px;
+  height: auto;
+  margin: 0 12px;
+  pointer-events: none;
+}
 
