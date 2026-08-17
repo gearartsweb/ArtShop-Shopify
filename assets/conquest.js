@@ -156,5 +156,7 @@
 
 /* Increase nav link font size */
 .header-nav-left a {
-  font-size: 2.3rem !important;
+  font-size: 3.1rem !important;
+  font-style: italic !important;
 }
+
