@@ -1693,4 +1693,11 @@ nav.boutique-menu a,
   margin: 0 12px;
   pointer-events: none;
 }
-
+.nav-inline-logo {
+  display: inline-block;
+  vertical-align: middle;
+  width: 70px;
+  height: auto;
+  margin: 0 12px;
+  pointer-events: none;
+}
