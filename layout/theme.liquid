@@ -228,8 +228,8 @@
   document.addEventListener('DOMContentLoaded', function() {
     var drawer = document.getElementById('CartDrawer');
     var overlay = document.getElementById('cart-drawer-overlay');
-    if (drawer) { drawer.classList.remove('is-active'); drawer.setAttribute('aria-hidden', 'true'); }
-    if (overlay) { overlay.classList.remove('is-active'); overlay.setAttribute('aria-hidden', 'true'); }
+  if (drawer && drawer.classList.contains('is-active')) window.toggleCart();
+  if (overlay) { overlay.classList.remove('is-active'); overlay.setAttribute('aria-hidden', 'true'); }
     document.body.style.overflow = '';
   });
 </script>

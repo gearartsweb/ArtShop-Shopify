@@ -8,7 +8,7 @@
 <div
   id="cart-drawer-overlay"
   class="cart-drawer-overlay"
-  onclick="window.toggleCart()"
+  onclick="window.closeCart()"
   aria-hidden="true"></div>
 
 <aside
@@ -144,4 +144,12 @@
   "name": "Cart drawer",
   "settings": []
 }
+
 {% endschema %}
+window.closeCart = function() {
+  var drawer = document.getElementById('CartDrawer');
+  var overlay = document.getElementById('cart-drawer-overlay');
+  if (drawer) { drawer.classList.remove('is-active'); drawer.setAttribute('aria-hidden', 'true'); }
+  if (overlay) { overlay.classList.remove('is-active'); overlay.setAttribute('aria-hidden', 'true'); }
+  document.body.style.overflow = '';
+};
