@@ -71,12 +71,12 @@
     }
   };
 
-  document.addEventListener('keydown', function(e) {
-    if (e.key !== 'Escape') return;
-    var drawer = document.getElementById('CartDrawer');
-    if (drawer && drawer.classList.contains window.toggleCart();
-  });
-</script>
+ document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Escape') return;
+  var drawer = document.getElementById('CartDrawer');
+  if (drawer && drawer.classList.contains('is-active')) window.toggleCart();
+});
+
 
   {%- section 'cart-drawer' -%}
 
