@@ -23,7 +23,7 @@
     <button
       type="button"
       class="close-drawer"
-      onclick="window.toggleCart()"
+      onclick="window.closeCart()"
       aria-label="Close cart">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
         <line x1="18" y1="6" x2="6" y2="18"/>
@@ -49,6 +49,28 @@
 </aside>
 
 <script>
+  window.closeCart = function() {
+    var drawer  = document.getElementById('CartDrawer');
+    var overlay = document.getElementById('cart-drawer-overlay');
+    if (drawer)  { drawer.classList.remove('is-active');  drawer.setAttribute('aria-hidden', 'true'); }
+    if (overlay) { overlay.classList.remove('is-active'); overlay.setAttribute('aria-hidden', 'true'); }
+    document.body.style.overflow = '';
+  };
+
+  window.toggleCart = function() {
+    var drawer  = document.getElementById('CartDrawer');
+    var overlay = document.getElementById('cart-drawer-overlay');
+    if (!drawer) return;
+    var isOpen = drawer.classList.contains('is-active');
+    if (isOpen) {
+      window.closeCart();
+    } else {
+      drawer.classList.add('is-active');  drawer.setAttribute('aria-hidden', 'false');
+      if (overlay) { overlay.classList.add('is-active'); overlay.setAttribute('aria-hidden', 'false'); }
+      document.body.style.overflow = 'hidden';
+    }
+  };
+
   document.addEventListener('submit', function(e) {
     var form = e.target.closest('form[action*="/cart/add"]');
     if (!form) return;
@@ -71,7 +93,8 @@
       return window.refreshDrawer ? window.refreshDrawer() : Promise.resolve();
     })
     .then(function() {
-      if (window.toggleCart) window.toggleCart();
+      var drawer = document.getElementById('CartDrawer');
+      if (drawer && !drawer.classList.contains('is-active')) window.toggleCart();
       if (btn) { btn.disabled = false; btn.textContent = originalText; }
     })
     .catch(function(err) {
@@ -144,12 +167,5 @@
   "name": "Cart drawer",
   "settings": []
 }
-
 {% endschema %}
-window.closeCart = function() {
-  var drawer = document.getElementById('CartDrawer');
-  var overlay = document.getElementById('cart-drawer-overlay');
-  if (drawer) { drawer.classList.remove('is-active'); drawer.setAttribute('aria-hidden', 'true'); }
-  if (overlay) { overlay.classList.remove('is-active'); overlay.setAttribute('aria-hidden', 'true'); }
-  document.body.style.overflow = '';
-};
+
