@@ -121,6 +121,9 @@
         cqUpdateCount(cart.item_count);
         if(btn){ btn.textContent = 'Added ✓'; }
         cqToast('Added to cart');
+        document.dispatchEvent(new CustomEvent('cart:open'));
+        var drawerEl = document.getElementById('cart-drawer');
+        if(drawerEl) drawerEl.dispatchEvent(new CustomEvent('open'));
         setTimeout(function(){ if(btn){ btn.disabled = false; btn.textContent = label; } }, 1500);
       })
       .catch(function(){
@@ -129,6 +132,7 @@
       });
   });
 })();
+
 
 /* ---- Force add-to-cart enabled on the product page ----
    Shopify's `available` flag is stuck false on this store, so Dawn keeps
