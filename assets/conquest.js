@@ -121,6 +121,8 @@
         cqUpdateCount(cart.item_count);
         if(btn){ btn.textContent = 'Added ✓'; }
         cqToast('Added to cart');
+        console.log('drawer?', document.getElementById('cart-drawer'), document.getElementById('cart-notification'), document.querySelector('cart-drawer'), document.querySelector('[id*="cart"]'));
+
         document.dispatchEvent(new CustomEvent('cart:open'));
         var drawerEl = document.getElementById('cart-drawer');
         if(drawerEl) drawerEl.dispatchEvent(new CustomEvent('open'));
