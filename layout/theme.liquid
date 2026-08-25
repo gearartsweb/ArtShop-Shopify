@@ -73,6 +73,115 @@
     });
   </script>
 
+  {%- comment -%}
+    ── GLOBAL ADD-TO-CART INTERCEPTOR ──
+    Catches every form that posts to /cart/add and turns it into an AJAX
+    call, then opens the drawer. Without this, Shopify's default handler
+    fires and redirects to /cart (which is what was happening).
+  {%- endcomment -%}
+  <script>
+    document.addEventListener('submit', function(e) {
+      var form = e.target;
+      if (!form.matches || !form.matches('[action*="/cart/add"]')) return;
+      if (form.dataset.ajaxHandled) return;
+
+      e.preventDefault();
+
+      var submitBtn = form.querySelector('[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.7';
+      }
+
+      fetch(window.Shopify.routes.root + 'cart/add.js', {
+        method: 'POST',
+        body: new FormData(form)
+      })
+      .then(function(res) {
+        if (!res.ok) throw new Error('Cart add failed');
+        return res.json();
+      })
+      .then(function() {
+        if (window.TheArtShop && window.TheArtShop.updateCartCount) {
+          window.TheArtShop.updateCartCount();
+        } else if (window.updateCartCountBubble) {
+          window.updateCartCountBubble();
+        }
+        if (window.refreshDrawer) {
+          window.refreshDrawer().then(function() {
+            if (window.toggleCart) window.toggleCart();
+          });
+        } else if (window.toggleCart) {
+          window.toggleCart();
+        }
+      })
+      .catch(function(err) {
+        console.error('Add to Cart error:', err);
+        /* Escape hatch: let the browser submit normally if AJAX fails */
+        form.dataset.ajaxHandled = 'skip';
+        form.submit();
+      })
+      .finally(function() {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = '1';
+        }
+      });
+    });
+  </script>
+
+  {%- comment -%}
+    ── GRID VARIANT SELECTOR ──
+    Handles the variant dropdown inside product cards on the catalogue.
+    product-card.liquid buttons call onclick="window.selectGridVariant(this)"
+    so this function MUST exist on window. Was missing → clicks were dead.
+  {%- endcomment -%}
+  <script>
+    window.selectGridVariant = function(button) {
+      var card        = button.closest('.studio-product-card');
+      if (!card) return;
+      var variantId   = button.getAttribute('data-variant-id');
+      var price       = button.getAttribute('data-variant-price');
+      var isAvailable = button.getAttribute('data-variant-available') === 'true';
+      var newImage    = button.getAttribute('data-variant-image');
+      var labelId     = button.getAttribute('data-parent-label');
+
+      /* Hidden variant input for the card's Add-to-Cart form */
+      var input = card.querySelector('.selected-variant-id');
+      if (input) input.value = variantId;
+
+      /* Displayed price */
+      var priceEl = card.querySelector('.product-card__price');
+      if (priceEl && price) priceEl.textContent = price;
+
+      /* Summary label ("Select option" → chosen variant title) */
+      if (labelId) {
+        var label = document.getElementById(labelId);
+        if (label) label.textContent = button.getAttribute('data-title');
+      }
+
+      /* Quick-add button state */
+      var addBtn = card.querySelector('.quick-add-btn');
+      if (addBtn) {
+        addBtn.disabled = !isAvailable;
+        addBtn.textContent = isAvailable ? 'Add to Cart' : 'Sold Out';
+        addBtn.classList.toggle('is-disabled', !isAvailable);
+      }
+
+      /* Swap image (only if the URL looks valid) */
+      var imgEl = card.querySelector('.grid-img');
+      if (imgEl && newImage && newImage !== 'null' && newImage.indexOf('Liquid error') === -1) {
+        var tmp = new Image();
+        tmp.onload = function() { imgEl.src = newImage; };
+        tmp.src = newImage;
+      }
+
+      /* Close the disclosure */
+      var disclosure = card.querySelector('.grid-variant-disclosure');
+      if (disclosure) disclosure.removeAttribute('open');
+    };
+  </script>
+
   {%- comment -%} ── BODY OVERFLOW RESET ── {%- endcomment -%}
   <script>
     document.addEventListener('DOMContentLoaded', function() {
