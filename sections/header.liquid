@@ -1,6 +1,21 @@
 <header class="site-frame-header" role="banner">
   <div class="header-boutique page-width">
 
+    {%- comment -%} Mobile-only hamburger (hidden on desktop via CSS) {%- endcomment -%}
+    <button
+      type="button"
+      class="mobile-menu-toggle"
+      aria-label="Open menu"
+      aria-expanded="false"
+      aria-controls="MobileMenu"
+      onclick="window.toggleMobileMenu()">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+
     <nav class="header-nav-left boutique-menu" role="navigation" aria-label="Main navigation">
       {% for link in linklists.main-menu.links %}
         {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
@@ -74,6 +89,44 @@
 
   </div>
 </header>
+
+
+{%- comment -%}
+  ── MOBILE MENU (slide-in drawer) ──
+  Same menu source as the desktop nav — one place to edit in Shopify admin.
+{%- endcomment -%}
+<div id="MobileMenu" class="mobile-menu" aria-hidden="true">
+  <div class="mobile-menu__overlay" onclick="window.closeMobileMenu()" aria-hidden="true"></div>
+
+  <nav class="mobile-menu__panel" role="navigation" aria-label="Main navigation (mobile)">
+    <div class="mobile-menu__head">
+      <span class="mobile-menu__title">Menu</span>
+      <button
+        type="button"
+        class="mobile-menu__close"
+        onclick="window.closeMobileMenu()"
+        aria-label="Close menu">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <ul class="mobile-menu__list">
+      {%- for link in linklists.main-menu.links -%}
+        {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
+          <li>
+            <a href="{{ link.url }}"
+               {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
+              {{ link.title }}
+            </a>
+          </li>
+        {%- endunless -%}
+      {%- endfor -%}
+    </ul>
+  </nav>
+</div>
 
 
 {%- comment -%} ── SEARCH MODAL (full overlay) ── {%- endcomment -%}

@@ -311,10 +311,12 @@
 
   /* ─── MOBILE: Quick add always visible + thumb-friendly tap targets ─── */
   @media screen and (max-width: 749px) {
+    /* Keep the form pinned to the bottom of .image-frame (absolute) —
+       switching to position:relative flowed it into the frame's clipped
+       aspect-ratio box and hid the button. Just cancel the translateY that
+       hides it on desktop. */
     .product-card-form {
-      position: relative;
       transform: none;
-      margin-top: var(--space-xs);
     }
 
     .studio-product-card:hover .product-card-form,
@@ -323,9 +325,10 @@
     }
 
     .product-card-form .quick-add-btn {
-      border-radius: var(--radius-xs);
-      padding: 14px;         /* ≈ 44px hit-zone including text */
+      border-radius: 0;              /* flush with card edges */
+      padding: 12px;                 /* ≈ 44px hit-zone */
       font-size: 11px;
+      box-shadow: 0 -6px 14px rgba(0, 0, 0, 0.18); /* legibility over image */
     }
 
     .grid-variant-summary {
