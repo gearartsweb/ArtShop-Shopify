@@ -135,7 +135,6 @@
       /* On sold-out / stock errors, refresh anyway so the UI matches truth. */
       if (/sold.?out|stock/i.test(err.message)) window.refreshDrawer();
     });
-    });
   };
 
   document.addEventListener('click', function(e) {

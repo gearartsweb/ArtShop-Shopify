@@ -1,43 +1,27 @@
 <header class="site-frame-header" role="banner">
-  <div class="header-boutique page-width">
 
-<nav class="header-nav-left boutique-menu" role="navigation" aria-label="Main navigation">
-  {% for link in linklists.main-menu.links %}
-    {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
-      <a href="{{ link.url }}"
-         {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
-        {{ link.title }}
-      </a>
-      {%- if link.title == 'Contact' -%}
-        <img src="{{ 'logo-2.png' | asset_url }}" alt="{{ shop.name }}" class="nav-inline-logo" loading="lazy">
+  {%- comment -%} ── ROW 1: brand (left) + tools (right) ── {%- endcomment -%}
+  <div class="header-top">
+    <a href="{{ routes.root_url }}" class="site-logo-link" aria-label="{{ shop.name }} — Home">
+      {%- if settings.logo != blank -%}
+        <img
+          src="{{ settings.logo | image_url: width: 360 }}"
+          alt="{{ shop.name }}"
+          class="site-logo-image"
+          width="350"
+          height="500"
+          loading="eager">
+      {%- else -%}
+        <img
+          src="{{ 'logo-2.png' | asset_url }}"
+          alt="{{ shop.name }}"
+          class="site-logo-image"
+          width="350"
+          height="500"
+          loading="eager">
       {%- endif -%}
-    {%- endunless -%}
-  {% endfor %}
-</nav>
+    </a>
 
-    {%- comment -%} ── CENTER: Logo ── {%- endcomment -%}
-    <div class="header-logo-center">
-      <a href="{{ routes.root_url }}" class="site-logo-link" aria-label="{{ shop.name }} - Home">
-        {%- if settings.logo != blank -%}
-          <img
-            src="{{ settings.logo | image_url: width: 360 }}"
-            alt="{{ shop.name }}"
-            class="site-logo-image"
-            width="350"
-            height="500"
-            loading="eager">
-        {%- else -%}
-          <img
-            src="{{ 'logo-2.png' | asset_url }}"
-            alt="{{ shop.name }}"
-            class="site-logo-image"
-            width="350"
-            height="500"
-            loading="eager">
-        {%- endif -%}
-      </a>
-    </div>
-    {%- comment -%} ── RIGHT: Search + Cart ── {%- endcomment -%}
     <div class="header-icons-right">
       <button
         type="button"
@@ -70,8 +54,27 @@
         </span>
       </button>
     </div>
+  </div>
 
-  </div>{%- comment -%} /.header-boutique {%- endcomment -%}
+  {%- comment -%}
+    ── ROW 2: full-width category nav ──
+    Renders every item in the Shopify "main-menu". No matter how many
+    the client adds, the bar scrolls horizontally on narrow viewports
+    instead of squeezing items or wrapping mid-word.
+  {%- endcomment -%}
+  <nav class="header-nav-bar" role="navigation" aria-label="Main navigation">
+    <div class="header-nav-bar__inner">
+      {%- for link in linklists.main-menu.links -%}
+        {%- unless link.title contains 'Search' or link.title contains 'Cart' -%}
+          <a href="{{ link.url }}"
+             {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
+            {{ link.title }}
+          </a>
+        {%- endunless -%}
+      {%- endfor -%}
+    </div>
+  </nav>
+
 </header>
 
 
