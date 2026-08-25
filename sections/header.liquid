@@ -23,9 +23,6 @@
              {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
             {{ link.title }}
           </a>
-          {%- if link.title == 'Contact' -%}
-            <img src="{{ 'logo-2.png' | asset_url }}" alt="{{ shop.name }}" class="nav-inline-logo" loading="lazy">
-          {%- endif -%}
         {%- endunless -%}
       {% endfor %}
     </nav>

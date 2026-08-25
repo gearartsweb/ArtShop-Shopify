@@ -226,16 +226,6 @@ section {
   color: var(--color-white);
 }
 
-/* Inline decorative logo that sits inside the left nav (after "Contact") */
-.nav-inline-logo {
-  display: inline-block;
-  vertical-align: middle;
-  width: 70px;
-  height: auto;
-  margin: 0 12px;
-  pointer-events: none;
-}
-
 /* Center logo */
 .header-logo-center {
   display: flex;
@@ -363,11 +353,6 @@ section {
   }
 }
 
-@media screen and (max-width: 749px) {
-  .nav-inline-logo {
-    width: 90px;
-  }
-}
 
 /* ─── MOBILE MENU (slide-in drawer) ─── */
 .mobile-menu {
