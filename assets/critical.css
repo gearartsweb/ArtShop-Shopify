@@ -9,24 +9,6 @@
 /* ─────────────────────────────────────────────
    1. RESET & BASE
 ───────────────────────────────────────────── */
-/* ============================================================
-   CONQUEST — custom theme layer for Dawn
-   Blood & Ash palette + Slayer-energy motion
-   Loaded after Dawn's base.css so these rules win.
-   ============================================================ */
-   @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Lora', Georgia, serif;
-}
-
-body, p, a, nav, button, input, select, textarea {
-  font-family: 'Lora', Georgia, serif;
-}
-
-
-
-
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -36,19 +18,6 @@ body, p, a, nav, button, input, select, textarea {
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
-}
-
-@media(prefers-reduced-motion:reduce){
-  .cq-reveal{opacity:1; transform:none}
-  *{animation-duration:.001ms!important; transition-duration:.001ms!important}
-}
-
-/* Increase nav link font size */
-nav.header-nav-left a,
-nav.boutique-menu a,
-.header-nav-container nav a {
-  font-size: 0.9rem !important;
-  font-style: italic !important;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -76,29 +45,6 @@ nav.boutique-menu a,
 
 :focus:not(:focus-visible) {
   outline: none;
-}
-
-
-.cart-drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  width: 420px;
-  height: 100%;
-  background: var(--cq-ink);
-  z-index: var(--z-drawer);
-  display: flex;           /* keep flex for layout */
-  flex-direction: column;
-  transform: translateX(100%);
-  transition: transform 0.45s cubic-bezier(.7,0,.3,1);
-  visibility: hidden;      /* ← replaces display: none */
-  pointer-events: none;    /* ← prevents click-through when hidden */
-}
-
-.cart-drawer.is-active {
-  transform: translateX(0);
-  visibility: visible;     /* ← show it */
-  pointer-events: all;     /* ← re-enable clicks */
 }
 
 

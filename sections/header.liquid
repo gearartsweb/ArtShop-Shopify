@@ -15,8 +15,6 @@
   {% endfor %}
 </nav>
 
-    </div>
-
     {%- comment -%} ── CENTER: Logo ── {%- endcomment -%}
     <div class="header-logo-center">
       <a href="{{ routes.root_url }}" class="site-logo-link" aria-label="{{ shop.name }} - Home">
@@ -39,10 +37,6 @@
         {%- endif -%}
       </a>
     </div>
-    <a href="{{ link.url }}"
-               {% if link.url == request.path %}class="is-active" aria-current="page"{% endif %}>
-
-
     {%- comment -%} ── RIGHT: Search + Cart ── {%- endcomment -%}
     <div class="header-icons-right">
       <button
@@ -165,13 +159,10 @@
     });
   };
 
-  // Escape key closes search and mobile menu
+  // Escape closes the search modal. (Old menu-toggle checkbox was removed
+  // from the markup — no mobile-menu toggle to sync anymore.)
   document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-      TheArtShop.closeSearch();
-      const menuToggle = document.getElementById('menu-toggle');
-      if (menuToggle && menuToggle.checked) menuToggle.checked = false;
-    }
+    if (e.key === 'Escape') TheArtShop.closeSearch();
   });
 
   // Click outside search modal to close
