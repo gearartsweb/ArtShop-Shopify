@@ -60,23 +60,6 @@
         </div>
       </div>
 
-      {%- comment -%} ── COL 2: SHOP ── {%- endcomment -%}
-      <div class="footer-col">
-        <h4 class="footer-heading">Shop</h4>
-        <ul>
-          {%- assign shop_menu = section.settings.menu_shop -%}
-          {%- if shop_menu == blank -%}{%- assign shop_menu = linklists['footer-shop'] -%}{%- endif -%}
-          {%- for link in shop_menu.links -%}
-            <li><a href="{{ link.url }}">{{ link.title }}</a></li>
-          {%- else -%}
-            <li><a href="{{ routes.collections_url }}/oil-painting">Oil Painting</a></li>
-            <li><a href="{{ routes.collections_url }}/watercolour">Watercolour</a></li>
-            <li><a href="{{ routes.collections_url }}/drawing">Drawing & Sketching</a></li>
-            <li><a href="{{ routes.collections_url }}/canvas">Canvas & Paper</a></li>
-            <li><a href="/collections/all">All Products</a></li>
-          {%- endfor -%}
-        </ul>
-      </div>
 
       {%- comment -%} ── COL 3: HELP ── {%- endcomment -%}
       <div class="footer-col">
