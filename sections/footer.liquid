@@ -64,7 +64,9 @@
       <div class="footer-col">
         <h4 class="footer-heading">Shop</h4>
         <ul>
-          {%- for link in linklists.footer-shop.links -%}
+          {%- assign shop_menu = section.settings.menu_shop -%}
+          {%- if shop_menu == blank -%}{%- assign shop_menu = linklists['footer-shop'] -%}{%- endif -%}
+          {%- for link in shop_menu.links -%}
             <li><a href="{{ link.url }}">{{ link.title }}</a></li>
           {%- else -%}
             <li><a href="{{ routes.collections_url }}/oil-painting">Oil Painting</a></li>
@@ -80,13 +82,13 @@
       <div class="footer-col">
         <h4 class="footer-heading">Help</h4>
         <ul>
-          {%- for link in linklists.footer-help.links -%}
+          {%- assign help_menu = section.settings.menu_help -%}
+          {%- if help_menu == blank -%}{%- assign help_menu = linklists['footer-help'] -%}{%- endif -%}
+          {%- for link in help_menu.links -%}
             <li><a href="{{ link.url }}">{{ link.title }}</a></li>
           {%- else -%}
             <li><a href="/pages/contact">Contact Us</a></li>
-            <li><a href="/pages/shipping">Shipping Policy</a></li>
-            <li><a href="/pages/returns">Returns</a></li>
-            <li><a href="/pages/faq">FAQ</a></li>
+            {%- comment -%} Policy links appear automatically in the footer bottom bar (Settings -> Policies) {%- endcomment -%}
           {%- endfor -%}
         </ul>
       </div>
@@ -157,6 +159,13 @@
 
     {%- comment -%} ── FOOTER BOTTOM BAR ── {%- endcomment -%}
     <div class="footer-bottom">
+      {%- if shop.policies.size > 0 -%}
+        <nav class="footer-policies" aria-label="Legal policies">
+          {%- for policy in shop.policies -%}
+            <a href="{{ policy.url }}">{{ policy.title }}</a>
+          {%- endfor -%}
+        </nav>
+      {%- endif -%}
       <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. All rights reserved.</p>
       <p class="footer-credit">
         Built by
@@ -341,6 +350,30 @@
   }
 
   /* ─── BOTTOM BAR ─── */
+  .footer-policies {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-xs);
+  }
+
+  .footer-policies a {
+    font-size: var(--text-sm);
+    color: var(--text-on-dark-muted);
+    transition: var(--transition-fast);
+  }
+
+  .footer-policies a:not(:last-child)::after {
+    content: "·";
+    margin-left: var(--space-sm);
+    color: var(--text-on-dark-faint);
+  }
+
+  .footer-policies a:hover {
+    color: var(--color-white);
+  }
+
   .footer-credit a {
     color: var(--color-maroon-light);
     transition: var(--transition-fast);
@@ -389,6 +422,22 @@
       "type": "url",
       "id": "facebook",
       "label": "Facebook URL"
+    },
+    {
+      "type": "header",
+      "content": "Footer menus"
+    },
+    {
+      "type": "link_list",
+      "id": "menu_shop",
+      "label": "Shop column menu",
+      "info": "Optional. Choose a menu for the Shop column. Leave empty to use the built-in collection links."
+    },
+    {
+      "type": "link_list",
+      "id": "menu_help",
+      "label": "Help column menu",
+      "info": "Optional. Choose a menu for the Help column (e.g. Contact, FAQ). Store policies link automatically in the footer bottom bar - set them in Settings -> Policies."
     }
   ],
   "presets": [
