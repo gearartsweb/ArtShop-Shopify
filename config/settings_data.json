@@ -25,7 +25,9 @@
           "hours": "Mon–Fri 9am–5pm · Sat 9am–2pm",
           "email": "artshophermanus@gmail.com",
           "instagram": "",
-          "facebook": ""
+          "facebook": "",
+          "menu_shop": "",
+          "menu_help": "policies"
         }
       },
       "cart-drawer": {
