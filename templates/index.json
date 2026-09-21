@@ -26,7 +26,7 @@
       "settings": {
         "eyebrow": "Online Savings",
         "title": "Current Promo",
-        "text": "<p>Shop to save!</p>",
+        "text": "",
         "image": "shopify://shop_images/Gemini_Generated_Image_a0sg5ba0sg5ba0sg.jpg",
         "bg_color": "#f9f9f9"
       }
