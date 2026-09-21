@@ -19,7 +19,23 @@
 
 
 
-        {%- comment -%} ── STAT ROW UNDER IMAGE ── {%- endcomment -%}
+
+
+      {%- comment -%} ── RIGHT: CONTENT ── {%- endcomment -%}
+      <div class="about-content">
+        <span class="eyebrow">
+          {%- if section.settings.eyebrow != blank -%}
+            {{ section.settings.eyebrow }}
+          {%- else -%}
+            Our Story
+          {%- endif -%}
+        </span>
+
+        <h2 class="about-heading">
+          {{ section.settings.title | default: 'The Art Shop Hermanus' }}
+        </h2>
+
+                {%- comment -%} ── STAT ROW UNDER IMAGE ── {%- endcomment -%}
         <div class="about-stats">
           <div class="about-stat">
             <span class="about-stat__number">20+</span>
@@ -37,20 +53,6 @@
           </div>
         </div>
       </div>
-
-      {%- comment -%} ── RIGHT: CONTENT ── {%- endcomment -%}
-      <div class="about-content">
-        <span class="eyebrow">
-          {%- if section.settings.eyebrow != blank -%}
-            {{ section.settings.eyebrow }}
-          {%- else -%}
-            Our Story
-          {%- endif -%}
-        </span>
-
-        <h2 class="about-heading">
-          {{ section.settings.title | default: 'The Art Shop Hermanus' }}
-        </h2>
 
         <div class="about-description">
           {%- if section.settings.text != blank -%}
