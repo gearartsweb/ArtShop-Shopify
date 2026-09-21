@@ -25,9 +25,9 @@
       "name": "About Studio",
       "settings": {
         "eyebrow": "",
-        "title": "About The Art Shop",
+        "title": "",
         "text": "<p>A space for artists, by artists.</p>",
-        "image": "shopify://shop_images/The_art_Shop_front.webp",
+        "image": "shopify://shop_images/Gemini_Generated_Image_a0sg5ba0sg5ba0sg.jpg",
         "bg_color": "#f9f9f9"
       }
     },
