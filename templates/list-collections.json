@@ -11,7 +11,9 @@
   "sections": {
     "main": {
       "type": "collections",
-      "settings": {}
+      "settings": {
+        "grid_item_width": "collections--full"
+      }
     }
   },
   "order": [
