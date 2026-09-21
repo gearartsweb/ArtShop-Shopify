@@ -13,11 +13,12 @@
       "type": "hero-video",
       "settings": {
         "eyebrow": "Hermanus · Est. 2006 · Professional Grade",
-        "title": "The Art of Precision",
+        "title": "The Art Shop Hermanus",
         "subtitle": "Fine Art supplies for the modern studio.",
         "button_label": "Shop the Collection",
         "button_link": "",
-        "video_url": "https://cdn.shopify.com/videos/c/o/v/d23f5aa76f064dd4b87b5e36a744aab3.mp4"
+        "video_url": "",
+        "poster": "shopify://shop_images/Art_Shop_Bus_d51c7597-627f-4538-8949-bf51c7a7626b.png"
       }
     },
     "about_studio_fkV74B": {
@@ -28,7 +29,7 @@
         "title": "The Art Shop Hermanus",
         "text": "",
         "image": "shopify://shop_images/Front_Facing_Shop_e220004b-c265-4e5f-9425-8ce62d213592.jpg",
-        "bg_color": "#FDCACE"
+        "bg_color": "#fdcace"
       }
     },
     "featured_showcase_LjPAAp": {
