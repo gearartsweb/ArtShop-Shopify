@@ -47,19 +47,12 @@
             {%- endif -%}
           </h1>
 
-          {%- if section.settings.subtitle != blank -%}
+           {%- if section.settings.subtitle != blank -%}
             <p class="hero-subtitle">{{ section.settings.subtitle }}</p>
           {%- endif -%}
 
-          <div class="hero-ctas">
-            <a
-              href="{{ section.settings.button_link | default: '/collections/all' }}"
-              class="btn btn--primary btn--lg">
-              {{ section.settings.button_label | default: 'Shop Professional Grade' }}
-            </a>
+  </div>
 
-          </div>
-        </div>
 
         {%- comment -%} ── CREDENTIAL BADGE ── {%- endcomment -%}
         <div class="hero-badge" aria-hidden="true">
