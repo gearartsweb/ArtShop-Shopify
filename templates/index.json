@@ -17,16 +17,16 @@
         "subtitle": "Fine Art supplies for the modern studio.",
         "button_label": "Shop the Collection",
         "button_link": "",
-        "video_url": ""
+        "video_url": "https://cdn.shopify.com/videos/c/o/v/d23f5aa76f064dd4b87b5e36a744aab3.mp4"
       }
     },
     "about_studio_fkV74B": {
       "type": "about-studio",
-      "name": "About Studio",
+      "name": "Trending",
       "settings": {
-        "eyebrow": "",
-        "title": "",
-        "text": "<p>A space for artists, by artists.</p>",
+        "eyebrow": "Online Savings",
+        "title": "Current Promo",
+        "text": "<p>Shop to save!</p>",
         "image": "shopify://shop_images/Gemini_Generated_Image_a0sg5ba0sg5ba0sg.jpg",
         "bg_color": "#f9f9f9"
       }
