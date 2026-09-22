@@ -9,17 +9,12 @@
  */
 {
   "sections": {
-    "boutique_form": {
-      "type": "contact-boutique",
-      "settings": {
-        "title": "Contact The Art Shop",
-        "text": "For any enquires please reach out below.",
-        "address": "13 Mitchell str. Hermanus",
-        "email": "artshophermanus@gmail.com"
-      }
+    "main": {
+      "type": "page",
+      "settings": {}
     }
   },
   "order": [
-    "boutique_form"
+    "main"
   ]
 }
