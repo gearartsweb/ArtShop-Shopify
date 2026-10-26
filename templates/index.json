@@ -52,12 +52,54 @@
         "instagram": "https://www.instagram.com/theartshophermanus/",
         "facebook": "https://www.facebook.com/p/The-Art-Shop-Hermanus-100066807003010/"
       }
+    },
+    "footer_733M6a": {
+      "type": "footer",
+      "name": "Footer",
+      "settings": {
+        "brand_description": "Fine art materials for working professionals. Curated in Hermanus, trusted across South Africa.",
+        "address": "13 Mitchell St, Hermanus",
+        "hours": "Mon–Fri 9am–5pm · Sat 9am–2pm",
+        "email": "artshophermanus@gmail.com",
+        "instagram": "",
+        "facebook": "",
+        "menu_shop": "",
+        "menu_help": ""
+      }
+    },
+    "1792994130057e2e21": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_e4e9628_AGtxra": {
+          "type": "ai_gen_block_e4e9628",
+          "disabled": true,
+          "settings": {
+            "heading": "We are a growing website and sometimes bugs might creep in! Kindly report any issues.",
+            "heading_font": "anonymous_pro_n4",
+            "font_size": 16,
+            "font_weight": "500",
+            "alignment": "center",
+            "text_color": "#333333",
+            "glow_color": "#E85D04",
+            "glow_blur": 8,
+            "animation_duration": 3,
+            "desktop_width_percent": 55
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_e4e9628_AGtxra"
+      ],
+      "settings": {}
     }
   },
   "order": [
     "hero_video",
     "about_studio_fkV74B",
     "featured_showcase_LjPAAp",
-    "boutique_contact"
+    "boutique_contact",
+    "footer_733M6a",
+    "1792994130057e2e21"
   ]
 }
