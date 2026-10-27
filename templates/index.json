@@ -19,6 +19,16 @@
         "poster": "shopify://shop_images/Art_Shop_Bus_d51c7597-627f-4538-8949-bf51c7a7626b.png"
       }
     },
+    "featured_showcase_LjPAAp": {
+      "type": "featured-showcase",
+      "name": "Showcase Grid",
+      "settings": {
+        "title": "Best Sellers",
+        "subtitle": "Our most loved supplies",
+        "collection": "bestsellers",
+        "products_to_show": 16
+      }
+    },
     "about_studio_fkV74B": {
       "type": "about-studio",
       "name": "Trending",
@@ -28,16 +38,6 @@
         "text": "",
         "image": "shopify://shop_images/Front_Facing_Shop_e220004b-c265-4e5f-9425-8ce62d213592.jpg",
         "bg_color": "#eae0e1"
-      }
-    },
-    "featured_showcase_LjPAAp": {
-      "type": "featured-showcase",
-      "name": "Showcase Grid",
-      "settings": {
-        "title": "Best Sellers",
-        "subtitle": "Our most loved supplies",
-        "collection": "bestsellers",
-        "products_to_show": 16
       }
     },
     "boutique_contact": {
@@ -96,8 +96,8 @@
   },
   "order": [
     "hero_video",
-    "about_studio_fkV74B",
     "featured_showcase_LjPAAp",
+    "about_studio_fkV74B",
     "boutique_contact",
     "footer_733M6a",
     "1792994130057e2e21"
