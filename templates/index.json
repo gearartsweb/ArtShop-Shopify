@@ -37,7 +37,7 @@
         "title": "Best Sellers",
         "subtitle": "Our most loved supplies",
         "collection": "bestsellers",
-        "products_to_show": 4
+        "products_to_show": 16
       }
     },
     "boutique_contact": {
@@ -80,7 +80,7 @@
             "font_weight": "500",
             "alignment": "center",
             "text_color": "#333333",
-            "glow_color": "#E85D04",
+            "glow_color": "#e85d04",
             "glow_blur": 8,
             "animation_duration": 3,
             "desktop_width_percent": 55
