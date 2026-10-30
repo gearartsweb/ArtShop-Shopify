@@ -92,6 +92,24 @@
         "ai_gen_block_e4e9628_AGtxra"
       ],
       "settings": {}
+    },
+    "17933558179a1f3794": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_f74668f_9qF7dM": {
+          "type": "ai_gen_block_f74668f",
+          "settings": {
+            "desktop_width_percent": 100,
+            "tab_title": "Size conversion: inches to cm",
+            "explanation": "<p>Enter the canvas width and height in inches for a centimetre conversion. These are size conversions only and do not change your selected variant.</p>"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_f74668f_9qF7dM"
+      ],
+      "settings": {}
     }
   },
   "order": [
@@ -100,6 +118,7 @@
     "about_studio_fkV74B",
     "boutique_contact",
     "footer_733M6a",
-    "1792994130057e2e21"
+    "1792994130057e2e21",
+    "17933558179a1f3794"
   ]
 }
