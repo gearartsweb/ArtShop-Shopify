@@ -965,10 +965,26 @@ document.addEventListener('DOMContentLoaded', function() {
           TheArtShop.updateCartCount();
         }
 
-        /* Open cart drawer if available */
-        if (typeof window.toggleCart === 'function') {
-          setTimeout(function() { window.toggleCart(); }, 300);
-        }
+/* Refresh the bag before opening it. */
+if (typeof window.refreshDrawer === 'function') {
+  window.refreshDrawer()
+    .then(function() {
+      var drawer = document.getElementById('CartDrawer');
+      if (
+        typeof window.toggleCart === 'function' &&
+        drawer &&
+        !drawer.classList.contains('is-active')
+      ) {
+        window.toggleCart();
+      }
+    })
+    .catch(function() {
+      window.location.assign(window.Shopify.routes.root + 'cart');
+    });
+} else {
+  window.location.assign(window.Shopify.routes.root + 'cart');
+}
+
 
         setTimeout(function() {
           addBtn.disabled = false;
@@ -979,9 +995,10 @@ document.addEventListener('DOMContentLoaded', function() {
         addBtn.disabled = false;
         addBtnText.textContent = 'Add to Cart';
         productForm.submit();
-      });
+         });
     });
   }
+
 
   /* ── FILTERS ── */
   if (searchInput)  searchInput.addEventListener('input', filterGrid);
