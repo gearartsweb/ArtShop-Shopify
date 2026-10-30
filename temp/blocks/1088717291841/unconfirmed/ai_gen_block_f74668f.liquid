@@ -1,6 +1,200 @@
+{% doc %}
+  @prompt
+    Create a mobile-friendly, accessible product-page tab titled “Size conversion: inches to cm” for Pro Art Canvasses only (product ID 10257741054273), without displaying it on other products sharing the template. Let shoppers enter canvas width and height in inches, including decimal values, and show both measurements in centimetres using exactly 1 inch = 2.54 cm. Label both inputs clearly, show units beside inputs and results, and display results rounded to two decimal places. Handle empty, invalid, or negative inputs gracefully. Match the existing product-page styling and make the tab title and explanatory text editable. Explain briefly that these are size conversions, not changes to the selected variant. Do not change product variants, prices, or other product content.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+{% if product.id == 10257741054273 %}
+  {% style %}
+    .ai-size-conversion-{{ ai_gen_id }} {
+      display: block;
+      width: {{ block.settings.desktop_width_percent }}%;
+      max-width: 100%;
+      color: inherit;
+      font-family: inherit;
+    }
+    .ai-size-conversion-{{ ai_gen_id }} details {
+      border-top: 1px solid rgba(51, 51, 51, 0.2);
+      border-bottom: 1px solid rgba(51, 51, 51, 0.2);
+    }
+    .ai-size-conversion-{{ ai_gen_id }} summary {
+      cursor: pointer;
+      padding: 1rem 2.25rem 1rem 0;
+      position: relative;
+      font: inherit;
+      font-weight: 600;
+      color: inherit;
+      list-style: none;
+    }
+    .ai-size-conversion-{{ ai_gen_id }} summary::-webkit-details-marker { display: none; }
+    .ai-size-conversion-{{ ai_gen_id }} summary::after {
+      content: '+';
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.25rem;
+    }
+    .ai-size-conversion-{{ ai_gen_id }} details[open] summary::after { content: '−'; }
+    .ai-size-conversion-{{ ai_gen_id }} summary:focus-visible,
+    .ai-size-conversion-{{ ai_gen_id }} input:focus-visible {
+      outline: 2px solid #6b1f35;
+      outline-offset: 3px;
+    }
+    .ai-size-conversion-{{ ai_gen_id }}__content { padding: 0 0 1.25rem; }
+    .ai-size-conversion-{{ ai_gen_id }}__explanation { margin: 0 0 1rem; line-height: 1.5; }
+    .ai-size-conversion-{{ ai_gen_id }}__fields {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+    .ai-size-conversion-{{ ai_gen_id }}__field { min-width: 0; }
+    .ai-size-conversion-{{ ai_gen_id }}__field label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+    .ai-size-conversion-{{ ai_gen_id }}__input-wrap {
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(51, 51, 51, 0.45);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .ai-size-conversion-{{ ai_gen_id }} input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      padding: 0.75rem;
+      color: inherit;
+      background: transparent;
+      font: inherit;
+    }
+    .ai-size-conversion-{{ ai_gen_id }}__unit {
+      padding: 0 0.75rem;
+      white-space: nowrap;
+    }
+    .ai-size-conversion-{{ ai_gen_id }}__results {
+      margin: 1rem 0 0;
+      display: grid;
+      gap: 0.5rem;
+    }
+    .ai-size-conversion-{{ ai_gen_id }}__result {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .ai-size-conversion-{{ ai_gen_id }}__message { margin: 0.75rem 0 0; min-height: 1.5em; }
+    @media screen and (max-width: 549px) {
+      .ai-size-conversion-{{ ai_gen_id }}__fields { grid-template-columns: 1fr; gap: 0.75rem; }
+    }
+  {% endstyle %}
+
+  <size-conversion-{{ ai_gen_id }} class="ai-size-conversion-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+    <details>
+      <summary>{{ block.settings.tab_title | escape }}</summary>
+      <div class="ai-size-conversion-{{ ai_gen_id }}__content">
+        <div class="ai-size-conversion-{{ ai_gen_id }}__explanation">{{ block.settings.explanation }}</div>
+        <div class="ai-size-conversion-{{ ai_gen_id }}__fields">
+          <div class="ai-size-conversion-{{ ai_gen_id }}__field">
+            <label for="ai-width-{{ ai_gen_id }}">Canvas width</label>
+            <div class="ai-size-conversion-{{ ai_gen_id }}__input-wrap">
+              <input id="ai-width-{{ ai_gen_id }}" data-dimension="width" type="number" inputmode="decimal" step="any" min="0" autocomplete="off" aria-describedby="ai-message-{{ ai_gen_id }}">
+              <span class="ai-size-conversion-{{ ai_gen_id }}__unit" aria-hidden="true">in</span>
+            </div>
+          </div>
+          <div class="ai-size-conversion-{{ ai_gen_id }}__field">
+            <label for="ai-height-{{ ai_gen_id }}">Canvas height</label>
+            <div class="ai-size-conversion-{{ ai_gen_id }}__input-wrap">
+              <input id="ai-height-{{ ai_gen_id }}" data-dimension="height" type="number" inputmode="decimal" step="any" min="0" autocomplete="off" aria-describedby="ai-message-{{ ai_gen_id }}">
+              <span class="ai-size-conversion-{{ ai_gen_id }}__unit" aria-hidden="true">in</span>
+            </div>
+          </div>
+        </div>
+        <div class="ai-size-conversion-{{ ai_gen_id }}__results" aria-live="polite" aria-atomic="true">
+          <div class="ai-size-conversion-{{ ai_gen_id }}__result"><span>Width</span><strong><span data-result="width">—</span> cm</strong></div>
+          <div class="ai-size-conversion-{{ ai_gen_id }}__result"><span>Height</span><strong><span data-result="height">—</span> cm</strong></div>
+        </div>
+        <p class="ai-size-conversion-{{ ai_gen_id }}__message" id="ai-message-{{ ai_gen_id }}" role="status">Enter measurements in inches to convert.</p>
+      </div>
+    </details>
+  </size-conversion-{{ ai_gen_id }}>
+
+  <script>
+    (() => {
+      const tagName = 'size-conversion-{{ ai_gen_id }}';
+      if (customElements.get(tagName)) return;
+      class SizeConversion extends HTMLElement {
+        connectedCallback() {
+          this.inputs = this.querySelectorAll('input[data-dimension]');
+          this.message = this.querySelector('[role="status"]');
+          this.inputs.forEach((input) => input.addEventListener('input', () => this.update()));
+        }
+        update() {
+          let hasValue = false;
+          let invalid = false;
+          this.inputs.forEach((input) => {
+            const raw = input.value.trim();
+            const result = this.querySelector('[data-result="' + input.dataset.dimension + '"]');
+            if (raw === '') {
+              result.textContent = '—';
+              return;
+            }
+            hasValue = true;
+            const value = Number(raw);
+            if (!Number.isFinite(value) || value < 0) {
+              invalid = true;
+              result.textContent = '—';
+            } else {
+              result.textContent = (value * 2.54).toFixed(2);
+            }
+          });
+          if (invalid) {
+            this.message.textContent = 'Enter a valid, non-negative measurement in inches.';
+          } else if (hasValue) {
+            this.message.textContent = 'Conversions use 1 inch = 2.54 cm. These are size conversions only and do not change your selected variant.';
+          } else {
+            this.message.textContent = 'Enter measurements in inches to convert.';
+          }
+        }
+      }
+      customElements.define(tagName, SizeConversion);
+    })();
+  </script>
+{% endif %}
+
 {% schema %}
- {
-   "name": "AI_Block",
-   "tag": "shopify-ai-generated-block"
- }
+{
+  "name": "Size conversion",
+  "settings": [
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "text",
+      "id": "tab_title",
+      "label": "Tab title",
+      "default": "Size conversion: inches to cm"
+    },
+    {
+      "type": "richtext",
+      "id": "explanation",
+      "label": "Explanatory text",
+      "default": "<p>Enter the canvas width and height in inches for a centimetre conversion. These are size conversions only and do not change your selected variant.</p>"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Size conversion"
+    }
+  ],
+  "tag": null,
+  "class": "size-conversion-block"
+}
 {% endschema %}
