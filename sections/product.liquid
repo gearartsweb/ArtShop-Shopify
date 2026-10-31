@@ -88,12 +88,7 @@
           {%- endif -%}
         </div>
 
-        {%- comment -%} Short description {%- endcomment -%}
-        {%- if product.description != blank -%}
-          <div class="product-description-text rte">
-            {{ product.description }}
-          </div>
-        {%- endif -%}
+
 
         {%- comment -%} ── ADD TO CART FORM ── {%- endcomment -%}
         {%- form 'product', product, id: 'ProductForm', novalidate: 'novalidate' -%}
@@ -235,7 +230,7 @@
             </div>
           {%- endif -%}
 
-          {%- comment -%} ── QTY + ADD ── {%- endcomment -%}
+        {%- comment -%} ── QTY + ADD ── {%- endcomment -%}
           <div class="product-form-actions">
             <div class="qty-and-add-row">
               <div class="quantity-selector" aria-label="Quantity">
@@ -244,6 +239,7 @@
                   class="quantity-selector__btn"
                   data-action="minus"
                   aria-label="Decrease quantity">−</button>
+
                 <input
                   type="number"
                   id="Quantity-{{ section.id }}"
@@ -252,6 +248,7 @@
                   min="1"
                   aria-label="Quantity"
                   class="quantity-selector__input">
+
                 <button
                   type="button"
                   class="quantity-selector__btn"
@@ -264,17 +261,29 @@
                 name="add"
                 id="add-to-cart-btn"
                 class="btn btn--primary btn--lg"
-                aria-live="polite">
+                aria-live="polite"
+                {% unless current_variant.available %}disabled{% endunless %}>
                 <span id="add-to-cart-text">
-                  {%- if current_variant.available -%}Add to Cart{%- else -%}Out of Stock{%- endif -%}
+                  {% if current_variant.available %}
+                    Add to Cart
+                  {% else %}
+                    Out of Stock
+                  {% endif %}
                 </span>
               </button>
             </div>
           </div>
-
         {%- endform -%}
 
-        {%- comment -%} ── TRUST PERKS ── {%- endcomment -%}
+        {%- comment -%} Product description below buying controls {%- endcomment -%}
+        {%- if product.description != blank -%}
+          <div class="product-description-text rte">
+            {{ product.description }}
+          </div>
+        {%- endif -%}
+
+
+       {%- comment -%} ── TRUST PERKS ── {%- endcomment -%}
         <div class="studio-perks">
           <div class="perk-item">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
